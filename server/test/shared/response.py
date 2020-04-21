@@ -1,6 +1,6 @@
 from typing import Mapping
 from werkzeug.wrappers import Response
-from .constants import UUID_LENGTH
+from yaits_api.constants import UUID_LENGTH
 
 
 def verify_api_response(response: Response,

@@ -1,6 +1,6 @@
 from typing import Mapping
 from flask.testing import FlaskClient
-from .constants import JWT_TOKEN_NAME, JWT_REFRESH_TOKEN_NAME
+from yaits_api.constants import JWT_TOKEN_NAME, JWT_REFRESH_TOKEN_NAME
 from .request import auth_header
 from .response import (
     verify_api_response, verify_user_response

@@ -1,5 +1,5 @@
 import random
-from .constants import VALID_CHARACTERS
+from yaits_api.constants import VALID_CHARACTERS
 
 
 def random_string(length: int) -> str:

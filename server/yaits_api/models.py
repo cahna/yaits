@@ -6,6 +6,7 @@ from yaits_api.constants import (
     USERNAME_MAX_LENGTH,
     UUID_LENGTH,
     TEAM_NAME_MAX_LENGTH,
+    TEAM_SLUG_MAX_LENGTH,
     ISSUE_STATUS_MAX_LENGTH,
     ISSUE_SHORT_DESCRIPTION_MAX_LENGTH,
 )
@@ -56,6 +57,8 @@ class User(db.Model):
         - created_issues
         - assigned_issues
     """
+    __tablename__ = 'users'  # 'user' is reserved in postgresql
+
     id = db.Column(PK_TYPE, primary_key=True, autoincrement=True)
     unique_id = db.Column(GUID(),
                           nullable=False,
@@ -67,7 +70,7 @@ class User(db.Model):
                          nullable=False)
     hashed_pw = db.Column(db.String(128), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    teams = db.relationship('Team', secondary='TeamMembership')
+    teams = db.relationship('Team', secondary='team_membership')
 
     @db.validates('created_by', 'assigned_to')
     def validate_username(self, key, _username):
@@ -96,7 +99,7 @@ class JwtBlacklist(db.Model):
                     index=True,
                     nullable=False)
     user_unique_id = db.Column(GUID(),
-                               db.ForeignKey('user.unique_id'),
+                               db.ForeignKey('users.unique_id'),
                                nullable=False)
     blacklist_date = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -107,17 +110,19 @@ class Team(db.Model):
                      index=True,
                      unique=True,
                      nullable=False)
-    slug = db.Column(db.String(2 * TEAM_NAME_MAX_LENGTH),
+    slug = db.Column(db.String(TEAM_SLUG_MAX_LENGTH),
                      index=True,
                      unique=True,
                      nullable=False)
+    owner_id = db.Column(PK_TYPE, db.ForeignKey('users.id'))
 
-    members = db.relationship('User', secondary='TeamMembership')
+    owner = db.relationship('User')
+    members = db.relationship('User', secondary='team_membership')
 
 
 class TeamMembership(db.Model):
     team_id = db.Column(PK_TYPE, db.ForeignKey('team.id'), primary_key=True)
-    user_id = db.Column(PK_TYPE, db.ForeignKey('user.id'), primary_key=True)
+    user_id = db.Column(PK_TYPE, db.ForeignKey('users.id'), primary_key=True)
 
 
 class IssueStatus(db.Model):
@@ -153,16 +158,20 @@ class Issue(db.Model):
                           db.ForeignKey('issue_status.id'),
                           nullable=False,
                           index=True)
+    team_id = db.Column(PK_TYPE,
+                        db.ForeignKey('team.id'),
+                        nullable=False,
+                        index=True)
     created_by_id = db.Column(PK_TYPE,
-                              db.ForeignKey('user.id'),
+                              db.ForeignKey('users.id'),
                               nullable=False,
                               index=True)
     assigned_to_id = db.Column(PK_TYPE,
-                               db.ForeignKey('user.id'),
+                               db.ForeignKey('users.id'),
                                nullable=False,
                                index=True)
 
-    status = db.relationship('issue_status')
+    status = db.relationship('IssueStatus')
     team = db.relationship('Team', backref=db.backref('issues', lazy=True))
     created_by = db.relationship('User',
                                  foreign_keys=[created_by_id],
@@ -191,7 +200,7 @@ class Issue(db.Model):
 class IssueComment(db.Model):
     id = db.Column(PK_TYPE, primary_key=True, autoincrement=True)
     issue_id = db.Column(PK_TYPE, db.ForeignKey('issue.id'), nullable=False)
-    user_id = db.Column(PK_TYPE, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(PK_TYPE, db.ForeignKey('users.id'), nullable=False)
     text = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
 

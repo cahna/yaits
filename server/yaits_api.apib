@@ -113,3 +113,29 @@ Manage accounts and sessions.
         {
             "success": true
         }
+
+# Group Teams
+
+Manage teams.
+
+## [/teams]
+
+### Create a new team on behalf of user [POST]
++ Request (application/json)
+
+        {
+            "name": "TestTeam",
+        }
+
+    + Headers
+
+            Authentication: Bearer _JWT_ACCESS_TOKEN_
+
++ Response 200 (application/json)
+
+        {
+            "name": "TestTeam",
+            "slug": "test-team",
+            "owner": "_UUID_",
+            "members": ["_UUID_"]
+        }
