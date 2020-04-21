@@ -119,6 +119,18 @@ class Team(db.Model):
     owner = db.relationship('User')
     members = db.relationship('User', secondary='team_membership')
 
+    @db.validates('owner')
+    def validate_owner_in_team(self, key, _owner):
+        assert _owner.uique_id in [m.unique_id for m in self.members]
+
+    def dto(self):
+        return {
+            'name': self.name,
+            'slug': self.slug,
+            'owner': self.owner,
+            'members': [m.dto() for m in self.members],
+        }
+
 
 class TeamMembership(db.Model):
     team_id = db.Column(PK_TYPE, db.ForeignKey('team.id'), primary_key=True)
