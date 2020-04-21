@@ -1,0 +1,115 @@
+FORMAT: 1A
+HOST: http://localhost:5000
+
+# yaits_api
+
+API for yaits
+
+# Group health
+
+Healthcheck endpoint.
+
+## [/health]
+
+### Check service status [GET]
++ Response 200 (application/json)
+
+        {
+            "healthy": true,
+            "details": ""
+        }
+
+## [/health/db]
+
+### Check service status, including DB check [GET]
++ Request
+    + Headers
+
+            Authentication: Bearer _JWT_ACCESS_TOKEN_
+
++ Response 200 (application/json)
+
+        {
+            "healthy": true,
+            "details": ""
+        }
+
+# Group Authentication
+
+Manage accounts and sessions.
+
+## [/auth/register]
+
+### Create a new user account [POST]
++ Request (application/json)
+
+        {
+            "username": "TestUser",
+            "password": "TestPass",
+        }
+
++ Response 200 (application/json)
+
+        {
+            "success": true
+        }
+
+## [/auth/login]
+
+### Login to establish a session [POST]
++ Request (application/json)
+
+        {
+            "username": "TestUser",
+            "password": "TestPass",
+        }
+
++ Response 200 (application/json)
+
+        {
+            "accessToken": "_JWT_ACCESS_TOKEN_",
+            "refreshToken": "_JWT_REFRESH_TOKEN_"
+        }
+
+## [/auth/active_user]
+
+### Retrieve user information associated with session token [GET]
++ Request
+    + Headers
+
+            Authentication: Bearer _JWT_ACCESS_TOKEN_
+
++ Response 200 (application/json)
+
+        {
+            "username": "TestUser",
+            "uniqueId": "_UUID_"
+        }
+
+## [/auth/refresh]
+
+### Refresh JWT access token [POST]
++ Request
+    + Headers
+
+            Authentication: Bearer _JWT_REFRESH_TOKEN_
+
++ Response 200 (application/json)
+
+        {
+            "accessToken": "_JWT_NEW_ACCESS_TOKEN_"
+        }
+
+## [/auth/logout]
+
+### End user session [POST]
++ Request
+    + Headers
+
+            Authentication: Bearer _JWT_ACCESS_TOKEN_
+
++ Response 200 (application/json)
+
+        {
+            "success": true
+        }
