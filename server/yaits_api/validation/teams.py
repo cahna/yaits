@@ -4,7 +4,7 @@ from yaits_api.constants import (
     TEAM_NAME_MAX_LENGTH,
     TEAM_NAME_MIN_LENGTH,
 )
-from yaits_api.exceptions.auth import (
+from yaits_api.exceptions.teams import (
     CreateTeamBadName,
     CreateTeamBadRequest,
 )

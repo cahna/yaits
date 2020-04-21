@@ -118,16 +118,13 @@ class Team(db.Model):
 
     owner = db.relationship('User')
     members = db.relationship('User', secondary='team_membership')
-
-    @db.validates('owner')
-    def validate_owner_in_team(self, key, _owner):
-        assert _owner.uique_id in [m.unique_id for m in self.members]
+    # TODO: Add trigger/validation that owner is a member
 
     def dto(self):
         return {
             'name': self.name,
             'slug': self.slug,
-            'owner': self.owner,
+            'owner': self.owner.dto(),
             'members': [m.dto() for m in self.members],
         }
 

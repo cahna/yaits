@@ -28,8 +28,8 @@ def create_team(team_name: str, creator: User) -> Team:
 
     new_team = Team(name=team_name,
                     slug=team_slug,
-                    owner=creator,
-                    members=[creator])
+                    members=[creator],
+                    owner_id=creator.id)
 
     db.session.add(new_team)
     db.session.commit()
