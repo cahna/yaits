@@ -107,7 +107,7 @@ def validate_create_issue(request_data: Mapping,
             raise CreateIssueBadRequest('invalid assignedToUniqueId')
 
     if priority:
-        if not isinstance(priority, int) or priority >= 10:
+        if not isinstance(priority, int) or priority < 0 or priority >= 10:
             raise CreateIssueBadRequest('invalid priority')
         else:
             create_issue_kwargs['priority'] = priority

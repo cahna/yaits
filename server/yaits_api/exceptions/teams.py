@@ -20,7 +20,7 @@ class TeamNameAlreadyExists(HTTPException):
 
 class TeamSlugCollission(HTTPException):
     code = 409
-    description = 'Team slug collission'
+    description = 'Slug collission'
 
 
 class CreateIssueStatusBadRequest(BadRequest):
@@ -37,7 +37,7 @@ class CreateIssueStatusBadDescription(CreateIssueStatusBadRequest):
 
 class IssueStatusAlreadyExists(HTTPException):
     code = 409
-    description = 'Status already exists'
+    description = 'Name collission'
 
 
 class CreateIssueBadRequest(BadRequest):

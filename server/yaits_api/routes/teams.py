@@ -52,7 +52,7 @@ def create_issue(team_slug) -> Response:
 
 @bp.route('/<string:team_slug>/issues', methods=['GET'])
 @jwt_required
-def get_issues(team_slug) -> Response:
+def get_issues(team_slug: str) -> Response:
     user_uuid = get_jwt_identity().get('unique_id')
     team, user = teams.verify_user_in_team(team_slug, user_uuid)
     issues = teams.get_issues_for_team(team.id)
@@ -61,3 +61,14 @@ def get_issues(team_slug) -> Response:
         'issues': [i.dto() for i in issues],
     })
 
+
+@bp.route('/<string:team_slug>/issues/<string:issue_uuid>/comments',
+          methods=['POST'])
+@jwt_required
+def comment_on_issue(team_slug: str, issue_uuid: str) -> Response:
+    # user_uuid = get_jwt_identity().get('unique_id')
+    # team, user = teams.verify_user_in_team(team_slug, user_uuid)
+    # kwargs = validate_create_issue(request.get_json(), team, user)
+    # issue = teams.create_issue(**kwargs)
+
+    return jsonify({'TODO': True})

@@ -75,3 +75,9 @@ Must be run manually until automation configured.
 1. `flask db init` : Enable migrations support
 2. `flask db migrate` : Create first migration (commit changes to VCS)
 3. `flask db upgrade` : Apply migration
+
+## TODO/TBD
+
+- Replace calls to `yaits_api.services.teams.verify_user_in_team()` with a JWT claim.
+- Add SQL triggers/constraints to enforce data model rules/permissions
+
