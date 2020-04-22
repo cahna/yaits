@@ -1,5 +1,4 @@
 import {
-  makeSelectLocation,
   makeSelectCurrentUser,
   makeSelectLoading,
   makeSelectError,
@@ -7,18 +6,6 @@ import {
 } from 'containers/App/selectors';
 
 describe('App container selectors', () => {
-  describe('makeSelectLocation', () => {
-    it('should select the location', () => {
-      const router = {
-        location: { pathname: '/foo' },
-      };
-      const mockedState = {
-        router,
-      };
-      expect(makeSelectLocation()(mockedState)).toEqual(router.location);
-    });
-  });
-
   describe('makeSelectCurrentUser', () => {
     it('should select currentUser', () => {
       const global = {

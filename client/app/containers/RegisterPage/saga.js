@@ -1,6 +1,6 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
-import { push } from 'connected-react-router';
 
+import history from 'utils/history';
 import request from 'utils/request';
 import { API_REGISTER, ROUTE_LOGIN } from 'containers/App/constants';
 
@@ -29,12 +29,12 @@ export function* submitRegistration({
 
     if (response && response.success) {
       yield put(registerSuccess());
-      yield put(push(ROUTE_LOGIN));
+      yield call(history.push, ROUTE_LOGIN);
     } else {
-      yield put(onFailure((response || {}).error));
+      yield call(onFailure, (response || {}).error);
     }
   } catch (error) {
-    yield put(onFailure(error));
+    yield call(onFailure, error);
   }
 }
 

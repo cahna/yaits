@@ -7,8 +7,6 @@ import { initialState } from './reducer';
 
 const selectGlobal = (state) => state.global || initialState;
 
-const selectRouter = (state) => state.router;
-
 const makeSelectCurrentUser = () =>
   createSelector(selectGlobal, (globalState) => globalState.currentUser);
 
@@ -21,9 +19,6 @@ const makeSelectError = () =>
 const makeSelectAccessToken = () =>
   createSelector(selectGlobal, (globalState) => globalState.accessToken);
 
-const makeSelectLocation = () =>
-  createSelector(selectRouter, (routerState) => routerState.location);
-
 const makeSelectActiveTeam = () =>
   createSelector(selectGlobal, (globalState) => globalState.activeTeam);
 
@@ -33,6 +28,5 @@ export {
   makeSelectAccessToken,
   makeSelectLoading,
   makeSelectError,
-  makeSelectLocation,
   makeSelectActiveTeam,
 };

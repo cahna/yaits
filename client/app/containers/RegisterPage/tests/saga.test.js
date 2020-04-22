@@ -1,9 +1,8 @@
 import { takeLatest } from 'redux-saga/effects';
 import { testSaga } from 'redux-saga-test-plan';
-import { push } from 'connected-react-router';
 
 import request from 'utils/request';
-import { API_REGISTER, ROUTE_LOGIN } from 'containers/App/constants';
+import { API_REGISTER } from 'containers/App/constants';
 
 import { REQUEST_REGISTER } from '../constants';
 import {
@@ -58,7 +57,6 @@ describe('submitRegistration saga generator', () => {
       .next({ success: true })
       .put(registerSuccess())
       .next()
-      .put(push(ROUTE_LOGIN))
       .next()
       .isDone();
   });

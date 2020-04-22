@@ -1,10 +1,9 @@
-import React, { useReducer, useCallback } from 'react';
+import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
 import { useIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'redux';
-import { push } from 'connected-react-router';
 import {
   EuiPage,
   EuiPageBody,
@@ -24,6 +23,7 @@ import {
   EuiSpacer,
 } from '@elastic/eui';
 
+import history from 'utils/history';
 import { useInjectSaga } from 'utils/injectSaga';
 import { ROUTE_REGISTER } from 'containers/App/constants';
 
@@ -40,33 +40,21 @@ import {
 
 const key = 'loginPage';
 
-export function LoginPage({ makeOnSubmitForm, navigateTo }) {
+export function LoginPage({ makeOnSubmitForm }) {
   useInjectSaga({ key, saga });
 
   const { formatMessage } = useIntl();
   const [state, dispatch] = useReducer(reducer, initialState);
   const { username, password, loading } = state;
 
-  const goToRegisterPage = useCallback(() => navigateTo(ROUTE_REGISTER), [
-    navigateTo,
-  ]);
-  const onChangeUsername = useCallback(
-    (evt) => dispatch(changeUsername(evt.target.value)),
-    [],
-  );
-  const onChangePassword = useCallback(
-    (evt) => dispatch(changePassword(evt.target.value)),
-    [],
-  );
-  const onSubmitForm = useCallback(
-    makeOnSubmitForm({
-      username,
-      password,
-      onStart: () => dispatch(loginFormLoading()),
-      onFailure: (error) => dispatch(loginFailure(error)),
-    }),
-    [username, password, makeOnSubmitForm],
-  );
+  const onChangeUsername = (evt) => dispatch(changeUsername(evt.target.value));
+  const onChangePassword = (evt) => dispatch(changePassword(evt.target.value));
+  const onSubmitForm = makeOnSubmitForm({
+    username,
+    password,
+    onStart: () => dispatch(loginFormLoading()),
+    onFailure: (error) => dispatch(loginFailure(error)),
+  });
 
   return (
     <EuiPage>
@@ -124,7 +112,10 @@ export function LoginPage({ makeOnSubmitForm, navigateTo }) {
             <EuiSpacer />
             <EuiFlexGroup justifyContent="spaceAround">
               <EuiFlexItem grow={false}>
-                <EuiLink color="secondary" onClick={goToRegisterPage}>
+                <EuiLink
+                  color="secondary"
+                  onClick={() => history.push(ROUTE_REGISTER)}
+                >
                   <FormattedMessage {...messages.registerButtonLabel} />
                 </EuiLink>
               </EuiFlexItem>
@@ -138,12 +129,10 @@ export function LoginPage({ makeOnSubmitForm, navigateTo }) {
 
 LoginPage.propTypes = {
   makeOnSubmitForm: PropTypes.func.isRequired,
-  navigateTo: PropTypes.func.isRequired,
 };
 
 function mapDispatchToProps(dispatch) {
   return {
-    navigateTo: (route) => dispatch(push(route)),
     makeOnSubmitForm: (payload) => (evt) => {
       if (evt !== undefined && evt.preventDefault) evt.preventDefault();
       dispatch(submitLogin(payload));

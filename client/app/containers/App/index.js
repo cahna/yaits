@@ -3,17 +3,14 @@
  * contain code that should be seen on all pages. (e.g. navigation bar)
  */
 
-import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { Switch, Route } from 'react-router-dom';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
+import React from 'react';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { useIntl } from 'react-intl';
-import { push } from 'connected-react-router';
 import { EuiHeaderLogo, EuiHeader } from '@elastic/eui';
 
 import { useInjectSaga } from 'utils/injectSaga';
 import { useInjectReducer } from 'utils/injectReducer';
+import history from 'utils/history';
 import HomePage from 'containers/HomePage/Loadable';
 import LoginPage from 'containers/LoginPage/Loadable';
 import RegisterPage from 'containers/RegisterPage/Loadable';
@@ -33,18 +30,15 @@ const ManagedHomePage = withRequireSession(HomePage);
 const ManagedLoginPage = withDisallowSession(LoginPage);
 const ManagedRegisterPage = withDisallowSession(RegisterPage);
 
-export function App({ navigateTo }) {
+export default function App() {
   useInjectReducer({ key, reducer });
   useInjectSaga({ key, saga });
 
   const { formatMessage } = useIntl();
-  const onClickGoHome = useCallback(
-    (e) => {
-      e.preventDefault();
-      navigateTo('/');
-    },
-    [navigateTo],
-  );
+  const onClickGoHome = (e) => {
+    e.preventDefault();
+    history.push('/');
+  };
 
   const renderLogo = (
     <EuiHeaderLogo
@@ -75,26 +69,13 @@ export function App({ navigateTo }) {
     <>
       <EuiHeader sections={sections} position="fixed" />
       <Switch>
-        <Route exact path="/" component={ManagedHomePage} />
+        <Route path="/yaits" component={ManagedHomePage} />
         <Route exact path="/login" component={ManagedLoginPage} />
         <Route exact path="/register" component={ManagedRegisterPage} />
+        <Redirect from="/" to="/yaits" />
         <Route component={NotFoundPage} />
       </Switch>
       <GlobalStyle />
     </>
   );
 }
-
-App.propTypes = {
-  navigateTo: PropTypes.func.isRequired,
-};
-
-function mapDispatchToProps(dispatch) {
-  return {
-    navigateTo: (route) => dispatch(push(route)),
-  };
-}
-
-const withConnect = connect(null, mapDispatchToProps);
-
-export default compose(withConnect)(App);

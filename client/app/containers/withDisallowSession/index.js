@@ -1,52 +1,21 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { useIntl, FormattedMessage } from 'react-intl';
-import { push } from 'connected-react-router';
-import { Helmet } from 'react-helmet-async';
-import { EuiPage, EuiPageBody, EuiPageContent } from '@elastic/eui';
 
-import { useInjectSaga } from 'utils/injectSaga';
 import { getDisplayName } from 'utils/hoc';
 import { makeSelectAccessToken } from 'containers/App/selectors';
-import { APP_KEY } from 'containers/App/constants';
-import saga from 'containers/App/saga';
+import { ROUTE_HOME } from 'containers/App/constants';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import messages from './messages';
 
 export const DisallowSessionHoC = (Component) => {
   const WrappedComponent = (props) => {
-    const { accessToken, redirectTo, ...rest } = props;
-
-    useInjectSaga({ key: APP_KEY, saga });
-    useEffect(() => {
-      if (accessToken) {
-        redirectTo('/');
-      }
-    });
-
-    const { formatMessage } = useIntl();
-    const redirecting = formatMessage(messages.unauthorizedRedirect);
+    const { accessToken, ...rest } = props;
 
     if (accessToken) {
-      return (
-        <EuiPage>
-          <Helmet>
-            <title>{redirecting}</title>
-            <meta name="description" content={redirecting} />
-          </Helmet>
-          <EuiPageBody component="div">
-            <EuiPageContent
-              verticalPosition="center"
-              horizontalPosition="center"
-            >
-              <FormattedMessage {...messages.unauthorizedRedirect} />
-            </EuiPageContent>
-          </EuiPageBody>
-        </EuiPage>
-      );
+      return <Redirect to={ROUTE_HOME} />;
     }
 
     return <Component {...rest} />;
@@ -54,7 +23,6 @@ export const DisallowSessionHoC = (Component) => {
 
   WrappedComponent.propTypes = {
     accessToken: PropTypes.string,
-    redirectTo: PropTypes.func.isRequired,
   };
 
   WrappedComponent.displayName = `withDisallowSession(${getDisplayName(
@@ -68,12 +36,6 @@ const mapStateToProps = createStructuredSelector({
   accessToken: makeSelectAccessToken(),
 });
 
-function mapDispatchToProps(dispatch) {
-  return {
-    redirectTo: (path) => dispatch(push(path)),
-  };
-}
-
-const withConnect = connect(mapStateToProps, mapDispatchToProps);
+const withConnect = connect(mapStateToProps, {});
 
 export default compose(withConnect, DisallowSessionHoC);

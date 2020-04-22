@@ -1,6 +1,6 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
-import { push } from 'connected-react-router';
 
+import history from 'utils/history';
 import request from 'utils/request';
 import {
   API_LOGIN,
@@ -33,7 +33,7 @@ export function* submitLogin({
 
     localStorage.setItem(LOCAL_TOKEN_NAME, response.accessToken);
     yield put(userLoggedIn(response.accessToken));
-    yield put(push(ROUTE_HOME));
+    yield call(history.push, ROUTE_HOME);
   } catch (error) {
     yield put(onFailure(error));
     localStorage.removeItem(LOCAL_TOKEN_NAME);

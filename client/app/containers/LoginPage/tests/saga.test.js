@@ -1,7 +1,7 @@
 import { takeLatest } from 'redux-saga/effects';
 import { testSaga } from 'redux-saga-test-plan';
-import { push } from 'connected-react-router';
 
+import history from 'utils/history';
 import request from 'utils/request';
 import { API_LOGIN, ROUTE_HOME } from 'containers/App/constants';
 import { userLoggedIn } from 'containers/App/actions';
@@ -56,7 +56,7 @@ describe('submitLogin saga generator', () => {
       .next({ accessToken })
       .put(userLoggedIn(accessToken))
       .next()
-      .put(push(ROUTE_HOME))
+      .call(history.push, ROUTE_HOME)
       .next()
       .isDone();
   });

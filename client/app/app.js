@@ -12,7 +12,7 @@ import '@babel/polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'connected-react-router';
+import { Router } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from 'styled-components';
 import '@elastic/eui/dist/eui_theme_dark.css';
@@ -40,7 +40,7 @@ import { translationMessages } from './i18n';
 
 // Create redux store with history
 const initialState = {};
-const store = configureStore(initialState, history);
+const store = configureStore(initialState);
 const MOUNT_NODE = document.getElementById('app');
 
 const render = (messages) => {
@@ -48,11 +48,11 @@ const render = (messages) => {
     <Provider store={store}>
       <ThemeProvider theme={euiVars}>
         <LanguageProvider messages={messages}>
-          <ConnectedRouter history={history}>
+          <Router history={history}>
             <HelmetProvider>
               <App />
             </HelmetProvider>
-          </ConnectedRouter>
+          </Router>
         </LanguageProvider>
       </ThemeProvider>
     </Provider>,

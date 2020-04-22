@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet-async';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -23,13 +23,25 @@ import {
   makeSelectActiveTeam,
   makeSelectLoading,
   makeSelectError,
+  makeSelectAccessToken,
 } from 'containers/App/selectors';
-import { logoutUser } from 'containers/App/actions';
+import { logoutUser, getActiveUser } from 'containers/App/actions';
 
 import messages from './messages';
 
-export function HomePage({ currentUser, doLogoutUser, activeTeam }) {
+export function HomePage({
+  accessToken,
+  currentUser,
+  doLogoutUser,
+  activeTeam,
+  loadActiveUser,
+}) {
   const { formatMessage } = useIntl();
+  useEffect(() => {
+    if (accessToken && (!currentUser || !currentUser.username)) {
+      loadActiveUser();
+    }
+  });
 
   const pageContent = activeTeam.slug ? (
     'TODO'
@@ -106,6 +118,7 @@ export function HomePage({ currentUser, doLogoutUser, activeTeam }) {
 HomePage.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+  accessToken: PropTypes.string,
   currentUser: PropTypes.shape({
     username: PropTypes.string,
     uniqueId: PropTypes.string,
@@ -115,9 +128,11 @@ HomePage.propTypes = {
     slug: PropTypes.string,
   }).isRequired,
   doLogoutUser: PropTypes.func.isRequired,
+  loadActiveUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
+  accessToken: makeSelectAccessToken(),
   currentUser: makeSelectCurrentUser(),
   activeTeam: makeSelectActiveTeam(),
   loading: makeSelectLoading(),
@@ -127,6 +142,7 @@ const mapStateToProps = createStructuredSelector({
 export function mapDispatchToProps(dispatch) {
   return {
     doLogoutUser: () => dispatch(logoutUser()),
+    loadActiveUser: () => dispatch(getActiveUser()),
   };
 }
 
