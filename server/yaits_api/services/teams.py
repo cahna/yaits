@@ -1,7 +1,7 @@
 from typing import List
 from slugify import slugify
 from yaits_api.constants import TEAM_SLUG_MAX_LENGTH
-from yaits_api.models import db, Team, User, IssueStatus
+from yaits_api.models import db, Team, User, IssueStatus, Issue
 from yaits_api.services.users import get_user_by_id
 from yaits_api.exceptions.auth import ActionForbidden
 from yaits_api.exceptions.teams import (
@@ -9,6 +9,7 @@ from yaits_api.exceptions.teams import (
     TeamSlugCollission,
     NoSuchTeam,
     IssueStatusAlreadyExists,
+    CreateIssueUnprocessable,
 )
 
 
@@ -52,7 +53,9 @@ def get_team_by_slug(team_slug: str) -> User:
 
 
 def verify_user_in_team(team_slug: str, user_uuid: str) -> List:
-    """If valid, return [Team, User]"""
+    """If valid, return [Team, User]
+    TODO: Refactor into Flask route decorator
+    """
     team = get_team_by_slug(team_slug)
     user = get_user_by_id(user_uuid)
 
@@ -89,3 +92,48 @@ def create_issue_status(name: str,
     db.session.commit()
 
     return issue_status
+
+
+def get_issue_status_by_uuid(status_uuid: str) -> IssueStatus:
+    return db.session.query(IssueStatus) \
+        .filter_by(unique_id=status_uuid).first()
+
+
+def create_issue(short_description: str,
+                 description: str,
+                 status_uuid: str,
+                 team: Team,
+                 created_by: User,
+                 assigned_to_uuid: str = None,
+                 priority: int = 0) -> Issue:
+    status = get_issue_status_by_uuid(status_uuid)
+
+    if not status:
+        raise CreateIssueUnprocessable('No such status')
+
+    if status.team_id != team.id:
+        raise CreateIssueUnprocessable('Invalid status')
+
+    assigned_to_user = created_by
+
+    if assigned_to_uuid:
+        assigned_to_user = get_user_by_id(assigned_to_uuid)
+
+    issue = Issue(short_description=short_description,
+                  description=description,
+                  status_id=status.id,
+                  team_id=team.id,
+                  created_by_id=created_by.id,
+                  assigned_to_id=assigned_to_user.id,
+                  priority=priority)
+
+    db.session.add(issue)
+    db.session.commit()
+
+    return issue
+
+
+def get_issues_for_team(team_id) -> List[Issue]:
+    return db.session.query(Issue) \
+        .filter_by(id=team_id).all()
+

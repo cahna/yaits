@@ -38,3 +38,12 @@ class CreateIssueStatusBadDescription(CreateIssueStatusBadRequest):
 class IssueStatusAlreadyExists(HTTPException):
     code = 409
     description = 'Status already exists'
+
+
+class CreateIssueBadRequest(BadRequest):
+    pass
+
+
+class CreateIssueUnprocessable(HTTPException):
+    code = 409
+    description = 'Unprocessable request'

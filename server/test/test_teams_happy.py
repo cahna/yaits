@@ -1,6 +1,10 @@
 from flask.testing import FlaskClient
 from .shared.auth import verify_register_user, verify_login_user
-from .shared.teams import verify_create_team, verify_create_issue_status
+from .shared.teams import (
+    verify_create_team,
+    verify_create_issue_status,
+    verify_create_issue,
+)
 
 
 def test_create_team(client: FlaskClient):
@@ -43,3 +47,37 @@ def test_create_issue_statuses(client: FlaskClient):
                                        expect_ordering=1)
 
     assert data2['uniqueId'] != data1['uniqueId']
+
+
+def test_create_issue(client: FlaskClient):
+    username = 'Anothertestuser'
+    password = 'jfdksalvadakvlj'
+    verify_register_user(client, username, password)
+    access_token, _ = verify_login_user(client, username, password)
+
+    team_name = 'SupremeTeam'
+    team_slug = 'supremeteam'
+    verify_create_team(client, team_name, access_token,
+                       expect_slug=team_slug,
+                       expect_owner=username)
+
+    status_name = 'Closed'
+    status_description = 'Finished'
+    status = verify_create_issue_status(client,
+                                        team_slug,
+                                        access_token,
+                                        status_name,
+                                        status_description)
+    status_uuid = status['uniqueId']
+
+    issue_short_description = 'Create Hello World'
+    issue_description = 'Perform all of the work'
+    issue = verify_create_issue(client,
+                                team_slug,
+                                access_token,
+                                status_uuid,
+                                issue_short_description,
+                                issue_description)
+
+    assert issue['createdBy']['username'] == username
+    assert issue['assignedTo']['username'] == username

@@ -83,7 +83,7 @@ Manage accounts and sessions.
 
         {
             "username": "TestUser",
-            "uniqueId": "_UUID_"
+            "uniqueId": "_USER_UUID_"
         }
 
 ## [/auth/refresh]
@@ -138,21 +138,22 @@ Manage teams.
             "slug": "test-team",
             "owner": {
                 "username": "TestUser",
-                "uniqueId": "_UUID_"
+                "uniqueId": "_USER_UUID_"
             },
             "members": [{
                 "username": "TestUser",
-                "uniqueId": "_UUID_"
+                "uniqueId": "_USER_UUID_"
             }]
         }
 
-## [/teams/{slug}/issue]
+# [/teams/{slug}/issue_statuses]
 
 ### Create a new issue for a team [POST]
 + Request (application/json)
 
         {
-            "name": "TestTeam",
+            "name": "Open",
+            "description": "Awaiting assignment",
         }
 
     + Headers
@@ -162,25 +163,50 @@ Manage teams.
 + Response 200 (application/json)
 
         {
-            "uniqueId": "_UUID_",
-            "shortDescription": "TestTeam",
-            "description": "test-team",
+            "uniqueId": "_STATUS_UUID_",
+            "name": "Open",
+            "description", "Awaiting assignment",
+            "ordering": 0
+        }
+
+
+## [/teams/{slug}/issue]
+
+### Create a new issue for a team [POST]
++ Request (application/json)
+
+        {
+            "shortDescription": "Test Issue",
+            "description": "optional",
+            "statusUniqueId": "_STATUS_UUID_",
+        }
+
+    + Headers
+
+            Authentication: Bearer _JWT_ACCESS_TOKEN_
+
++ Response 200 (application/json)
+
+        {
+            "uniqueId": "_ISSUE_UUID_",
+            "shortDescription": "Test Issue",
+            "description": "optional",
             "priority": 0,
             "status": {
-                "uniqueId": "_UUID_",
+                "uniqueId": "_STATUS_UUID_",
                 "name": "Open",
                 "ordering": 0,
-                "description": "Ready for work"
+                "description": "Awaiting assignment"
             },
             "createdBy": {
                 "username": "TestUser",
-                "uniqueId": "_UUID_"
+                "uniqueId": "_USER_UUID_"
             },
             "assignedTo": {
                 "username": "TestUser",
-                "uniqueId": "_UUID_"
+                "uniqueId": "_USER_UUID_"
             },
-            "dateCreated": "",
-            "dateUpdated": "",
+            "dateCreated": "20200501",
+            "dateUpdated": "20200501",
         }
 
