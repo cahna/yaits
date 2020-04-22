@@ -24,6 +24,9 @@ const makeSelectAccessToken = () =>
 const makeSelectLocation = () =>
   createSelector(selectRouter, (routerState) => routerState.location);
 
+const makeSelectActiveTeam = () =>
+  createSelector(selectGlobal, (globalState) => globalState.activeTeam);
+
 export {
   selectGlobal,
   makeSelectCurrentUser,
@@ -31,4 +34,5 @@ export {
   makeSelectLoading,
   makeSelectError,
   makeSelectLocation,
+  makeSelectActiveTeam,
 };

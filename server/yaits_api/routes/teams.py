@@ -72,3 +72,15 @@ def comment_on_issue(team_slug: str, issue_uuid: str) -> Response:
     # issue = teams.create_issue(**kwargs)
 
     return jsonify({'TODO': True})
+
+
+@bp.route('/<string:team_slug>/issues/<string:issue_uuid>/comments',
+          methods=['GET'])
+@jwt_required
+def get_issue_comments(team_slug: str, issue_uuid: str) -> Response:
+    # user_uuid = get_jwt_identity().get('unique_id')
+    # team, user = teams.verify_user_in_team(team_slug, user_uuid)
+    # kwargs = validate_create_issue(request.get_json(), team, user)
+    # issue = teams.create_issue(**kwargs)
+
+    return jsonify({'TODO': True})

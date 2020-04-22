@@ -8,22 +8,19 @@ import { createStructuredSelector } from 'reselect';
 import {
   EuiPage,
   EuiPageBody,
-  EuiPageHeader,
-  EuiHeaderLogo,
-  EuiFieldSearch,
-  EuiHeader,
+  EuiEmptyPrompt,
+  EuiButton,
   EuiSideNav,
-  EuiPageHeaderSection,
   EuiPageContent,
   EuiPageContentBody,
-  EuiPageContentHeader,
-  EuiPageContentHeaderSection,
-  EuiTitle,
+  // EuiPageContentHeader,
+  // EuiPageContentHeaderSection,
   EuiIcon,
 } from '@elastic/eui';
 
 import {
   makeSelectCurrentUser,
+  makeSelectActiveTeam,
   makeSelectLoading,
   makeSelectError,
 } from 'containers/App/selectors';
@@ -31,52 +28,66 @@ import { logoutUser } from 'containers/App/actions';
 
 import messages from './messages';
 
-export function HomePage({ currentUser, doLogoutUser }) {
+export function HomePage({ currentUser, doLogoutUser, activeTeam }) {
   const { formatMessage } = useIntl();
 
-  const renderLogo = (
-    <EuiHeaderLogo iconType="compute" href="/" aria-label="Go to home page" />
+  const pageContent = activeTeam.slug ? (
+    'TODO'
+  ) : (
+    <EuiEmptyPrompt
+      iconType="indexManagementApp"
+      title={<h2>{formatMessage(messages.noTeamsTitle)}</h2>}
+      body={
+        <>
+          <p>
+            <FormattedMessage {...messages.noTeamsInfo} />
+          </p>
+          <p>
+            <FormattedMessage {...messages.pleaseSetupATeam} />
+          </p>
+        </>
+      }
+      actions={
+        <EuiButton color="primary" fill>
+          <FormattedMessage {...messages.createTeamButton} />
+        </EuiButton>
+      }
+    />
   );
-
-  const breadcrumbs = [
-    {
-      text: 'Home',
-      href: '/',
-    },
-  ];
-
-  const renderSearch = <EuiFieldSearch placeholder="Search" compressed />;
-
-  const sections = [
-    {
-      items: [renderLogo],
-      borders: 'right',
-      breadcrumbs,
-    },
-    {
-      items: [renderSearch, <div style={{ width: 8 }} />],
-      borders: 'none',
-    },
-  ];
 
   return (
     <EuiPage>
       <Helmet>
-        <title>I Made This</title>
-        <meta name="description" content="All the stuff we've made" />
+        <title>{formatMessage(messages.pageTitle)}</title>
+        <meta
+          name="description"
+          content={formatMessage(messages.pageDescription)}
+        />
       </Helmet>
-      <EuiHeader sections={sections} position="fixed" />
       <EuiSideNav
         style={{ width: 192 }}
         items={[
           {
+            name: formatMessage(messages.teamsNavHeader),
+            id: messages.teamsNavHeader.id,
+            icon: <EuiIcon type="users" />,
+            items: [
+              {
+                name: formatMessage(messages.createTeamButton),
+                id: messages.createTeamButton.id,
+                icon: <EuiIcon type="plusInCircle" />,
+                onClick: doLogoutUser,
+              },
+            ],
+          },
+          {
             name: currentUser.username,
-            id: currentUser.username,
+            id: currentUser.uniqueId,
             icon: <EuiIcon type="user" />,
             items: [
               {
                 name: formatMessage(messages.logoutButtonLabel),
-                id: 'Logout',
+                id: messages.logoutButtonLabel.id,
                 onClick: doLogoutUser,
               },
             ],
@@ -84,23 +95,8 @@ export function HomePage({ currentUser, doLogoutUser }) {
         ]}
       />
       <EuiPageBody>
-        <EuiPageHeader>
-          <EuiPageHeaderSection>
-            <EuiTitle size="l">
-              <FormattedMessage {...messages.header} />
-            </EuiTitle>
-          </EuiPageHeaderSection>
-          <EuiPageHeaderSection>Page abilities</EuiPageHeaderSection>
-        </EuiPageHeader>
         <EuiPageContent>
-          <EuiPageContentHeader>
-            <EuiPageContentHeaderSection>
-              <EuiTitle>
-                <h2>Hello, {currentUser.username}!</h2>
-              </EuiTitle>
-            </EuiPageContentHeaderSection>
-          </EuiPageContentHeader>
-          <EuiPageContentBody>TODO</EuiPageContentBody>
+          <EuiPageContentBody>{pageContent}</EuiPageContentBody>
         </EuiPageContent>
       </EuiPageBody>
     </EuiPage>
@@ -114,11 +110,16 @@ HomePage.propTypes = {
     username: PropTypes.string,
     uniqueId: PropTypes.string,
   }).isRequired,
+  activeTeam: PropTypes.shape({
+    name: PropTypes.string,
+    slug: PropTypes.string,
+  }).isRequired,
   doLogoutUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
   currentUser: makeSelectCurrentUser(),
+  activeTeam: makeSelectActiveTeam(),
   loading: makeSelectLoading(),
   error: makeSelectError(),
 });

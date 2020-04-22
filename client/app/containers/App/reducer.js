@@ -17,6 +17,10 @@ export const initialState = {
     username: null,
     uniqueId: null,
   },
+  activeTeam: {
+    name: null,
+    slug: null,
+  },
   accessToken: localStorage.getItem(LOCAL_TOKEN_NAME),
 };
 
