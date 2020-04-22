@@ -1,0 +1,12 @@
+{
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.venvPath": "${workspaceFolder}/server",
+  "python.pythonPath": "server/venv/bin/python",
+  "python.testing.pytestEnabled": true,
+  "[javascript]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}

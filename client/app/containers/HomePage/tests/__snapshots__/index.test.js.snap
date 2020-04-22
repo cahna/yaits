@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<HomePage /> should render and match the snapshot 1`] = `
+<article>
+  <div>
+    <section
+      class="Section-ojdkzv-0 CenteredSection-sc-1e2by6n-0 fuuAJb"
+    >
+      <h1>
+        What have you made?
+      </h1>
+    </section>
+    <section
+      class="Section-ojdkzv-0 CenteredSection-sc-1e2by6n-0 fuuAJb"
+    >
+      <h2
+        class="H2-egphza-0 fehwqM"
+      >
+        Hello, 
+        !
+      </h2>
+    </section>
+    <section
+      class="Section-ojdkzv-0 CenteredSection-sc-1e2by6n-0 fuuAJb"
+    >
+      <div
+        class="Wrapper-sc-5dsnpv-0 bCngtA"
+      >
+        <a
+          class="A-t53uvo-0 kzOpmE"
+        >
+          Logout
+        </a>
+      </div>
+    </section>
+  </div>
+</article>
+`;

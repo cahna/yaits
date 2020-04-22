@@ -1,0 +1,41 @@
+---
+name: Python server
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore: [ './client/**' ]
+  pull_request:
+    branches: [ master ]
+    paths-ignore: [ './client/**' ]
+
+env:
+  FLASK_ENV: development
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        working-directory: ./server
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Fail build if lint errors or warnings
+        working-directory: ./server
+        run: |
+          flake8 --show-source --statistics --exit-zero
+      - name: Test with pytest
+        working-directory: ./server
+        run: |
+          pip install pytest
+          coverage run -m pytest
+          coverage report
+
