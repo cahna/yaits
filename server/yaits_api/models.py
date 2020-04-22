@@ -142,13 +142,26 @@ class IssueStatus(db.Model):
                           default=uuid.uuid4)
     name = db.Column(db.String(ISSUE_STATUS_MAX_LENGTH),
                      index=True,
-                     unique=True,
                      nullable=False)
     description = db.Column(db.Text)
+    ordering = db.Column(db.Integer, nullable=False)
     team_id = db.Column(PK_TYPE,
                         db.ForeignKey('team.id'),
                         nullable=False,
                         index=True)
+
+    __table_args__ = (
+        db.UniqueConstraint('name', 'team_id'),
+        db.UniqueConstraint('team_id', 'ordering'),
+    )
+
+    def dto(self):
+        return {
+            'uniqueId': self.unique_id,
+            'name': self.name,
+            'description': self.description,
+            'ordering': self.ordering,
+        }
 
 
 class Issue(db.Model):
@@ -191,19 +204,25 @@ class Issue(db.Model):
                                   backref=db.backref('assigned_issues',
                                                      lazy=True))
 
-    @db.validates('created_by', 'assigned_to')
-    def validate_users_in_team(self, key, _user):
-        assert _user.team.id == self.team.id
-
-    @db.validates('status')
-    def validate_status_in_team(self, key, _status):
-        assert _status.team_id == self.team.id
-
+    # TODO: Add triggers/validation that associated users are members of team
     __table_args__ = (
         db.CheckConstraint('date_created <= date_updated'),
         # TODO: Move priority to own table (configurable/team)
         db.CheckConstraint('priority < 10'),
     )
+
+    def dto(self):
+        return {
+            'uniqueId': self.unique_id,
+            'shortDescription': self.short_description,
+            'description': self.description,
+            'priority': self.priority,
+            'dateCreated': self.date_created,
+            'dateUpdated': self.date_updated,
+            'createdBy': self.created_by.dto(),
+            'assignedTo': self.assigned_to.dto(),
+            'status': self.status.dto(),
+        }
 
 
 class IssueComment(db.Model):
@@ -216,10 +235,9 @@ class IssueComment(db.Model):
     issue = db.relationship('Issue', backref=db.backref('comments', lazy=True))
     user = db.relationship('User')
 
-    @db.validates('issue')  # Is this better as a TRIGGER? IDK...
-    def validate_issue_in_team(self, key, _issue):
-        assert _issue.team.id == self.user.team.id
-
-    @db.validates('user')
-    def validate_users_in_team(self, key, _user):
-        assert _user.team.id == self.issue.team.id
+    def dto(self):
+        return {
+            'text': self.text,
+            'timestamp': self.timestamp,
+            'user': self.user.dto(),
+        }

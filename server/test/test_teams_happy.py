@@ -1,7 +1,6 @@
 from flask.testing import FlaskClient
-from .shared.request import auth_header
-from .shared.response import verify_api_response
 from .shared.auth import verify_register_user, verify_login_user
+from .shared.teams import verify_create_team, verify_create_issue_status
 
 
 def test_create_team(client: FlaskClient):
@@ -11,16 +10,36 @@ def test_create_team(client: FlaskClient):
     access_token, _ = verify_login_user(client, username, password)
 
     team_name = 'My Test Team'
+    verify_create_team(client, team_name, access_token,
+                       expect_slug='my-test-team',
+                       expect_owner=username)
 
-    response = client.post('/teams',
-                           json={'name': team_name},
-                           headers=auth_header(access_token),
-                           follow_redirects=True)
 
-    data = verify_api_response(response)
+def test_create_issue_statuses(client: FlaskClient):
+    username = 'MichaelJordan23'
+    password = 'theLa$tD4nce'
+    verify_register_user(client, username, password)
+    access_token, _ = verify_login_user(client, username, password)
 
-    assert data['name'] == team_name
-    assert data['slug'] == 'my-test-team'
-    assert data['owner']['username'] == username
-    assert len(data['members']) == 1
-    assert data['members'][0]['username'] == username
+    team_name = '90s Chicago Bulls'
+    team_slug = '90s-chicago-bulls'
+    verify_create_team(client, team_name, access_token,
+                       expect_slug=team_slug,
+                       expect_owner=username)
+
+    s1_name = 'Draft'
+    data1 = verify_create_issue_status(client,
+                                       team_slug,
+                                       access_token,
+                                       s1_name)
+
+    s2_name = 'Open'
+    s2_description = 'Awaiting assignment'
+    data2 = verify_create_issue_status(client,
+                                       team_slug,
+                                       access_token,
+                                       s2_name,
+                                       s2_description,
+                                       expect_ordering=1)
+
+    assert data2['uniqueId'] != data1['uniqueId']

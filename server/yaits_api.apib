@@ -145,3 +145,42 @@ Manage teams.
                 "uniqueId": "_UUID_"
             }]
         }
+
+## [/teams/{slug}/issue]
+
+### Create a new issue for a team [POST]
++ Request (application/json)
+
+        {
+            "name": "TestTeam",
+        }
+
+    + Headers
+
+            Authentication: Bearer _JWT_ACCESS_TOKEN_
+
++ Response 200 (application/json)
+
+        {
+            "uniqueId": "_UUID_",
+            "shortDescription": "TestTeam",
+            "description": "test-team",
+            "priority": 0,
+            "status": {
+                "uniqueId": "_UUID_",
+                "name": "Open",
+                "ordering": 0,
+                "description": "Ready for work"
+            },
+            "createdBy": {
+                "username": "TestUser",
+                "uniqueId": "_UUID_"
+            },
+            "assignedTo": {
+                "username": "TestUser",
+                "uniqueId": "_UUID_"
+            },
+            "dateCreated": "",
+            "dateUpdated": "",
+        }
+

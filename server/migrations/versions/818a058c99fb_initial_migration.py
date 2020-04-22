@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: d3e02fd7004d
+Revision ID: 818a058c99fb
 Revises: 
-Create Date: 2020-04-21 14:26:36.541546
+Create Date: 2020-04-21 16:15:04.511685
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ import yaits_api
 
 
 # revision identifiers, used by Alembic.
-revision = 'd3e02fd7004d'
+revision = '818a058c99fb'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -53,12 +53,15 @@ def upgrade():
     sa.Column('unique_id', yaits_api.models.GUID(), nullable=False),
     sa.Column('name', sa.String(length=32), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('ordering', sa.Integer(), nullable=False),
     sa.Column('team_id', sa.BigInteger().with_variant(sa.Integer(), 'sqlite'), nullable=False),
     sa.ForeignKeyConstraint(['team_id'], ['team.id'], ),
     sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name', 'team_id'),
+    sa.UniqueConstraint('team_id', 'ordering'),
     sa.UniqueConstraint('unique_id')
     )
-    op.create_index(op.f('ix_issue_status_name'), 'issue_status', ['name'], unique=True)
+    op.create_index(op.f('ix_issue_status_name'), 'issue_status', ['name'], unique=False)
     op.create_index(op.f('ix_issue_status_team_id'), 'issue_status', ['team_id'], unique=False)
     op.create_table('team_membership',
     sa.Column('team_id', sa.BigInteger().with_variant(sa.Integer(), 'sqlite'), nullable=False),

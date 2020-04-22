@@ -3,10 +3,15 @@ from yaits_api.constants import (
     TEAM_NAME_CHARS_WHITELIST,
     TEAM_NAME_MAX_LENGTH,
     TEAM_NAME_MIN_LENGTH,
+    ISSUE_STATUS_MIN_LENGTH,
+    ISSUE_STATUS_MAX_LENGTH,
 )
 from yaits_api.exceptions.teams import (
     CreateTeamBadName,
     CreateTeamBadRequest,
+    CreateIssueStatusBadRequest,
+    CreateIssueStatusBadName,
+    CreateIssueStatusBadDescription,
 )
 
 
@@ -31,3 +36,24 @@ def validate_create_team(request_data: Mapping) -> str:
 
     return team_name
 
+
+def is_valid_status_name(status_name: str) -> bool:
+    return isinstance(status_name, str) and \
+        ISSUE_STATUS_MIN_LENGTH <= len(status_name) < ISSUE_STATUS_MAX_LENGTH
+
+
+def validate_create_issue_status(request_data: Mapping) -> Mapping:
+    """If valid, return [name, description]"""
+    if not isinstance(request_data, Mapping):
+        raise CreateIssueStatusBadRequest()
+
+    status_name = request_data.get('name')
+    status_description = request_data.get('description', '')
+
+    if not is_valid_status_name(status_name):
+        raise CreateIssueStatusBadName()
+
+    if not isinstance(status_description, str):
+        raise CreateIssueStatusBadDescription()
+
+    return status_name, status_description
