@@ -23,6 +23,7 @@ import {
   ACTIVE_USER_LOADED,
   LOADING_ACTIVE_USER,
   REQUEST_LOGOUT,
+  CREATED_NEW_TEAM,
 } from './constants';
 
 export const logoutUser = () => ({ type: REQUEST_LOGOUT });
@@ -43,4 +44,9 @@ export const userLoggedIn = (accessToken) => ({
 export const activeUserLoaded = (currentUser, error = false) => ({
   type: ACTIVE_USER_LOADED,
   payload: { currentUser, error },
+});
+
+export const createdNewTeam = (newTeam) => ({
+  type: CREATED_NEW_TEAM,
+  payload: { newTeam },
 });

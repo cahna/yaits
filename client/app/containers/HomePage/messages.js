@@ -1,20 +1,8 @@
 import { defineMessages } from 'react-intl';
 
-export const scope = 'boilerplate.containers.HomePage';
+export const scope = 'app.containers.HomePage';
 
 export default defineMessages({
-  pageTitle: {
-    id: `${scope}.pageTitle`,
-    defaultMessage: 'YAITS',
-  },
-  pageDescription: {
-    id: `${scope}.pageDescription`,
-    defaultMessage: 'Yet Another Issue Tracking Service',
-  },
-  header: {
-    id: `${scope}.header`,
-    defaultMessage: 'What have you made?',
-  },
   noTeamsTitle: {
     id: `${scope}.noTeamsTitle`,
     defaultMessage: 'You are not a member of any teams.',
@@ -31,5 +19,9 @@ export default defineMessages({
   createTeamButton: {
     id: `${scope}.createTeamButton`,
     defaultMessage: 'Create Team',
+  },
+  welcomeBack: {
+    id: `${scope}.welcomeBack`,
+    defaultMessage: 'Welcome back,',
   },
 });

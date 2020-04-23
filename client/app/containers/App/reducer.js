@@ -7,6 +7,7 @@ import {
   USER_LOGGED_IN,
   LOADING_ACTIVE_USER,
   ACTIVE_USER_LOADED,
+  CREATED_NEW_TEAM,
 } from './constants';
 
 // The initial state of the App
@@ -16,6 +17,7 @@ export const initialState = {
   currentUser: {
     username: null,
     uniqueId: null,
+    teams: [],
   },
   activeTeam: {
     name: null,
@@ -69,6 +71,10 @@ const appReducer = (state = initialState, { type, payload }) =>
           draft.accessToken = null;
           localStorage.removeItem(LOCAL_TOKEN_NAME);
         }
+        break;
+      case CREATED_NEW_TEAM:
+        draft.currentUser = { ...draft.currentUser };
+        draft.currentUser.teams.append(payload.newTeam);
         break;
     }
   });

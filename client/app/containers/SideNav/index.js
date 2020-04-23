@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
-import { EuiSideNav, EuiIcon } from '@elastic/eui';
+import { EuiSideNav, EuiIcon, EuiLoadingSpinner } from '@elastic/eui';
 
 import { User, Team } from 'utils/sharedProps';
 import history from 'utils/history';
@@ -13,12 +13,14 @@ import { logoutUser } from 'containers/App/actions';
 import {
   makeSelectCurrentUser,
   makeSelectActiveTeam,
+  makeSelectLoading,
 } from 'containers/App/selectors';
 import { DEFAULT_WIDTH } from './constants';
 import messages from './messages';
 
 export function SideNav({
   width = DEFAULT_WIDTH,
+  loading,
   currentUser,
   activeTeam,
   handleLogoutUser,
@@ -63,11 +65,16 @@ export function SideNav({
     ];
   }, [currentUser, activeTeam, handleLogoutUser]);
 
+  if (loading) {
+    return <EuiLoadingSpinner size="l" />;
+  }
+
   return <EuiSideNav style={{ width }} items={items} />;
 }
 
 SideNav.propTypes = {
   width: PropTypes.number,
+  loading: PropTypes.bool,
   currentUser: User.isRequired,
   activeTeam: Team.isRequired,
   handleLogoutUser: PropTypes.func.isRequired,
@@ -76,6 +83,7 @@ SideNav.propTypes = {
 const mapStateToProps = createStructuredSelector({
   currentUser: makeSelectCurrentUser(),
   activeTeam: makeSelectActiveTeam(),
+  loading: makeSelectLoading(),
 });
 
 function mapDispatchToProps(dispatch) {

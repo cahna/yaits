@@ -1,0 +1,208 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CreateTeamPage /> Should render and match the snapshot 1`] = `
+<div
+  class="euiPage"
+>
+  <main
+    class="euiPageBody"
+  >
+    <div
+      class="euiPanel euiPanel--paddingLarge euiPageContent euiPageContent--verticalCenter euiPageContent--horizontalCenter"
+    >
+      <div
+        class="euiPageContentHeader euiPageContentHeader--responsive"
+      >
+        <div
+          class="euiPageContentHeaderSection"
+        >
+          <h2
+            class="euiTitle euiTitle--medium"
+          >
+            Register
+          </h2>
+        </div>
+      </div>
+      <div
+        class="euiPageContentBody"
+      >
+        <form
+          class="euiForm"
+        >
+          <div
+            class="euiFormRow"
+            id="i6ea575c1-80fd-11ea-93bb-6d3ac1308411-row"
+          >
+            <div
+              class="euiFormRow__labelWrapper"
+            >
+              <label
+                class="euiFormLabel euiFormRow__label"
+                for="i6ea575c1-80fd-11ea-93bb-6d3ac1308411"
+              >
+                Username
+              </label>
+            </div>
+            <div
+              class="euiFormRow__fieldWrapper"
+            >
+              <div
+                class="euiFormControlLayout"
+              >
+                <div
+                  class="euiFormControlLayout__childrenWrapper"
+                >
+                  <input
+                    class="euiFieldText"
+                    id="i6ea575c1-80fd-11ea-93bb-6d3ac1308411"
+                    placeholder=""
+                    type="text"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFormRow"
+            id="i6ea59cd1-80fd-11ea-93bb-6d3ac1308411-row"
+          >
+            <div
+              class="euiFormRow__labelWrapper"
+            >
+              <label
+                class="euiFormLabel euiFormRow__label"
+                for="i6ea59cd1-80fd-11ea-93bb-6d3ac1308411"
+              >
+                Password
+              </label>
+            </div>
+            <div
+              class="euiFormRow__fieldWrapper"
+            >
+              <div
+                class="euiFormControlLayout"
+              >
+                <div
+                  class="euiFormControlLayout__childrenWrapper"
+                >
+                  <input
+                    class="euiFieldPassword"
+                    id="i6ea59cd1-80fd-11ea-93bb-6d3ac1308411"
+                    placeholder=""
+                    type="password"
+                    value=""
+                  />
+                  <div
+                    class="euiFormControlLayoutIcons"
+                  >
+                    <span
+                      class="euiFormControlLayoutCustomIcon"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                        focusable="false"
+                        height="16"
+                        role="img"
+                        viewBox="0 0 16 16"
+                        width="16"
+                        xmlns="http://www.w3.org/2000/svg"
+                      />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFormRow"
+            id="i6ea61201-80fd-11ea-93bb-6d3ac1308411-row"
+          >
+            <div
+              class="euiFormRow__labelWrapper"
+            >
+              <label
+                class="euiFormLabel euiFormRow__label"
+                for="i6ea61201-80fd-11ea-93bb-6d3ac1308411"
+              >
+                Confirm password
+              </label>
+            </div>
+            <div
+              class="euiFormRow__fieldWrapper"
+            >
+              <div
+                class="euiFormControlLayout"
+              >
+                <div
+                  class="euiFormControlLayout__childrenWrapper"
+                >
+                  <input
+                    class="euiFieldPassword"
+                    id="i6ea61201-80fd-11ea-93bb-6d3ac1308411"
+                    placeholder=""
+                    type="password"
+                    value=""
+                  />
+                  <div
+                    class="euiFormControlLayoutIcons"
+                  >
+                    <span
+                      class="euiFormControlLayoutCustomIcon"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="euiIcon euiIcon--medium euiIcon-isLoading euiFormControlLayoutCustomIcon__icon"
+                        focusable="false"
+                        height="16"
+                        role="img"
+                        viewBox="0 0 16 16"
+                        width="16"
+                        xmlns="http://www.w3.org/2000/svg"
+                      />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="euiFormRow"
+            id="i6ea66021-80fd-11ea-93bb-6d3ac1308411-row"
+          >
+            <div
+              class="euiFormRow__fieldWrapper"
+            >
+              <div
+                class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--justifyContentSpaceAround euiFlexGroup--directionRow euiFlexGroup--responsive"
+                id="i6ea66021-80fd-11ea-93bb-6d3ac1308411"
+              >
+                <div
+                  class="euiFlexItem euiFlexItem--flexGrowZero"
+                >
+                  <button
+                    class="euiButton euiButton--primary euiButton--fill"
+                    disabled=""
+                    type="submit"
+                  >
+                    <span
+                      class="euiButton__content"
+                    >
+                      <span
+                        class="euiButton__text"
+                      >
+                        Register
+                      </span>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+`;
