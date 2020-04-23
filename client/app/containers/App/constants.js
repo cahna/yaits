@@ -20,9 +20,11 @@ export const API_ACTIVE_USER = '/api/auth/active_user';
 /**
  * UI routes
  */
-export const ROUTE_HOME = '/';
+export const ROUTE_HOME = '/yaits';
 export const ROUTE_LOGIN = '/login';
 export const ROUTE_REGISTER = '/register';
+export const ROUTE_TEAMS = `${ROUTE_HOME}/teams`;
+export const ROUTE_CREATE_TEAM = `${ROUTE_HOME}/create-team`;
 
 /**
  * Configuration / other

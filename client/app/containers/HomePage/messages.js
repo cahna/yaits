@@ -15,10 +15,6 @@ export default defineMessages({
     id: `${scope}.header`,
     defaultMessage: 'What have you made?',
   },
-  logoutButtonLabel: {
-    id: `${scope}.logoutButtonLabel.message`,
-    defaultMessage: 'Logout',
-  },
   noTeamsTitle: {
     id: `${scope}.noTeamsTitle`,
     defaultMessage: 'You are not a member of any teams.',
@@ -31,10 +27,6 @@ export default defineMessages({
     id: `${scope}.pleaseSetupATeam`,
     defaultMessage:
       'Please create a team or accept an invitation to join an existing team.',
-  },
-  teamsNavHeader: {
-    id: `${scope}.sideNav.teamsNavHeader`,
-    defaultMessage: 'Teams',
   },
   createTeamButton: {
     id: `${scope}.createTeamButton`,

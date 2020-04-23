@@ -43,8 +43,7 @@ describe('registerPageReducer', () => {
     expect(registerPageReducer(state, changePassword('T'))).toEqual(
       produce(state, (draft) => {
         draft.password = 'T';
-        draft.passwordError = true;
-        draft.confirmPasswordError = true;
+        draft.usernameError = true;
       }),
     );
   });
@@ -53,6 +52,7 @@ describe('registerPageReducer', () => {
     expect(registerPageReducer(state, changeConfirmPassword('T'))).toEqual(
       produce(state, (draft) => {
         draft.confirmPassword = 'T';
+        draft.usernameError = true;
         draft.passwordError = true;
         draft.confirmPasswordError = true;
       }),

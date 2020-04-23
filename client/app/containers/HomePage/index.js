@@ -5,19 +5,19 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import { Switch, Route } from 'react-router-dom';
 import {
   EuiPage,
   EuiPageBody,
   EuiEmptyPrompt,
   EuiButton,
-  EuiSideNav,
   EuiPageContent,
   EuiPageContentBody,
-  // EuiPageContentHeader,
-  // EuiPageContentHeaderSection,
-  EuiIcon,
 } from '@elastic/eui';
 
+import history from 'utils/history';
+import { User, Team } from 'utils/sharedProps';
+import { ROUTE_CREATE_TEAM, ROUTE_HOME } from 'containers/App/constants';
 import {
   makeSelectCurrentUser,
   makeSelectActiveTeam,
@@ -25,14 +25,15 @@ import {
   makeSelectError,
   makeSelectAccessToken,
 } from 'containers/App/selectors';
-import { logoutUser, getActiveUser } from 'containers/App/actions';
+import { getActiveUser } from 'containers/App/actions';
+import SideNav from 'containers/SideNav';
+import NotFoundPage from 'containers/NotFoundPage/Loadable';
 
 import messages from './messages';
 
 export function HomePage({
   accessToken,
   currentUser,
-  doLogoutUser,
   activeTeam,
   loadActiveUser,
 }) {
@@ -60,7 +61,11 @@ export function HomePage({
         </>
       }
       actions={
-        <EuiButton color="primary" fill>
+        <EuiButton
+          color="primary"
+          fill
+          onClick={() => history.push(ROUTE_CREATE_TEAM)}
+        >
           <FormattedMessage {...messages.createTeamButton} />
         </EuiButton>
       }
@@ -76,39 +81,16 @@ export function HomePage({
           content={formatMessage(messages.pageDescription)}
         />
       </Helmet>
-      <EuiSideNav
-        style={{ width: 192 }}
-        items={[
-          {
-            name: formatMessage(messages.teamsNavHeader),
-            id: messages.teamsNavHeader.id,
-            icon: <EuiIcon type="users" />,
-            items: [
-              {
-                name: formatMessage(messages.createTeamButton),
-                id: messages.createTeamButton.id,
-                icon: <EuiIcon type="plusInCircle" />,
-                onClick: doLogoutUser,
-              },
-            ],
-          },
-          {
-            name: currentUser.username,
-            id: currentUser.uniqueId,
-            icon: <EuiIcon type="user" />,
-            items: [
-              {
-                name: formatMessage(messages.logoutButtonLabel),
-                id: messages.logoutButtonLabel.id,
-                onClick: doLogoutUser,
-              },
-            ],
-          },
-        ]}
-      />
+      <SideNav />
       <EuiPageBody>
         <EuiPageContent>
-          <EuiPageContentBody>{pageContent}</EuiPageContentBody>
+          <EuiPageContentBody>
+            <Switch>
+              <Route exact path={ROUTE_HOME} render={() => pageContent} />
+              <Route exact path={ROUTE_CREATE_TEAM} render={() => 'TODO'} />
+              <Route component={NotFoundPage} />
+            </Switch>
+          </EuiPageContentBody>
         </EuiPageContent>
       </EuiPageBody>
     </EuiPage>
@@ -119,15 +101,8 @@ HomePage.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
   accessToken: PropTypes.string,
-  currentUser: PropTypes.shape({
-    username: PropTypes.string,
-    uniqueId: PropTypes.string,
-  }).isRequired,
-  activeTeam: PropTypes.shape({
-    name: PropTypes.string,
-    slug: PropTypes.string,
-  }).isRequired,
-  doLogoutUser: PropTypes.func.isRequired,
+  currentUser: User.isRequired,
+  activeTeam: Team.isRequired,
   loadActiveUser: PropTypes.func.isRequired,
 };
 
@@ -141,7 +116,6 @@ const mapStateToProps = createStructuredSelector({
 
 export function mapDispatchToProps(dispatch) {
   return {
-    doLogoutUser: () => dispatch(logoutUser()),
     loadActiveUser: () => dispatch(getActiveUser()),
   };
 }

@@ -79,7 +79,7 @@ describe('submitRegistration saga generator', () => {
       .next()
       .call(request, API_REGISTER, options)
       .throw('dummy')
-      .put(registerFailure('dummy'))
+      .call(registerFailure, 'dummy')
       .next()
       .isDone();
   });

@@ -23,7 +23,7 @@ export const initialState = {
 };
 
 const sanitizeUsername = (username = '') =>
-  replace(username, /\s|[^a-z0-9\.\-\_]/i, '');
+  replace(username, /\s|[^a-z0-9.\-_]/i, '');
 
 const showUsernameError = ({ username, password, confirmPassword }) =>
   (username.length < MIN_USERNAME_LEN || username.length > MAX_USERNAME_LEN) &&
@@ -33,7 +33,7 @@ const showPasswordError = ({ password, confirmPassword }) =>
   password.length < MIN_PASSWORD_LEN && confirmPassword.length > 0;
 
 const showConfirmPasswordError = ({ password, confirmPassword }) =>
-  confirmPassword.length > 0 && confirmPassword != password;
+  confirmPassword.length > 0 && confirmPassword !== password;
 
 /* eslint-disable default-case, no-param-reassign */
 const registerPageReducer = (state = initialState, { type, payload }) =>

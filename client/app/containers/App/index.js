@@ -15,18 +15,17 @@ import HomePage from 'containers/HomePage/Loadable';
 import LoginPage from 'containers/LoginPage/Loadable';
 import RegisterPage from 'containers/RegisterPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
-import withRequireSession from 'containers/withRequireSession';
+import AuthRoute from 'containers/AuthRoute';
 import withDisallowSession from 'containers/withDisallowSession';
 
 import GlobalStyle from '../../global-styles';
 import reducer from './reducer';
 import saga from './saga';
 import messages from './messages';
-import { APP_KEY } from './constants';
+import { APP_KEY, ROUTE_HOME, ROUTE_LOGIN, ROUTE_REGISTER } from './constants';
 
 const key = APP_KEY;
 
-const ManagedHomePage = withRequireSession(HomePage);
 const ManagedLoginPage = withDisallowSession(LoginPage);
 const ManagedRegisterPage = withDisallowSession(RegisterPage);
 
@@ -69,10 +68,10 @@ export default function App() {
     <>
       <EuiHeader sections={sections} position="fixed" />
       <Switch>
-        <Route path="/yaits" component={ManagedHomePage} />
-        <Route exact path="/login" component={ManagedLoginPage} />
-        <Route exact path="/register" component={ManagedRegisterPage} />
-        <Redirect from="/" to="/yaits" />
+        <AuthRoute path={ROUTE_HOME} component={HomePage} />
+        <Route exact path={ROUTE_LOGIN} component={ManagedLoginPage} />
+        <Route exact path={ROUTE_REGISTER} component={ManagedRegisterPage} />
+        <Redirect from="/" to={ROUTE_HOME} />
         <Route component={NotFoundPage} />
       </Switch>
       <GlobalStyle />

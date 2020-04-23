@@ -76,7 +76,7 @@ describe('submitLogin saga generator', () => {
       .next()
       .call(request, API_LOGIN, options)
       .throw('dummy')
-      .put(loginFailure('dummy'))
+      .call(onFailure, 'dummy')
       .next()
       .isDone();
   });
