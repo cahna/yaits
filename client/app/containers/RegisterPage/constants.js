@@ -10,3 +10,8 @@ export const PASSWORD_CHANGED = 'yaits/RegisterPage/PASSWORD_CHANGED';
 export const CONFIRM_PASSWORD_CHANGED =
   'yaits/RegisterPage/CONFIRM_PASSWORD_CHANGED';
 export const REGISTER_FORM_LOADING = 'yaits/RegisterPage/REGISTER_FORM_LOADING';
+
+// Form configuration
+export const MIN_USERNAME_LEN = 2;
+export const MAX_USERNAME_LEN = 32;
+export const MIN_PASSWORD_LEN = 6;

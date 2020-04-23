@@ -35,7 +35,7 @@ export function* submitLogin({
     yield put(userLoggedIn(response.accessToken));
     yield call(history.push, ROUTE_HOME);
   } catch (error) {
-    yield put(onFailure(error));
+    yield call(onFailure, error);
     localStorage.removeItem(LOCAL_TOKEN_NAME);
   }
 }

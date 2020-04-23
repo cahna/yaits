@@ -13,7 +13,7 @@ import { registerSuccess } from './actions';
 export function* submitRegistration({
   payload: { username, password, onStart, onFailure },
 }) {
-  yield onStart();
+  yield call(onStart);
 
   const options = {
     body: JSON.stringify({ username, password }),

@@ -64,15 +64,12 @@ export function RegisterPage({ makeOnSubmitForm }) {
     (evt) => dispatch(changeConfirmPassword(evt.target.value)),
     [],
   );
-  const onSubmitForm = useCallback(
-    makeOnSubmitForm({
-      username,
-      password,
-      onStart: () => dispatch(registerFormLoading()),
-      onFailure: (error) => dispatch(registerFailure(error)),
-    }),
-    [username, password, makeOnSubmitForm],
-  );
+  const onSubmitForm = makeOnSubmitForm({
+    username,
+    password,
+    onStart: () => dispatch(registerFormLoading()),
+    onFailure: (error) => dispatch(registerFailure(error)),
+  });
 
   const formEmpty = !(username && password && confirmPassword);
   const formErrors = usernameError || passwordError || confirmPasswordError;
@@ -98,29 +95,45 @@ export function RegisterPage({ makeOnSubmitForm }) {
             </EuiPageContentHeaderSection>
           </EuiPageContentHeader>
           <EuiPageContentBody>
-            <EuiForm component="form" onSubmit={onSubmitForm}>
-              <EuiFormRow label={formatMessage(messages.usernameLabel)}>
+            <EuiForm
+              component="form"
+              onSubmit={onSubmitForm}
+              isInvalid={formErrors}
+            >
+              <EuiFormRow
+                label={formatMessage(messages.usernameLabel)}
+                isInvalid={usernameError}
+              >
                 <EuiFieldText
                   placeholder=""
                   value={username}
                   onChange={onChangeUsername}
                   disabled={loading}
+                  isInvalid={usernameError}
                 />
               </EuiFormRow>
-              <EuiFormRow label={formatMessage(messages.passwordLabel)}>
+              <EuiFormRow
+                label={formatMessage(messages.passwordLabel)}
+                isInvalid={passwordError}
+              >
                 <EuiFieldPassword
                   placeholder=""
                   value={password}
                   onChange={onChangePassword}
                   disabled={loading}
+                  isInvalid={passwordError}
                 />
               </EuiFormRow>
-              <EuiFormRow label={formatMessage(messages.confirmPasswordLabel)}>
+              <EuiFormRow
+                label={formatMessage(messages.confirmPasswordLabel)}
+                isInvalid={confirmPasswordError}
+              >
                 <EuiFieldPassword
                   placeholder=""
                   value={confirmPassword}
                   onChange={onChangeConfirmPassword}
                   disabled={loading}
+                  isInvalid={confirmPasswordError}
                 />
               </EuiFormRow>
               <EuiFormRow>
