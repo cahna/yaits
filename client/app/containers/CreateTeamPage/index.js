@@ -24,6 +24,7 @@ import {
   changeTeamName,
   createTeamFailure,
   createTeamFormLoading,
+  clearAlerts,
 } from './actions';
 import reducer, { initialState } from './reducer';
 import saga from './saga';
@@ -53,7 +54,7 @@ export function CreateTeamPage({ makeOnSubmitForm }) {
   if (createTeamError) {
     toasts = [
       {
-        key: 'create-team-failed',
+        id: 'create-team-failed',
         title: formatMessage(messages.createTeamFailedTitle),
         text: formatMessage(messages.createTeamFailedText),
         color: 'danger',
@@ -114,7 +115,7 @@ export function CreateTeamPage({ makeOnSubmitForm }) {
       <EuiGlobalToastList
         toasts={toasts}
         toastLifeTimeMs={6000}
-        dismissToast={() => {}}
+        dismissToast={() => dispatch(clearAlerts())}
       />
     </>
   );

@@ -7,6 +7,7 @@ import {
   MIN_TEAM_NAME_LEN,
   MAX_TEAM_NAME_LEN,
   CREATE_TEAM_SUCCESS,
+  CLEAR_ALERTS,
 } from './constants';
 
 export const initialState = {
@@ -41,6 +42,9 @@ const CreateTeamPageReducer = (state = initialState, { type, payload }) =>
       case CREATE_TEAM_FAILURE:
         draft.createTeamError = true;
         draft.loading = false;
+        break;
+      case CLEAR_ALERTS:
+        draft.createTeamError = false;
         break;
     }
   });

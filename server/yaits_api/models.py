@@ -1,3 +1,4 @@
+from typing import Mapping
 import uuid
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
@@ -76,15 +77,19 @@ class User(db.Model):
     def validate_username(self, key, _username):
         assert is_valid_username(_username)
 
-    def dto(self):
-        return {
+    def dto(self, with_teams: bool = True) -> Mapping:
+        u = {
             'username': self.username,
             'uniqueId': self.unique_id,
             'dateCreated': self.date_created,
-            'teams': [t.slug for t in self.teams],
         }
 
-    def jwt_identity(self):
+        if with_teams:
+            u['teams'] = [t.dto() for t in self.teams]
+
+        return u
+
+    def jwt_identity(self) -> Mapping:
         return {
             'username': self.username,
             'unique_id': self.unique_id,
@@ -120,12 +125,12 @@ class Team(db.Model):
     members = db.relationship('User', secondary='team_membership')
     # TODO: Add trigger/validation that owner is a member
 
-    def dto(self):
+    def dto(self) -> Mapping:
         return {
             'name': self.name,
             'slug': self.slug,
-            'owner': self.owner.dto(),
-            'members': [m.dto() for m in self.members],
+            'owner': self.owner.dto(with_teams=False),
+            'members': [u.dto(with_teams=False) for u in self.members],
         }
 
 
@@ -205,6 +210,7 @@ class Issue(db.Model):
                                                      lazy=True))
 
     # TODO: Add triggers/validation that associated users are members of team
+    # TODO: Add triggers/validation that IssueStatus belongs to team
     __table_args__ = (
         db.CheckConstraint('date_created <= date_updated'),
         # TODO: Move priority to own table (configurable/team)
@@ -219,8 +225,8 @@ class Issue(db.Model):
             'priority': self.priority,
             'dateCreated': self.date_created,
             'dateUpdated': self.date_updated,
-            'createdBy': self.created_by.dto(),
-            'assignedTo': self.assigned_to.dto(),
+            'createdBy': self.created_by.dto(with_teams=False),
+            'assignedTo': self.assigned_to.dto(with_teams=False),
             'status': self.status.dto(),
         }
 
@@ -239,5 +245,5 @@ class IssueComment(db.Model):
         return {
             'text': self.text,
             'timestamp': self.timestamp,
-            'user': self.user.dto(),
+            'user': self.user.dto(with_teams=False),
         }

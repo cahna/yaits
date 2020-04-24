@@ -6,6 +6,7 @@ export const SUBMIT_CREATE_TEAM = 'yaits/CreateTeamPage/SUBMIT_CREATE_TEAM';
 export const CREATE_TEAM_SUCCESS = 'yaits/CreateTeamPage/CREATE_TEAM_SUCCESS';
 export const CREATE_TEAM_FAILURE = 'yaits/CreateTeamPage/CREATE_TEAM_FAILURE';
 export const TEAM_NAME_CHANGED = 'yaits/CreateTeamPage/TEAM_NAME_CHANGED';
+export const CLEAR_ALERTS = 'yaits/CreateTeamPage/CLEAR_ALERTS';
 export const CREATE_TEAM_FORM_LOADING =
   'yaits/CreateTeamPage/CREATE_TEAM_FORM_LOADING';
 

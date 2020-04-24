@@ -9,7 +9,11 @@ import { Switch, Route } from 'react-router-dom';
 import { EuiPage, EuiPageBody, EuiLoadingContent } from '@elastic/eui';
 
 import { User } from 'utils/sharedProps';
-import { ROUTE_CREATE_TEAM, ROUTE_HOME } from 'containers/App/constants';
+import {
+  ROUTE_CREATE_TEAM,
+  ROUTE_HOME,
+  ROUTE_TEAMS,
+} from 'containers/App/constants';
 import {
   makeSelectCurrentUser,
   makeSelectLoading,
@@ -20,6 +24,7 @@ import SideNav from 'containers/SideNav/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import HomePage from 'containers/HomePage/Loadable';
 import CreateTeamPage from 'containers/CreateTeamPage/Loadable';
+import TeamPage from 'containers/TeamPage/Loadable';
 
 import messages from './messages';
 
@@ -42,6 +47,7 @@ export function YaitsApp({
     <Switch>
       <Route exact path={ROUTE_HOME} component={HomePage} />
       <Route exact path={ROUTE_CREATE_TEAM} component={CreateTeamPage} />
+      <Route exact path={`${ROUTE_TEAMS}/:slug`} component={TeamPage} />
       <Route component={NotFoundPage} />
     </Switch>
   );

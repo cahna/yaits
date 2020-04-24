@@ -73,8 +73,7 @@ const appReducer = (state = initialState, { type, payload }) =>
         }
         break;
       case CREATED_NEW_TEAM:
-        draft.currentUser = { ...draft.currentUser };
-        draft.currentUser.teams.append(payload.newTeam);
+        draft.currentUser.teams = [...draft.currentUser.teams, payload.newTeam];
         break;
     }
   });
