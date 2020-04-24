@@ -11,4 +11,56 @@ export default defineMessages({
     id: `${scope}.owner`,
     defaultMessage: 'Owner',
   },
+  issueShortDescription: {
+    id: `${scope}.shortDescription`,
+    defaultMessage: 'Short Description',
+  },
+  issueAssignedTo: {
+    id: `${scope}.issueAssignedTo`,
+    defaultMessage: 'Assigned to',
+  },
+  issueCreatedBy: {
+    id: `${scope}.issueCreatedBy`,
+    defaultMessage: 'Created by',
+  },
+  issueDateCreated: {
+    id: `${scope}.issueDateCreated`,
+    defaultMessage: 'Created',
+  },
+  issueDateUpdated: {
+    id: `${scope}.issueDateUpdated`,
+    defaultMessage: 'Updated',
+  },
+  issueStatus: {
+    id: `${scope}.issueStatus`,
+    defaultMessage: 'Status',
+  },
+  issuePriority: {
+    id: `${scope}.issuePriority`,
+    defaultMessage: 'Priority',
+  },
+  issuePriorityHelpText: {
+    id: `${scope}.issuePriorityHelpText`,
+    defaultMessage: 'Set priority level for issue',
+  },
+  noIssuesTitle: {
+    id: `${scope}.noIssuesTitle`,
+    defaultMessage: 'No issues, yet...',
+  },
+  noIssuesInfo: {
+    id: `${scope}.noIssuesInfo`,
+    defaultMessage: "Create the team's first issue to get started!",
+  },
+  newIssue: {
+    id: `${scope}.newIssue`,
+    defaultMessage: 'New Issue',
+  },
+  cancelNewIssue: {
+    id: `${scope}.cancelNewIssue`,
+    defaultMessage: 'Cancel',
+  },
+  saveNewIssue: {
+    id: `${scope}.saveNewIssue`,
+    defaultMessage: 'Save',
+  },
 });

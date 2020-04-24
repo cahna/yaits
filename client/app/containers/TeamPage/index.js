@@ -19,6 +19,7 @@ import { ROUTE_HOME } from 'containers/App/constants';
 import { makeSelectCurrentUser } from 'containers/App/selectors';
 
 import messages from './messages';
+import IssuesView from './IssuesView';
 
 export function TeamPage({
   match: {
@@ -47,7 +48,9 @@ export function TeamPage({
           </EuiTitle>
         </EuiPageContentHeaderSection>
       </EuiPageContentHeader>
-      <EuiPageContentBody>TODO</EuiPageContentBody>
+      <EuiPageContentBody>
+        <IssuesView team={team} />
+      </EuiPageContentBody>
     </EuiPageContent>
   );
 }
