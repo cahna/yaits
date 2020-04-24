@@ -22,7 +22,12 @@ import {
 import { IssueStatus } from 'utils/sharedProps';
 import messages from './messages';
 
-const IssueFormModal = ({ issueStatuses, onSubmitForm, closeModal }) => {
+const IssueFormModal = ({
+  teamSlug,
+  issueStatuses,
+  onSubmitForm,
+  closeModal,
+}) => {
   const { formatMessage } = useIntl();
   const [shortDescription, setShortDescription] = useState('');
   const [description, setDescription] = useState('');
@@ -57,8 +62,7 @@ const IssueFormModal = ({ issueStatuses, onSubmitForm, closeModal }) => {
             </EuiFormRow>
 
             <EuiFormRow
-              label={formatMessage(messages.issuePriority)}
-              helpText={formatMessage(messages.issuePriorityHelpText)}
+              label={`${formatMessage(messages.issuePriority)}: ${priority}`}
             >
               <EuiRange
                 min={0}
@@ -96,6 +100,7 @@ const IssueFormModal = ({ issueStatuses, onSubmitForm, closeModal }) => {
           <EuiButton
             onClick={() =>
               onSubmitForm({
+                teamSlug,
                 shortDescription,
                 description,
                 priority,

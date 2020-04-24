@@ -14,30 +14,18 @@ import {
   EuiForm,
   EuiFormRow,
   EuiButton,
-  EuiGlobalToastList,
 } from '@elastic/eui';
 
-import { useInjectSaga } from 'utils/injectSaga';
+import { submitCreateTeam } from 'containers/App/actions';
 
-import {
-  submitCreateTeam,
-  changeTeamName,
-  createTeamFailure,
-  createTeamFormLoading,
-  clearAlerts,
-} from './actions';
+import { changeTeamName, createTeamFormLoading } from './actions';
 import reducer, { initialState } from './reducer';
-import saga from './saga';
 import messages from './messages';
 
-const key = 'CreateTeamPage';
-
 export function CreateTeamPage({ makeOnSubmitForm }) {
-  useInjectSaga({ key, saga });
-
   const { formatMessage } = useIntl();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { loading, teamName, teamNameError, createTeamError } = state;
+  const { loading, teamName, teamNameError } = state;
 
   const onChangeTeamName = useCallback(
     (evt) => dispatch(changeTeamName(evt.target.value)),
@@ -46,22 +34,13 @@ export function CreateTeamPage({ makeOnSubmitForm }) {
   const onSubmitForm = makeOnSubmitForm({
     teamName,
     onStart: () => dispatch(createTeamFormLoading()),
-    onFailure: (error) => dispatch(createTeamFailure(error)),
+    failToast: {
+      title: formatMessage(messages.createTeamFailedTitle),
+      text: formatMessage(messages.createTeamFailedText),
+      color: 'danger',
+      iconType: 'alert',
+    },
   });
-
-  let toasts = [];
-
-  if (createTeamError) {
-    toasts = [
-      {
-        id: 'create-team-failed',
-        title: formatMessage(messages.createTeamFailedTitle),
-        text: formatMessage(messages.createTeamFailedText),
-        color: 'danger',
-        iconType: 'alert',
-      },
-    ];
-  }
 
   return (
     <>
@@ -112,11 +91,6 @@ export function CreateTeamPage({ makeOnSubmitForm }) {
           </EuiForm>
         </EuiPageContentBody>
       </EuiPageContent>
-      <EuiGlobalToastList
-        toasts={toasts}
-        toastLifeTimeMs={6000}
-        dismissToast={() => dispatch(clearAlerts())}
-      />
     </>
   );
 }

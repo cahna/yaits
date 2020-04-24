@@ -24,6 +24,12 @@ import {
   LOADING_ACTIVE_USER,
   REQUEST_LOGOUT,
   CREATED_NEW_TEAM,
+  SUBMIT_CREATE_TEAM,
+  REQUEST_ISSUES_FOR_TEAM,
+  SHOW_TOAST,
+  CLOSE_TOAST,
+  LOADED_ISSUES_FOR_TEAM,
+  SUBMIT_CREATE_ISSUE,
 } from './constants';
 
 export const logoutUser = () => ({ type: REQUEST_LOGOUT });
@@ -46,7 +52,49 @@ export const activeUserLoaded = (currentUser, error = false) => ({
   payload: { currentUser, error },
 });
 
+export const submitCreateTeam = (payload) => ({
+  type: SUBMIT_CREATE_TEAM,
+  payload,
+});
+
 export const createdNewTeam = (newTeam) => ({
   type: CREATED_NEW_TEAM,
   payload: { newTeam },
+});
+
+export const requestIssuesForTeam = (teamSlug) => ({
+  type: REQUEST_ISSUES_FOR_TEAM,
+  payload: { teamSlug },
+});
+
+export const loadedIssuesForTeam = (teamSlug, issues) => ({
+  type: LOADED_ISSUES_FOR_TEAM,
+  payload: { teamSlug, issues },
+});
+
+export const showToast = ({ title, text, color, iconType }) => ({
+  type: SHOW_TOAST,
+  payload: { title, text, color, iconType },
+});
+
+export const closeToast = ({ id }) => ({
+  type: CLOSE_TOAST,
+  payload: { id },
+});
+
+export const submitCreateIssue = ({
+  shortDescription,
+  description,
+  priority,
+  statusUniqueId,
+  onSuccess = () => {},
+}) => ({
+  type: SUBMIT_CREATE_ISSUE,
+  payload: {
+    shortDescription,
+    description,
+    priority,
+    statusUniqueId,
+    onSuccess,
+  },
 });

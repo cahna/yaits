@@ -1,5 +1,13 @@
 import PropTypes from 'prop-types';
 
+export const Toast = PropTypes.shape({
+  id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  color: PropTypes.string,
+  iconType: PropTypes.string,
+});
+
 export const IssueStatus = PropTypes.shape({
   uniqueId: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,

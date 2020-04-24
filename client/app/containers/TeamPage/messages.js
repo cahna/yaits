@@ -63,4 +63,8 @@ export default defineMessages({
     id: `${scope}.saveNewIssue`,
     defaultMessage: 'Save',
   },
+  reloadData: {
+    id: `${scope}.reloadData`,
+    defaultMessage: 'Reload data',
+  },
 });

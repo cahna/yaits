@@ -1,4 +1,7 @@
 import produce from 'immer';
+import { reject } from 'lodash/collection';
+import { kebabCase } from 'lodash/string';
+
 import {
   LOCAL_TOKEN_NAME,
   REQUEST_LOGOUT,
@@ -8,6 +11,9 @@ import {
   LOADING_ACTIVE_USER,
   ACTIVE_USER_LOADED,
   CREATED_NEW_TEAM,
+  LOADED_ISSUES_FOR_TEAM,
+  SHOW_TOAST,
+  CLOSE_TOAST,
 } from './constants';
 
 // The initial state of the App
@@ -19,11 +25,9 @@ export const initialState = {
     uniqueId: null,
     teams: [],
   },
-  activeTeam: {
-    name: null,
-    slug: null,
-  },
+  teamIssues: {},
   accessToken: localStorage.getItem(LOCAL_TOKEN_NAME),
+  toasts: [],
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -74,6 +78,30 @@ const appReducer = (state = initialState, { type, payload }) =>
         break;
       case CREATED_NEW_TEAM:
         draft.currentUser.teams = [...draft.currentUser.teams, payload.newTeam];
+        break;
+      case LOADED_ISSUES_FOR_TEAM:
+        draft.teamIssues = {
+          ...draft.teamIssues,
+          [payload.teamSlug]: {
+            loaded: Date.now(),
+            data: payload.issues,
+          },
+        };
+        break;
+      case SHOW_TOAST:
+        draft.toasts = [
+          ...draft.toasts,
+          {
+            id: kebabCase(`${payload.title}-${Date.now()}`),
+            title: payload.title,
+            text: payload.text,
+            color: payload.color,
+            iconType: payload.iconType,
+          },
+        ];
+        break;
+      case CLOSE_TOAST:
+        draft.toasts = reject(draft.toasts, (t) => t.id === payload.id);
         break;
     }
   });

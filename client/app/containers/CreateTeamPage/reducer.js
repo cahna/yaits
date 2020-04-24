@@ -2,12 +2,9 @@ import { replace } from 'lodash/string';
 import produce from 'immer';
 import {
   TEAM_NAME_CHANGED,
-  CREATE_TEAM_FAILURE,
   CREATE_TEAM_FORM_LOADING,
   MIN_TEAM_NAME_LEN,
   MAX_TEAM_NAME_LEN,
-  CREATE_TEAM_SUCCESS,
-  CLEAR_ALERTS,
 } from './constants';
 
 export const initialState = {
@@ -18,7 +15,7 @@ export const initialState = {
 };
 
 const sanitizeTeamName = (username = '') =>
-  replace(username, /\s|[^a-z0-9.\-_]/i, '');
+  replace(replace(username, /[^a-z0-9.\-_ ]/i, ''), /  +/, ' ');
 
 const showTeamNameError = ({ teamName }) =>
   teamName.length < MIN_TEAM_NAME_LEN || teamName.length > MAX_TEAM_NAME_LEN;
@@ -33,17 +30,6 @@ const CreateTeamPageReducer = (state = initialState, { type, payload }) =>
         break;
       case CREATE_TEAM_FORM_LOADING:
         draft.loading = payload.loading;
-        draft.createTeamError = false;
-        break;
-      case CREATE_TEAM_SUCCESS:
-        draft.createTeamError = false;
-        draft.loading = false;
-        break;
-      case CREATE_TEAM_FAILURE:
-        draft.createTeamError = true;
-        draft.loading = false;
-        break;
-      case CLEAR_ALERTS:
         draft.createTeamError = false;
         break;
     }

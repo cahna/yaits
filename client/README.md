@@ -1,12 +1,9 @@
-![React client](https://github.com/cahna/yaits/workflows/React%20client/badge.svg)
+# YAITS Client (React)
 
-## Documentation
+## TODO/TBD:
 
-- [**The Hitchhiker's Guide to `react-boilerplate`**](docs/general/introduction.md): An introduction for newcomers to this boilerplate.
-- [Overview](docs/general): A short overview of the included tools
-- [**Commands**](docs/general/commands.md): Getting the most out of this boilerplate
-- [Testing](docs/testing): How to work with the built-in test harness
-- [Styling](docs/css): How to work with the CSS tooling
-- [Your app](docs/js): Supercharging your app with Routing, Redux, simple
-  asynchronicity helpers, etc.
-- [**Troubleshooting**](docs/general/gotchas.md): Solutions to common problems faced by developers.
+- If API call 401s, try requesting new accessToken via refreshToken
+  - If refresh success, retry original request with new token
+  - If refresh token fails, redirect to home (will logout user)
+- Add UI to create custom issue statuses for teams
+- Websocket support

@@ -8,6 +8,7 @@ import {
 export const initialState = {
   loading: false,
   error: false,
+  issuesLoaded: false,
   issues: [],
 };
 
@@ -18,17 +19,20 @@ const teamPageReducer = (state = initialState, { type, payload }) =>
       case REQUEST_ISSUES:
         draft.loading = true;
         draft.error = false;
+        draft.issuesLoaded = false;
         draft.issues = [];
         break;
       case REQUEST_ISSUES_SUCCESS:
         draft.loading = false;
         draft.error = false;
-        draft.issues = payload.issues;
+        draft.issues = [...payload.issues];
+        draft.issuesLoaded = true;
         break;
       case REQUEST_ISSUES_FAILED:
         draft.loading = false;
         draft.error = true;
         draft.issues = [];
+        draft.issuesLoaded = false;
         break;
     }
   });

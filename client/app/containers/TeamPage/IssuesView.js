@@ -1,30 +1,19 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { useState, memo } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl, FormattedMessage } from 'react-intl';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
-import { createStructuredSelector } from 'reselect';
-import { EuiInMemoryTable, EuiEmptyPrompt, EuiButton } from '@elastic/eui';
+import {
+  EuiInMemoryTable,
+  EuiEmptyPrompt,
+  EuiButton,
+  EuiLoadingContent,
+} from '@elastic/eui';
 
 import { Issue, Team } from 'utils/sharedProps';
-import { makeSelectIssues } from './selectors';
-
 import messages from './messages';
 import IssueFormModal from './IssueFormModal';
 
-export function IssuesView({
-  team,
-  issues,
-  issuesLoaded = true,
-  loadIssuesForTeam = () => {},
-  loading,
-}) {
+export function IssuesView({ team, issues, issuesLoaded }) {
   const { formatMessage } = useIntl();
-  useEffect(() => {
-    if (!issuesLoaded && !loading) {
-      loadIssuesForTeam(team.slug);
-    }
-  }, [team]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const closeModal = () => setIsModalVisible(false);
@@ -34,11 +23,16 @@ export function IssuesView({
   if (isModalVisible) {
     modal = (
       <IssueFormModal
+        teamSlug={team.slug}
         closeModal={closeModal}
         onSubmitForm={() => {}}
         issueStatuses={team.issueStatuses}
       />
     );
+  }
+
+  if (!issuesLoaded) {
+    return <EuiLoadingContent lines={10} />;
   }
 
   if (issuesLoaded && issues.length < 1) {
@@ -131,16 +125,10 @@ export function IssuesView({
 
 IssuesView.propTypes = {
   team: Team.isRequired,
-  issues: PropTypes.arrayOf(Issue),
-  issuesLoaded: PropTypes.bool,
-  loadIssuesForTeam: PropTypes.func,
+  issues: PropTypes.arrayOf(Issue).isRequired,
+  issuesLoaded: PropTypes.oneOfType([PropTypes.number, PropTypes.bool])
+    .isRequired,
   loading: PropTypes.bool,
 };
 
-const mapStateToProps = createStructuredSelector({
-  issues: makeSelectIssues(),
-});
-
-const withConnect = connect(mapStateToProps, {});
-
-export default compose(withConnect, memo)(IssuesView);
+export default memo(IssuesView);

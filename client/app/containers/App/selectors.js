@@ -19,8 +19,11 @@ const makeSelectError = () =>
 const makeSelectAccessToken = () =>
   createSelector(selectGlobal, (globalState) => globalState.accessToken);
 
-const makeSelectActiveTeam = () =>
-  createSelector(selectGlobal, (globalState) => globalState.activeTeam);
+const makeSelectToasts = () =>
+  createSelector(selectGlobal, (globalState) => globalState.toasts);
+
+const makeSelectTeamIssues = () =>
+  createSelector(selectGlobal, (globalState) => globalState.teamIssues);
 
 export {
   selectGlobal,
@@ -28,5 +31,6 @@ export {
   makeSelectAccessToken,
   makeSelectLoading,
   makeSelectError,
-  makeSelectActiveTeam,
+  makeSelectToasts,
+  makeSelectTeamIssues,
 };

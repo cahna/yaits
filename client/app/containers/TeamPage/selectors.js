@@ -13,7 +13,16 @@ const makeSelectIssues = () =>
 const makeSelectLoading = () =>
   createSelector(selectTeamPage, (teamState) => teamState.loading);
 
+const makeSelectIssuesLoaded = () =>
+  createSelector(selectTeamPage, (teamState) => teamState.issuesLoaded);
+
 const makeSelectError = () =>
   createSelector(selectTeamPage, (teamState) => teamState.error);
 
-export { selectTeamPage, makeSelectLoading, makeSelectError, makeSelectIssues };
+export {
+  selectTeamPage,
+  makeSelectLoading,
+  makeSelectError,
+  makeSelectIssues,
+  makeSelectIssuesLoaded,
+};

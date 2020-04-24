@@ -6,13 +6,12 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 import { EuiSideNav, EuiIcon, EuiLoadingSpinner } from '@elastic/eui';
 
-import { User, Team } from 'utils/sharedProps';
+import { User } from 'utils/sharedProps';
 import history from 'utils/history';
 import { ROUTE_TEAMS, ROUTE_CREATE_TEAM } from 'containers/App/constants';
 import { logoutUser } from 'containers/App/actions';
 import {
   makeSelectCurrentUser,
-  makeSelectActiveTeam,
   makeSelectLoading,
 } from 'containers/App/selectors';
 import { DEFAULT_WIDTH } from './constants';
@@ -22,7 +21,6 @@ export function SideNav({
   width = DEFAULT_WIDTH,
   loading,
   currentUser,
-  activeTeam,
   handleLogoutUser,
 }) {
   const { formatMessage } = useIntl();
@@ -63,7 +61,7 @@ export function SideNav({
         ],
       },
     ];
-  }, [currentUser, activeTeam, handleLogoutUser]);
+  }, [currentUser, handleLogoutUser]);
 
   if (loading) {
     return <EuiLoadingSpinner size="l" />;
@@ -76,13 +74,11 @@ SideNav.propTypes = {
   width: PropTypes.number,
   loading: PropTypes.bool,
   currentUser: User.isRequired,
-  activeTeam: Team.isRequired,
   handleLogoutUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
   currentUser: makeSelectCurrentUser(),
-  activeTeam: makeSelectActiveTeam(),
   loading: makeSelectLoading(),
 });
 

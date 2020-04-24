@@ -9,6 +9,9 @@ export const requestIssues = (teamSlug) => ({
   payload: { teamSlug },
 });
 
-export const requestIssuesSuccess = () => ({ type: REQUEST_ISSUES_SUCCESS });
+export const requestIssuesSuccess = (issues) => ({
+  type: REQUEST_ISSUES_SUCCESS,
+  payload: { issues },
+});
 
 export const requestIssuesFailed = () => ({ type: REQUEST_ISSUES_FAILED });

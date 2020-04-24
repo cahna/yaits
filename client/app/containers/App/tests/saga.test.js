@@ -1,11 +1,16 @@
-import { takeLatest } from 'redux-saga/effects';
+import { all, takeLatest } from 'redux-saga/effects';
 import { testSaga } from 'redux-saga-test-plan';
 
 import request from 'utils/request';
 
-import { GET_ACTIVE_USER, API_ACTIVE_USER, REQUEST_LOGOUT } from '../constants';
+import {
+  GET_ACTIVE_USER,
+  API_ACTIVE_USER,
+  REQUEST_LOGOUT,
+  SUBMIT_CREATE_TEAM,
+} from '../constants';
 import { loadingActiveUser, activeUserLoaded } from '../actions';
-import appSaga, { logoutUser, loadActiveUser } from '../saga';
+import appSaga, { logoutUser, loadActiveUser, submitCreateTeam } from '../saga';
 
 const accessToken = '_JWT_';
 
@@ -15,10 +20,11 @@ describe('appSaga', () => {
 
   it('should start thread to watch for expected actions', () => {
     expect(mainSaga.next().value).toEqual(
-      takeLatest(GET_ACTIVE_USER, loadActiveUser),
-    );
-    expect(mainSaga.next().value).toEqual(
-      takeLatest(REQUEST_LOGOUT, logoutUser),
+      all([
+        takeLatest(GET_ACTIVE_USER, loadActiveUser),
+        takeLatest(REQUEST_LOGOUT, logoutUser),
+        takeLatest(SUBMIT_CREATE_TEAM, submitCreateTeam),
+      ]),
     );
   });
 });

@@ -17,12 +17,13 @@ import RegisterPage from 'containers/RegisterPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import AuthRoute from 'containers/AuthRoute';
 import NoAuthRoute from 'containers/NoAuthRoute';
+import GlobalToasts from 'containers/GlobalToasts/Loadable';
 
 import GlobalStyle from '../../global-styles';
+import { APP_KEY, ROUTE_HOME, ROUTE_LOGIN, ROUTE_REGISTER } from './constants';
 import reducer from './reducer';
 import saga from './saga';
 import messages from './messages';
-import { APP_KEY, ROUTE_HOME, ROUTE_LOGIN, ROUTE_REGISTER } from './constants';
 
 const key = APP_KEY;
 
@@ -71,6 +72,7 @@ export default function App() {
         <Redirect from="/" to={ROUTE_HOME} />
         <Route component={NotFoundPage} />
       </Switch>
+      <GlobalToasts />
       <GlobalStyle />
     </>
   );

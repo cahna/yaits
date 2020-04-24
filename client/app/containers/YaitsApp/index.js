@@ -80,11 +80,9 @@ const mapStateToProps = createStructuredSelector({
   loading: makeSelectLoading(),
 });
 
-export function mapDispatchToProps(dispatch) {
-  return {
-    loadActiveUser: () => dispatch(getActiveUser()),
-  };
-}
+const mapDispatchToProps = (dispatch) => ({
+  loadActiveUser: () => dispatch(getActiveUser()),
+});
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
