@@ -20,6 +20,7 @@ def verify_create_team(client: FlaskClient,
     assert 'slug' in data
     assert 'owner' in data
     assert len(data['members']) == 1
+    assert len(data['issueStatuses']) == 6
 
     if expect_slug:
         assert data['slug'] == expect_slug

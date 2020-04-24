@@ -1,21 +1,22 @@
 import PropTypes from 'prop-types';
 
+export const IssueStatus = PropTypes.shape({
+  uniqueId: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  ordering: PropTypes.number.isRequired,
+});
+
 export const Team = PropTypes.shape({
   name: PropTypes.string,
   slug: PropTypes.string,
+  issueStatuses: PropTypes.arrayOf(IssueStatus).isRequired,
 });
 
 export const User = PropTypes.shape({
   username: PropTypes.string,
   uniqueId: PropTypes.string,
   teams: PropTypes.arrayOf(Team),
-});
-
-export const IssueStatus = PropTypes.shape({
-  uniqueId: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  ordering: PropTypes.number.isRequired,
 });
 
 export const Issue = PropTypes.shape({

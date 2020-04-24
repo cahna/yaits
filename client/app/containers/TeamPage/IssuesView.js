@@ -36,7 +36,7 @@ export function IssuesView({
       <IssueFormModal
         closeModal={closeModal}
         onSubmitForm={() => {}}
-        issueStatuses={[]}
+        issueStatuses={team.issueStatuses}
       />
     );
   }

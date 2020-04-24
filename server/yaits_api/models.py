@@ -121,9 +121,9 @@ class Team(db.Model):
                      nullable=False)
     owner_id = db.Column(PK_TYPE, db.ForeignKey('users.id'))
 
+    # TODO: Add trigger/validation that owner is a member
     owner = db.relationship('User')
     members = db.relationship('User', secondary='team_membership')
-    # TODO: Add trigger/validation that owner is a member
 
     def dto(self) -> Mapping:
         return {
@@ -131,6 +131,7 @@ class Team(db.Model):
             'slug': self.slug,
             'owner': self.owner.dto(with_teams=False),
             'members': [u.dto(with_teams=False) for u in self.members],
+            'issueStatuses': [s.dto() for s in self.issue_statuses],
         }
 
 
@@ -154,6 +155,9 @@ class IssueStatus(db.Model):
                         db.ForeignKey('team.id'),
                         nullable=False,
                         index=True)
+
+    team = db.relationship('Team',
+                           backref=db.backref('issue_statuses', lazy=True))
 
     __table_args__ = (
         db.UniqueConstraint('name', 'team_id'),

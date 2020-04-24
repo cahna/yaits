@@ -35,7 +35,8 @@ def test_create_issue_statuses(client: FlaskClient):
     data1 = verify_create_issue_status(client,
                                        team_slug,
                                        access_token,
-                                       s1_name)
+                                       s1_name,
+                                       expect_ordering=6)
 
     s2_name = 'Open'
     s2_description = 'Awaiting assignment'
@@ -44,7 +45,7 @@ def test_create_issue_statuses(client: FlaskClient):
                                        access_token,
                                        s2_name,
                                        s2_description,
-                                       expect_ordering=1)
+                                       expect_ordering=7)
 
     assert data2['uniqueId'] != data1['uniqueId']
 
@@ -61,13 +62,14 @@ def test_create_issue(client: FlaskClient):
                        expect_slug=team_slug,
                        expect_owner=username)
 
-    status_name = 'Closed'
+    status_name = 'Done'
     status_description = 'Finished'
     status = verify_create_issue_status(client,
                                         team_slug,
                                         access_token,
                                         status_name,
-                                        status_description)
+                                        status_description,
+                                        expect_ordering=6)
     status_uuid = status['uniqueId']
 
     issue_short_description = 'Create Hello World'

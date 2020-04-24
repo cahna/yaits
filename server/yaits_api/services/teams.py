@@ -40,6 +40,23 @@ def create_team(team_name: str, creator: User) -> Team:
     db.session.add(new_team)
     db.session.commit()
 
+    # Hard-coding these for now. TODO: Allow configuring via API/UI
+    for i, name in enumerate([
+        'New',
+        'Ready',
+        'Active',
+        'Paused',
+        'Complete',
+        'Closed',
+    ]):
+        db.session.add(IssueStatus(
+            name=name,
+            description=name,
+            ordering=i,
+            team_id=new_team.id))
+
+    db.session.commit()
+
     return new_team
 
 
@@ -77,7 +94,7 @@ def create_issue_status(name: str,
         raise IssueStatusAlreadyExists()
 
     ordering = 0
-    existing_statuses = db.session.query(IssueStatus) \
+    existing_statuses = db.session.query(IssueStatus)\
         .filter_by(team_id=team.id).all()
 
     if existing_statuses:
@@ -95,7 +112,7 @@ def create_issue_status(name: str,
 
 
 def get_issue_status_by_uuid(status_uuid: str) -> IssueStatus:
-    return db.session.query(IssueStatus) \
+    return db.session.query(IssueStatus)\
         .filter_by(unique_id=status_uuid).first()
 
 
@@ -134,6 +151,6 @@ def create_issue(short_description: str,
 
 
 def get_issues_for_team(team_id) -> List[Issue]:
-    return db.session.query(Issue) \
+    return db.session.query(Issue)\
         .filter_by(id=team_id).all()
 

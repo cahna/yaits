@@ -72,7 +72,8 @@ def test_create_issue_status_rejects_name_collission(client: FlaskClient):
                        expect_owner=username)
 
     s1_name = 'Planned'
-    verify_create_issue_status(client, team_slug, access_token, s1_name)
+    verify_create_issue_status(
+        client, team_slug, access_token, s1_name, expect_ordering=6)
 
     response = client.post(f'/teams/{team_slug}/issue_statuses',
                            headers=auth_header(access_token),
@@ -129,7 +130,8 @@ def test_create_issue_rejects_bad_requests(client: FlaskClient):
                                         team_slug,
                                         access_token,
                                         status_name,
-                                        status_description)
+                                        status_description,
+                                        expect_ordering=6)
 
     # Invalid JSON payloads
     test_case_payload = [
