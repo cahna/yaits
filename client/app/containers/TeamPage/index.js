@@ -1,4 +1,4 @@
-import React, { useEffect, memo } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
 import { find } from 'lodash/collection';
 import { get } from 'lodash/object';
@@ -16,7 +16,7 @@ import {
   EuiButtonIcon,
 } from '@elastic/eui';
 
-import { User, Issue } from 'utils/sharedProps';
+import { User } from 'utils/sharedProps';
 import { ROUTE_HOME } from 'containers/App/constants';
 import {
   makeSelectCurrentUser,
@@ -27,6 +27,7 @@ import { requestIssuesForTeam } from 'containers/App/actions';
 
 import messages from './messages';
 import IssuesView from './IssuesView';
+import IssueFormModal from './IssueFormModal';
 
 export function TeamPage({
   match: {
@@ -50,6 +51,11 @@ export function TeamPage({
   }, [slug, issuesLoaded, loading]);
 
   const { formatMessage } = useIntl();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const closeModal = () => setIsModalVisible(false);
+  const showModal = () => setIsModalVisible(true);
+  let modal;
 
   if (!team) {
     return <Redirect to={ROUTE_HOME} />;
@@ -57,6 +63,16 @@ export function TeamPage({
 
   const isOwner = team.owner.uniqueId === currentUser.uniqueId;
   const ownerLabel = isOwner ? `(${formatMessage(messages.owner)})` : undefined;
+
+  if (isModalVisible) {
+    modal = (
+      <IssueFormModal
+        teamSlug={team.slug}
+        closeModal={closeModal}
+        issueStatuses={team.issueStatuses}
+      />
+    );
+  }
 
   return (
     <EuiPageContent>
@@ -70,6 +86,13 @@ export function TeamPage({
         </EuiPageContentHeaderSection>
         <EuiPageContentHeaderSection>
           <EuiButtonIcon
+            color="primary"
+            onClick={showModal}
+            iconType="plusInCircle"
+            aria-label={formatMessage(messages.newIssue)}
+            disabled={loading}
+          />
+          <EuiButtonIcon
             color="success"
             onClick={() => loadIssuesForTeam(team.slug)}
             iconType="refresh"
@@ -79,7 +102,12 @@ export function TeamPage({
         </EuiPageContentHeaderSection>
       </EuiPageContentHeader>
       <EuiPageContentBody>
-        <IssuesView team={team} issues={issues} issuesLoaded={issuesLoaded} />
+        {modal}
+        <IssuesView
+          issues={issues}
+          issuesLoaded={issuesLoaded}
+          showModal={showModal}
+        />
       </EuiPageContentBody>
     </EuiPageContent>
   );

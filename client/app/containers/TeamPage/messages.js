@@ -67,4 +67,24 @@ export default defineMessages({
     id: `${scope}.reloadData`,
     defaultMessage: 'Reload data',
   },
+  actionsHeader: {
+    id: `${scope}.actionsHeader`,
+    defaultMessage: 'Actions',
+  },
+  deleteIssueAction: {
+    id: `${scope}.deleteIssueAction`,
+    defaultMessage: 'Delete',
+  },
+  deleteIssueActionDesc: {
+    id: `${scope}.deleteIssueActionDesc`,
+    defaultMessage: 'Delete this issue',
+  },
+  editIssueAction: {
+    id: `${scope}.editIssueAction`,
+    defaultMessage: 'Edit',
+  },
+  editIssueActionDesc: {
+    id: `${scope}.editIssueActionDesc`,
+    defaultMessage: 'Edit this issue',
+  },
 });

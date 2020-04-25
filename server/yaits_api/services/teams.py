@@ -152,5 +152,5 @@ def create_issue(short_description: str,
 
 def get_issues_for_team(team_id) -> List[Issue]:
     return db.session.query(Issue)\
-        .filter_by(id=team_id).all()
+        .filter_by(team_id=team_id).all()
 

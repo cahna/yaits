@@ -1,6 +1,9 @@
 import React, { memo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
+import { parseInt } from 'lodash/string';
 import {
   EuiForm,
   EuiFormRow,
@@ -19,25 +22,29 @@ import {
   EuiButton,
 } from '@elastic/eui';
 
+import { submitCreateIssue } from 'containers/App/actions';
+
 import { IssueStatus } from 'utils/sharedProps';
 import messages from './messages';
 
 const IssueFormModal = ({
   teamSlug,
   issueStatuses,
-  onSubmitForm,
+  handleSubmitForm,
   closeModal,
 }) => {
   const { formatMessage } = useIntl();
-  const [shortDescription, setShortDescription] = useState('');
-  const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState(0);
-  const [statusUniqueId, setStatusId] = useState();
 
   const statusOptions = issueStatuses.map(({ uniqueId, name }) => ({
     value: uniqueId,
     text: name,
   }));
+
+  const [shortDescription, setShortDescription] = useState('');
+  const [description, setDescription] = useState('');
+  const [priority, setPriority] = useState(0);
+  const [statusUniqueId, setStatusId] = useState(statusOptions[0].value);
+  const [formLoading, setFormLoading] = useState(false);
 
   return (
     <EuiOverlayMask>
@@ -66,7 +73,7 @@ const IssueFormModal = ({
             >
               <EuiRange
                 min={0}
-                max={10}
+                max={9}
                 name="issuePriority"
                 value={priority}
                 onChange={({ target: { value } }) => setPriority(value)}
@@ -98,17 +105,20 @@ const IssueFormModal = ({
           </EuiButtonEmpty>
 
           <EuiButton
+            fill
+            isLoading={formLoading}
             onClick={() =>
-              onSubmitForm({
+              handleSubmitForm({
                 teamSlug,
                 shortDescription,
                 description,
-                priority,
+                priority: parseInt(priority),
                 statusUniqueId,
+                onStart: () => setFormLoading(true),
                 onSuccess: closeModal,
+                onFailure: () => setFormLoading(false),
               })
             }
-            fill
           >
             {formatMessage(messages.saveNewIssue)}
           </EuiButton>
@@ -119,9 +129,16 @@ const IssueFormModal = ({
 };
 
 IssueFormModal.propTypes = {
+  teamSlug: PropTypes.string.isRequired,
   issueStatuses: PropTypes.arrayOf(IssueStatus).isRequired,
   closeModal: PropTypes.func.isRequired,
-  onSubmitForm: PropTypes.func.isRequired,
+  handleSubmitForm: PropTypes.func.isRequired,
 };
 
-export default memo(IssueFormModal);
+const mapDispatchToProps = (dispatch) => ({
+  handleSubmitForm: (payload) => dispatch(submitCreateIssue(payload)),
+});
+
+const withConnect = connect(null, mapDispatchToProps);
+
+export default compose(withConnect, memo)(IssueFormModal);

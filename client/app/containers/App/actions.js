@@ -77,24 +77,55 @@ export const showToast = ({ title, text, color, iconType }) => ({
   payload: { title, text, color, iconType },
 });
 
+export const showErrorToast = ({ title, text }) => ({
+  type: SHOW_TOAST,
+  payload: {
+    title,
+    text,
+    color: 'danger',
+    iconType: 'alert',
+  },
+});
+
+export const showSuccessToast = ({ title, text }) => ({
+  type: SHOW_TOAST,
+  payload: {
+    title,
+    text,
+    color: 'success',
+    iconType: 'check',
+  },
+});
+
+export const showInfoToast = ({ title, text }) => ({
+  type: SHOW_TOAST,
+  payload: { title, text },
+});
+
 export const closeToast = ({ id }) => ({
   type: CLOSE_TOAST,
   payload: { id },
 });
 
 export const submitCreateIssue = ({
+  teamSlug,
   shortDescription,
   description,
   priority,
   statusUniqueId,
+  onStart = () => {},
   onSuccess = () => {},
+  onFailure = () => {},
 }) => ({
   type: SUBMIT_CREATE_ISSUE,
   payload: {
+    teamSlug,
     shortDescription,
     description,
     priority,
     statusUniqueId,
+    onStart,
     onSuccess,
+    onFailure,
   },
 });

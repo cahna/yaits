@@ -8,9 +8,17 @@ import {
   API_ACTIVE_USER,
   REQUEST_LOGOUT,
   SUBMIT_CREATE_TEAM,
+  REQUEST_ISSUES_FOR_TEAM,
+  SUBMIT_CREATE_ISSUE,
 } from '../constants';
 import { loadingActiveUser, activeUserLoaded } from '../actions';
-import appSaga, { logoutUser, loadActiveUser, submitCreateTeam } from '../saga';
+import appSaga, {
+  logoutUser,
+  loadActiveUser,
+  submitCreateTeam,
+  loadIssuesForTeam,
+  submitCreateIssue,
+} from '../saga';
 
 const accessToken = '_JWT_';
 
@@ -24,6 +32,8 @@ describe('appSaga', () => {
         takeLatest(GET_ACTIVE_USER, loadActiveUser),
         takeLatest(REQUEST_LOGOUT, logoutUser),
         takeLatest(SUBMIT_CREATE_TEAM, submitCreateTeam),
+        takeLatest(REQUEST_ISSUES_FOR_TEAM, loadIssuesForTeam),
+        takeLatest(SUBMIT_CREATE_ISSUE, submitCreateIssue),
       ]),
     );
   });

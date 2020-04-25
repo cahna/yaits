@@ -22,9 +22,17 @@ import {
   activeUserLoaded,
   loadingActiveUser,
   createdNewTeam,
-  showToast,
+  showErrorToast,
+  requestIssuesForTeam,
   loadedIssuesForTeam,
+  showSuccessToast,
+  showInfoToast,
 } from './actions';
+
+const JSON_HEADERS = {
+  Accept: 'application/json',
+  'Content-Type': 'application/json',
+};
 
 /**
  * Invalidate token
@@ -34,8 +42,7 @@ export function* logoutUser() {
   const options = {
     method: 'POST',
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      ...JSON_HEADERS,
       Authorization: `Bearer ${accessToken}`,
     },
   };
@@ -44,6 +51,12 @@ export function* logoutUser() {
     const { success } = yield call(request, API_LOGOUT, options);
     if (success) {
       yield put(logoutSuccess());
+      yield put(
+        showInfoToast({
+          title: 'Logout',
+          text: 'You have been logged-out',
+        }),
+      );
     } else {
       yield put(logoutFailed({ reason: 'unknown' }));
     }
@@ -64,8 +77,7 @@ export function* loadActiveUser() {
   const options = {
     method: 'GET',
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      ...JSON_HEADERS,
       Authorization: `Bearer ${accessToken}`,
     },
   };
@@ -91,8 +103,7 @@ export function* submitCreateTeam({
     body: JSON.stringify({ name: teamName }),
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+      ...JSON_HEADERS,
       Authorization: `Bearer ${accessToken}`,
     },
   };
@@ -103,13 +114,19 @@ export function* submitCreateTeam({
     if (team && team.slug) {
       yield put(createdNewTeam(team));
       yield call(history.push, `${ROUTE_TEAMS}/${team.slug}`);
+      yield put(
+        showSuccessToast({
+          title: 'Success: Team created',
+          text: `Name: ${team.name}\nSlug: ${team.slug}`,
+        }),
+      );
     } else {
       yield put(
-        showToast({ ...failToast, text: team.error || 'Unknown Error' }),
+        showErrorToast({ ...failToast, text: team.error || 'Unknown Error' }),
       );
     }
   } catch (error) {
-    yield put(showToast(failToast));
+    yield put(showErrorToast(failToast));
   }
 }
 
@@ -121,8 +138,7 @@ export function* loadIssuesForTeam({ payload: { teamSlug } }) {
   const options = {
     method: 'GET',
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      ...JSON_HEADERS,
       Authorization: `Bearer ${accessToken}`,
     },
   };
@@ -133,11 +149,9 @@ export function* loadIssuesForTeam({ payload: { teamSlug } }) {
     yield put(loadedIssuesForTeam(teamSlug, issues));
   } catch (err) {
     yield put(
-      showToast({
+      showErrorToast({
         title: 'Error loading issues for team',
         text: err.toString(),
-        color: 'danger',
-        iconType: 'alert',
       }),
     );
   }
@@ -148,11 +162,14 @@ export function* loadIssuesForTeam({ payload: { teamSlug } }) {
  */
 export function* submitCreateIssue({
   payload: {
+    teamSlug,
     shortDescription,
     description,
     priority,
     statusUniqueId,
+    onStart,
     onSuccess,
+    onFailure,
   },
 }) {
   yield call(onStart);
@@ -167,8 +184,7 @@ export function* submitCreateIssue({
     }),
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+      ...JSON_HEADERS,
       Authorization: `Bearer ${accessToken}`,
     },
   };
@@ -179,21 +195,29 @@ export function* submitCreateIssue({
 
     if (issue && issue.uniqueId) {
       yield call(onSuccess, issue);
+      yield put(
+        showSuccessToast({
+          title: 'Success: New issue created',
+          text: `ID: ${issue.uniqueId}`,
+        }),
+      );
       yield put(requestIssuesForTeam(teamSlug));
     } else {
       yield put(
-        showToast({ ...failToast, text: issue.error || 'Unknown Error' }),
+        showErrorToast({
+          title: 'Error creating issue',
+          text: issue.error || 'Unknown Error',
+        }),
       );
     }
   } catch (error) {
     yield put(
-      showToast({
+      showErrorToast({
         title: 'Error creating issue',
-        text: err.toString(),
-        color: 'danger',
-        iconType: 'alert',
+        text: error.toString(),
       }),
     );
+    yield call(onFailure, error);
   }
 }
 

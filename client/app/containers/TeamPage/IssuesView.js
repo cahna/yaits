@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl, FormattedMessage } from 'react-intl';
 import {
@@ -8,28 +8,11 @@ import {
   EuiLoadingContent,
 } from '@elastic/eui';
 
-import { Issue, Team } from 'utils/sharedProps';
+import { Issue } from 'utils/sharedProps';
 import messages from './messages';
-import IssueFormModal from './IssueFormModal';
 
-export function IssuesView({ team, issues, issuesLoaded }) {
-  const { formatMessage } = useIntl();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const closeModal = () => setIsModalVisible(false);
-  const showModal = () => setIsModalVisible(true);
-  let modal;
-
-  if (isModalVisible) {
-    modal = (
-      <IssueFormModal
-        teamSlug={team.slug}
-        closeModal={closeModal}
-        onSubmitForm={() => {}}
-        issueStatuses={team.issueStatuses}
-      />
-    );
-  }
+export function IssuesView({ issues, issuesLoaded, showModal }) {
+  const { formatMessage, formatDate } = useIntl();
 
   if (!issuesLoaded) {
     return <EuiLoadingContent lines={10} />;
@@ -52,10 +35,31 @@ export function IssuesView({ team, issues, issuesLoaded }) {
             </EuiButton>
           }
         />
-        {modal}
       </>
     );
   }
+
+  const actions = [
+    {
+      name: formatMessage(messages.editIssueAction),
+      description: formatMessage(messages.editIssueActionDesc),
+      isPrimary: true,
+      icon: 'pencil',
+      type: 'icon',
+      onClick: () => {},
+      'data-test-subj': 'action-edit-issue',
+    },
+    {
+      name: formatMessage(messages.deleteIssueAction),
+      description: formatMessage(messages.deleteIssueAction),
+      icon: 'trash',
+      color: 'danger',
+      type: 'icon',
+      onClick: () => {},
+      isPrimary: true,
+      'data-test-subj': 'action-delete-issue',
+    },
+  ];
 
   const columns = [
     {
@@ -63,43 +67,49 @@ export function IssuesView({ team, issues, issuesLoaded }) {
       name: formatMessage(messages.issueShortDescription),
       sortable: true,
       truncateText: true,
+      dataType: 'string',
+      width: '25%',
+    },
+    {
+      field: 'status',
+      name: formatMessage(messages.issueStatus),
+      render: ({ name }) => name,
+      sortable: ({ status: { ordering } }) => ordering,
+      dataType: 'string',
+      width: '10%',
+    },
+    {
+      field: 'priority',
+      name: formatMessage(messages.issuePriority),
+      sortable: true,
+      dataType: 'number',
+      width: '10%',
     },
     {
       field: 'assignedTo',
       name: formatMessage(messages.issueAssignedTo),
       render: ({ username }) => username,
+      dataType: 'string',
       sortable: true,
     },
     {
       field: 'createdBy',
       name: formatMessage(messages.issueCreatedBy),
       render: ({ username }) => username,
-      sortable: true,
-    },
-    {
-      field: 'dateCreated',
-      name: formatMessage(messages.issueDateCreated),
-      dataType: 'date',
-      render: (date) => new Date(date).toLocaleDateString(),
+      dataType: 'string',
       sortable: true,
     },
     {
       field: 'dateUpdated',
       name: formatMessage(messages.issueDateUpdated),
-      dataType: 'date',
-      render: (date) => new Date(date).toLocaleDateString(),
-      sortable: true,
+      render: (date) => formatDate(new Date(date)),
+      sortable: (date) => new Date(date),
+      dataType: 'number',
+      truncateText: true,
     },
     {
-      field: 'status',
-      name: formatMessage(messages.issueStatus),
-      render: ({ name }) => name,
-      sortable: true,
-    },
-    {
-      field: 'priority',
-      name: formatMessage(messages.issuePriority),
-      sortable: true,
+      name: formatMessage(messages.actionsHeader),
+      actions,
     },
   ];
 
@@ -118,17 +128,15 @@ export function IssuesView({ team, issues, issuesLoaded }) {
         pagination
         sorting={sorting}
       />
-      {modal}
     </>
   );
 }
 
 IssuesView.propTypes = {
-  team: Team.isRequired,
   issues: PropTypes.arrayOf(Issue).isRequired,
   issuesLoaded: PropTypes.oneOfType([PropTypes.number, PropTypes.bool])
     .isRequired,
-  loading: PropTypes.bool,
+  showModal: PropTypes.func.isRequired,
 };
 
 export default memo(IssuesView);

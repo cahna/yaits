@@ -13,7 +13,7 @@ import { closeToast } from 'containers/App/actions';
 export const GlobalToasts = ({ toasts, dispatch }) => (
   <EuiGlobalToastList
     toasts={toasts}
-    toastLifeTimeMs={10000}
+    toastLifeTimeMs={5000}
     dismissToast={(t) => dispatch(closeToast(t))}
   />
 );
