@@ -3,7 +3,9 @@ from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
 )
+from yaits_api.models import Issue
 from yaits_api.services import teams, users
+from yaits_api.validation.filters import validate_filters
 from yaits_api.validation.teams import (
     validate_create_team,
     validate_create_issue_status,
@@ -82,7 +84,8 @@ def create_issue(team_slug) -> Response:
 @jwt_required
 def get_issues(team_slug: str) -> Response:
     team, user = authorize_for_team(team_slug)
-    issues = teams.get_issues_for_team(team.id)
+    filters = validate_filters(request, Issue)
+    issues = teams.get_issues_for_team(team.id, filters)
 
     return jsonify({
         'issues': [i.dto() for i in issues],

@@ -2,6 +2,7 @@ from typing import List
 from slugify import slugify
 from yaits_api.constants import TEAM_SLUG_MAX_LENGTH
 from yaits_api.models import db, Team, User, IssueStatus, Issue
+from yaits_api.validation.filters import FilterOps, FilterRequest
 from yaits_api.services.users import get_user_by_id
 from yaits_api.exceptions.auth import ActionForbidden
 from yaits_api.exceptions.teams import (
@@ -161,9 +162,22 @@ def create_issue(short_description: str,
     return issue
 
 
-def get_issues_for_team(team_id) -> List[Issue]:
-    return db.session.query(Issue)\
-        .filter_by(team_id=team_id).all()
+def get_issues_for_team(team_id,
+                        filters: List[FilterRequest] = []) -> List[Issue]:
+    q = db.session.query(Issue).filter_by(team_id=team_id)
+
+    apply_filter = {
+        [FilterOps.EQ]: lambda f: q.filter(f.field == f.val),
+        [FilterOps.GT]: lambda f: q.filter(f.field > f.val),
+        [FilterOps.GTE]: lambda f: q.filter(f.field >= f.val),
+        [FilterOps.LT]: lambda f: q.filter(f.field <= f.val),
+        [FilterOps.LTE]: lambda f: q.filter(f.field <= f.val),
+    }
+
+    for f in filters:
+        apply_filter.get(f.op)(f)
+
+    return q.all()
 
 
 def get_issue_by_uuid(unique_id) -> Issue:

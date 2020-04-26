@@ -12,6 +12,7 @@ from yaits_api.constants import (
     ISSUE_SHORT_DESCRIPTION_MAX_LENGTH,
 )
 from yaits_api.validation.auth import is_valid_username
+from yaits_api.validation.filters import FilterOps
 
 db = SQLAlchemy()
 PK_TYPE = db.BigInteger().with_variant(db.Integer, "sqlite")
@@ -238,6 +239,19 @@ class Issue(db.Model):
             'assignedTo': self.assigned_to.dto(with_teams=False),
             'status': self.status.dto(),
             'teamSlug': self.team.slug,
+        }
+
+    @staticmethod
+    def filters():
+        return {
+            'priority': {
+                'ops': FilterOps.allOps,
+                'parse': int,
+            },
+            'statusId': {
+                'ops': [FilterOps.EQ],
+                'parse': str,
+            },
         }
 
 
