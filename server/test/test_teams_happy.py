@@ -4,6 +4,8 @@ from .shared.teams import (
     verify_create_team,
     verify_create_issue_status,
     verify_create_issue,
+    verify_delete_issue,
+    verify_get_issue,
 )
 
 
@@ -50,7 +52,7 @@ def test_create_issue_statuses(client: FlaskClient):
     assert data2['uniqueId'] != data1['uniqueId']
 
 
-def test_create_issue(client: FlaskClient):
+def test_create_issue_then_delete(client: FlaskClient):
     username = 'Anothertestuser'
     password = 'jfdksalvadakvlj'
     verify_register_user(client, username, password)
@@ -83,3 +85,6 @@ def test_create_issue(client: FlaskClient):
 
     assert issue['createdBy']['username'] == username
     assert issue['assignedTo']['username'] == username
+
+    verify_get_issue(client, team_slug, access_token, issue_dto=issue)
+    verify_delete_issue(client, team_slug, access_token, issue['uniqueId'])

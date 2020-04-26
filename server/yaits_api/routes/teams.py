@@ -71,6 +71,40 @@ def get_issues(team_slug: str) -> Response:
     })
 
 
+@bp.route('/<string:team_slug>/issues/<string:issue_uuid>',
+          methods=['GET'])
+@jwt_required
+def delete_issue(team_slug: str, issue_uuid: str) -> Response:
+    user_uuid = get_jwt_identity().get('unique_id')
+    team, user = teams.verify_user_in_team(team_slug, user_uuid)
+    issue = teams.get_issue_by_uuid(issue_uuid)
+
+    return jsonify(issue.dto())
+
+
+@bp.route('/<string:team_slug>/issues/<string:issue_uuid>',
+          methods=['DELETE'])
+@jwt_required
+def get_issue(team_slug: str, issue_uuid: str) -> Response:
+    user_uuid = get_jwt_identity().get('unique_id')
+    team, user = teams.verify_user_in_team(team_slug, user_uuid)
+    issue = teams.get_issue_by_uuid(issue_uuid)
+    teams.try_delete_issue(issue)
+
+    return jsonify({'success': True})
+
+
+@bp.route('/<string:team_slug>/issues/<string:issue_uuid>',
+          methods=['PATCH'])
+@jwt_required
+def patch_issue(team_slug: str, issue_uuid: str) -> Response:
+    # user_uuid = get_jwt_identity().get('unique_id')
+    # team, user = teams.verify_user_in_team(team_slug, user_uuid)
+    # teams.try_delete_issue(issue_uuid)
+
+    return jsonify({'TODO': True})
+
+
 @bp.route('/<string:team_slug>/issues/<string:issue_uuid>/comments',
           methods=['POST'])
 @jwt_required

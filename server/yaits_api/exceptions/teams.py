@@ -5,6 +5,10 @@ class NoSuchTeam(NotFound):
     description = 'No matching team'
 
 
+class NoSuchIssue(NotFound):
+    description = 'No matching issue'
+
+
 class CreateTeamBadRequest(BadRequest):
     description = 'Bad request'
 

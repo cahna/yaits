@@ -8,6 +8,7 @@ from yaits_api.exceptions.teams import (
     TeamNameAlreadyExists,
     TeamSlugCollission,
     NoSuchTeam,
+    NoSuchIssue,
     IssueStatusAlreadyExists,
     CreateIssueUnprocessable,
 )
@@ -154,3 +155,16 @@ def get_issues_for_team(team_id) -> List[Issue]:
     return db.session.query(Issue)\
         .filter_by(team_id=team_id).all()
 
+
+def get_issue_by_uuid(unique_id) -> Issue:
+    issue = db.session.query(Issue).filter_by(unique_id=unique_id).first()
+
+    if not issue:
+        raise NoSuchIssue()
+
+    return issue
+
+
+def try_delete_issue(issue: Issue):
+    db.session.delete(issue)
+    db.session.commit()

@@ -1,7 +1,7 @@
 from typing import Mapping
 from flask.testing import FlaskClient
 from .request import auth_header
-from .response import verify_api_response
+from .response import verify_api_response, verify_error_response
 
 
 def verify_create_team(client: FlaskClient,
@@ -93,3 +93,35 @@ def verify_create_issue(client: FlaskClient,
     assert data['priority'] == 0
 
     return data
+
+
+def verify_get_issue(client: FlaskClient,
+                     team_slug: str,
+                     access_token: str,
+                     issue_dto: Mapping):
+    issue_uuid = issue_dto['uniqueId']
+    response = client.get(f'/teams/{team_slug}/issues/{issue_uuid}',
+                          headers=auth_header(access_token),
+                          follow_redirects=True)
+    issue = verify_api_response(response)
+
+    assert issue['uniqueId'] == issue_uuid
+    assert issue['shortDescription'] == issue_dto['shortDescription']
+    assert issue['description'] == issue_dto['description']
+
+
+def verify_delete_issue(client: FlaskClient,
+                        team_slug: str,
+                        access_token: str,
+                        issue_uuid: str):
+    del_response = client.delete(f'/teams/{team_slug}/issues/{issue_uuid}',
+                                 headers=auth_header(access_token),
+                                 follow_redirects=True)
+
+    del_data = verify_api_response(del_response)
+    assert del_data['success'] is True
+
+    response = client.get(f'/teams/{team_slug}/issues/{issue_uuid}',
+                          headers=auth_header(access_token),
+                          follow_redirects=True)
+    verify_error_response(response, 404, 'No matching issue')
