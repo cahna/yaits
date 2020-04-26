@@ -1,3 +1,6 @@
+/**
+ * YaitsApp - Root app for authenticated users
+ */
 import React, { memo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet-async';
@@ -24,7 +27,7 @@ import SideNav from 'containers/SideNav/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import HomePage from 'containers/HomePage/Loadable';
 import CreateTeamPage from 'containers/CreateTeamPage/Loadable';
-import TeamPage from 'containers/TeamPage/Loadable';
+import TeamsApp from 'containers/TeamsApp/Loadable';
 
 import messages from './messages';
 
@@ -47,7 +50,7 @@ export function YaitsApp({
     <Switch>
       <Route exact path={ROUTE_HOME} component={HomePage} />
       <Route exact path={ROUTE_CREATE_TEAM} component={CreateTeamPage} />
-      <Route exact path={`${ROUTE_TEAMS}/:slug`} component={TeamPage} />
+      <Route path={ROUTE_TEAMS} component={TeamsApp} />
       <Route component={NotFoundPage} />
     </Switch>
   );

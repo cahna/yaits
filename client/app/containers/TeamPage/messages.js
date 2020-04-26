@@ -3,88 +3,36 @@ import { defineMessages } from 'react-intl';
 export const scope = 'app.containers.TeamPage';
 
 export default defineMessages({
-  loadingTeam: {
-    id: `${scope}.loadingTeam`,
-    defaultMessage: 'Loading team data...',
-  },
   owner: {
     id: `${scope}.owner`,
     defaultMessage: 'Owner',
   },
-  issueShortDescription: {
-    id: `${scope}.shortDescription`,
-    defaultMessage: 'Short Description',
+  usernameHeader: {
+    id: `${scope}.usernameHeader`,
+    defaultMessage: 'Username',
   },
-  issueAssignedTo: {
-    id: `${scope}.issueAssignedTo`,
-    defaultMessage: 'Assigned to',
+  uniqueIdHeader: {
+    id: `${scope}.uniqueIdHeader`,
+    defaultMessage: 'User ID',
   },
-  issueCreatedBy: {
-    id: `${scope}.issueCreatedBy`,
-    defaultMessage: 'Created by',
-  },
-  issueDateCreated: {
-    id: `${scope}.issueDateCreated`,
-    defaultMessage: 'Created',
-  },
-  issueDateUpdated: {
-    id: `${scope}.issueDateUpdated`,
-    defaultMessage: 'Updated',
-  },
-  issueStatus: {
-    id: `${scope}.issueStatus`,
-    defaultMessage: 'Status',
-  },
-  issuePriority: {
-    id: `${scope}.issuePriority`,
-    defaultMessage: 'Priority',
-  },
-  issuePriorityHelpText: {
-    id: `${scope}.issuePriorityHelpText`,
-    defaultMessage: 'Set priority level for issue',
-  },
-  noIssuesTitle: {
-    id: `${scope}.noIssuesTitle`,
-    defaultMessage: 'No issues, yet...',
-  },
-  noIssuesInfo: {
-    id: `${scope}.noIssuesInfo`,
-    defaultMessage: "Create the team's first issue to get started!",
-  },
-  newIssue: {
-    id: `${scope}.newIssue`,
-    defaultMessage: 'New Issue',
-  },
-  cancelNewIssue: {
-    id: `${scope}.cancelNewIssue`,
-    defaultMessage: 'Cancel',
-  },
-  saveNewIssue: {
-    id: `${scope}.saveNewIssue`,
-    defaultMessage: 'Save',
-  },
-  reloadData: {
-    id: `${scope}.reloadData`,
-    defaultMessage: 'Reload data',
-  },
-  actionsHeader: {
-    id: `${scope}.actionsHeader`,
+  actionsTitle: {
+    id: `${scope}.actionsTitle`,
     defaultMessage: 'Actions',
   },
-  deleteIssueAction: {
-    id: `${scope}.deleteIssueAction`,
-    defaultMessage: 'Delete',
+  viewTeamIssuesTitle: {
+    id: `${scope}.viewTeamIssuesTitle`,
+    defaultMessage: 'Issues',
   },
-  deleteIssueActionDesc: {
-    id: `${scope}.deleteIssueActionDesc`,
-    defaultMessage: 'Delete this issue',
+  viewTeamIssuesDescription: {
+    id: `${scope}.viewTeamIssuesDescription`,
+    defaultMessage: "View and manage your teams' issues.",
   },
-  editIssueAction: {
-    id: `${scope}.editIssueAction`,
-    defaultMessage: 'Edit',
+  manageMembersTitle: {
+    id: `${scope}.manageMembersTitle`,
+    defaultMessage: 'Members',
   },
-  editIssueActionDesc: {
-    id: `${scope}.editIssueActionDesc`,
-    defaultMessage: 'Edit this issue',
+  manageMembersDescription: {
+    id: `${scope}.manageMembersDescription`,
+    defaultMessage: 'Manage team members.',
   },
 });

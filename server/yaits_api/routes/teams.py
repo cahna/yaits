@@ -25,6 +25,15 @@ def create_team() -> Response:
     return jsonify(team.dto())
 
 
+@bp.route('/<string:team_slug>', methods=['GET'])
+@jwt_required
+def get_team_details(team_slug: str) -> Response:
+    user_uuid = get_jwt_identity().get('unique_id')
+    team, user = teams.verify_user_in_team(team_slug, user_uuid)
+
+    return jsonify(team.dto(with_issue_ids=True))
+
+
 @bp.route('/<string:team_slug>/issue_statuses', methods=['POST'])
 @jwt_required
 def create_issue_status(team_slug) -> Response:

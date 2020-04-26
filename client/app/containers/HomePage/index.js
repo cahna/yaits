@@ -1,11 +1,10 @@
 import React, { memo } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import { Redirect } from 'react-router-dom';
 import {
-  EuiEmptyPrompt,
-  EuiButton,
   EuiPageContent,
   EuiPageContentBody,
   EuiPageContentHeader,
@@ -13,46 +12,21 @@ import {
   EuiPageContentHeaderSection,
 } from '@elastic/eui';
 
-import history from 'utils/history';
 import { User } from 'utils/sharedProps';
-import { ROUTE_CREATE_TEAM } from 'containers/App/constants';
+import { ROUTE_TEAMS } from 'containers/App/constants';
 import { makeSelectCurrentUser } from 'containers/App/selectors';
+import NoTeamsPrompt from 'components/NoTeamsPrompt/Loadable';
 
 import messages from './messages';
 
 export function HomePage({ currentUser }) {
   const { formatMessage } = useIntl();
 
-  if ((currentUser.teams || []).length < 1) {
-    return (
-      <EuiPageContent>
-        <EuiPageContentBody>
-          <EuiEmptyPrompt
-            iconType="indexManagementApp"
-            title={<h2>{formatMessage(messages.noTeamsTitle)}</h2>}
-            body={
-              <>
-                <p>
-                  <FormattedMessage {...messages.noTeamsInfo} />
-                </p>
-                <p>
-                  <FormattedMessage {...messages.pleaseSetupATeam} />
-                </p>
-              </>
-            }
-            actions={
-              <EuiButton
-                color="primary"
-                fill
-                onClick={() => history.push(ROUTE_CREATE_TEAM)}
-              >
-                <FormattedMessage {...messages.createTeamButton} />
-              </EuiButton>
-            }
-          />
-        </EuiPageContentBody>
-      </EuiPageContent>
-    );
+  let pageContent = <NoTeamsPrompt />;
+
+  if (currentUser.teams.length > 0) {
+    // TODO: Make some dashboard-like content
+    pageContent = <Redirect to={ROUTE_TEAMS} />;
   }
 
   return (
@@ -66,6 +40,7 @@ export function HomePage({ currentUser }) {
           </EuiTitle>
         </EuiPageContentHeaderSection>
       </EuiPageContentHeader>
+      <EuiPageContentBody>{pageContent}</EuiPageContentBody>
     </EuiPageContent>
   );
 }

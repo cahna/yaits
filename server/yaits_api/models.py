@@ -125,14 +125,19 @@ class Team(db.Model):
     owner = db.relationship('User')
     members = db.relationship('User', secondary='team_membership')
 
-    def dto(self) -> Mapping:
-        return {
+    def dto(self, with_issue_ids=False) -> Mapping:
+        t = {
             'name': self.name,
             'slug': self.slug,
             'owner': self.owner.dto(with_teams=False),
             'members': [u.dto(with_teams=False) for u in self.members],
             'issueStatuses': [s.dto() for s in self.issue_statuses],
         }
+
+        if with_issue_ids:
+            t['issueIds'] = [i.unique_id for i in self.issues]
+
+        return t
 
 
 class TeamMembership(db.Model):
@@ -232,6 +237,7 @@ class Issue(db.Model):
             'createdBy': self.created_by.dto(with_teams=False),
             'assignedTo': self.assigned_to.dto(with_teams=False),
             'status': self.status.dto(),
+            'teamSlug': self.team.slug,
         }
 
 

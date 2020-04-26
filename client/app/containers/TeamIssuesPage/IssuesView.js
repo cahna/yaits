@@ -6,9 +6,13 @@ import {
   EuiEmptyPrompt,
   EuiButton,
   EuiLoadingContent,
+  EuiLink,
 } from '@elastic/eui';
 
+import history from 'utils/history';
 import { Issue } from 'utils/sharedProps';
+import { ROUTE_TEAMS } from 'containers/App/constants';
+
 import messages from './messages';
 
 export function IssuesView({ issues, issuesLoaded, showModal }) {
@@ -46,7 +50,8 @@ export function IssuesView({ issues, issuesLoaded, showModal }) {
       isPrimary: true,
       icon: 'pencil',
       type: 'icon',
-      onClick: () => {},
+      onClick: ({ uniqueId, teamSlug }) =>
+        history.push(`${ROUTE_TEAMS}/${teamSlug}/issues/${uniqueId}`),
       'data-test-subj': 'action-edit-issue',
     },
     {
@@ -55,7 +60,7 @@ export function IssuesView({ issues, issuesLoaded, showModal }) {
       icon: 'trash',
       color: 'danger',
       type: 'icon',
-      onClick: () => {},
+      onClick: () => {}, // (issue) => requestDeleteIssue(issue),
       isPrimary: true,
       'data-test-subj': 'action-delete-issue',
     },
@@ -63,9 +68,19 @@ export function IssuesView({ issues, issuesLoaded, showModal }) {
 
   const columns = [
     {
-      field: 'shortDescription',
       name: formatMessage(messages.issueShortDescription),
-      sortable: true,
+      render: (
+        { teamSlug, shortDescription, uniqueId }, // eslint-disable-line react/prop-types
+      ) => (
+        <EuiLink
+          onClick={() =>
+            history.push(`${ROUTE_TEAMS}/${teamSlug}/issues/${uniqueId}`)
+          }
+        >
+          {shortDescription}
+        </EuiLink>
+      ),
+      sortable: ({ shortDescription }) => shortDescription,
       truncateText: true,
       dataType: 'string',
       width: '25%',
@@ -83,18 +98,11 @@ export function IssuesView({ issues, issuesLoaded, showModal }) {
       name: formatMessage(messages.issuePriority),
       sortable: true,
       dataType: 'number',
-      width: '10%',
+      align: 'left',
     },
     {
       field: 'assignedTo',
       name: formatMessage(messages.issueAssignedTo),
-      render: ({ username }) => username,
-      dataType: 'string',
-      sortable: true,
-    },
-    {
-      field: 'createdBy',
-      name: formatMessage(messages.issueCreatedBy),
       render: ({ username }) => username,
       dataType: 'string',
       sortable: true,
@@ -115,8 +123,8 @@ export function IssuesView({ issues, issuesLoaded, showModal }) {
 
   const sorting = {
     sort: {
-      field: 'priority',
-      direction: 'asc',
+      field: 'dateUpdated',
+      direction: 'desc',
     },
   };
 
