@@ -51,7 +51,11 @@ Manage accounts and sessions.
 + Response 200 (application/json)
 
         {
-            "success": true
+            "success": true,
+            "user", {
+                "uniqueId": "_USER_UUID_",
+                "username": "TestUser",
+            }
         }
 
 ## [/auth/login]
@@ -146,9 +150,69 @@ Manage teams.
             }]
         }
 
-# [/teams/{slug}/issue_statuses]
+## [/teams/{slug}/members]
 
-### Create a new issue for a team [POST]
+### Add/remove member(s) to team [PATCH]
+
++ Parameters
+    + slug (string) - Unique team slug identifier
+
++ Request (application/json)
+
+        {
+            "add": ["_USER2_UUID_"]
+        }
+
++ Response 200 (application/json)
+
+        {
+            "name": "TestTeam",
+            "slug": "test-team",
+            "owner": {
+                "username": "TestUser",
+                "uniqueId": "_USER_UUID_"
+            },
+            "members": [
+                {
+                    "username": "TestUser",
+                    "uniqueId": "_USER_UUID_"
+                },
+                {
+                    "username": "TestUser2",
+                    "uniqueId": "_USER2_UUID_"
+                }
+            ]
+        }
+
++ Request (application/json)
+
+        {
+            "remove": ["_USER2_UUID_"]
+        }
+
++ Response 200 (application/json)
+
+        {
+            "name": "TestTeam",
+            "slug": "test-team",
+            "owner": {
+                "username": "TestUser",
+                "uniqueId": "_USER_UUID_"
+            },
+            "members": [
+                {
+                    "username": "TestUser",
+                    "uniqueId": "_USER_UUID_"
+                }
+            ]
+        }
+
+## [/teams/{slug}/issue_statuses]
+
+### Create a new issue status for a team [POST]
++ Parameters
+    + slug (string) - Unique team slug identifier
+
 + Request (application/json)
 
         {
@@ -170,9 +234,12 @@ Manage teams.
         }
 
 
-## [/teams/{slug}/issue]
+## [/teams/{slug}/issues]
 
 ### Create a new issue for a team [POST]
++ Parameters
+    + slug (string) - Unique team slug identifier
+
 + Request (application/json)
 
         {
@@ -210,3 +277,162 @@ Manage teams.
             "dateUpdated": "20200501",
         }
 
+## [/teams/{slug}/issues{?filter}]
+
+### List issues for a team [GET]
+
++ Parameters
+    + slug (string) - Unique team slug identifier
+    + filter (optional) - JSON-encoded list of shapes matching: { field, op, val }
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer _JWT_ACCESS_TOKEN_
+
++ Response 200 (application/json)
+
+        [{
+            "uniqueId": "_ISSUE_UUID_",
+            "shortDescription": "Test Issue",
+            "description": "optional",
+            "priority": 0,
+            "status": {
+                "uniqueId": "_STATUS_UUID_",
+                "name": "Open",
+                "ordering": 0,
+                "description": "Awaiting assignment"
+            },
+            "createdBy": {
+                "username": "TestUser",
+                "uniqueId": "_USER_UUID_"
+            },
+            "assignedTo": {
+                "username": "TestUser",
+                "uniqueId": "_USER_UUID_"
+            },
+            "dateCreated": "20200501",
+            "dateUpdated": "20200501",
+        }]
+
+## [/teams/{slug}/issues/{issueUniqueId}]
+
++ Parameters
+    + slug (string) - Unique team slug identifier
+    + issueUniqueId (string) - UUID of issue
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer _JWT_ACCESS_TOKEN_
+
+### Issue details [GET]
+
++ Response 200 (application/json)
+
+        {
+            "uniqueId": "_ISSUE_UUID_",
+            "shortDescription": "Test Issue",
+            "description": "optional",
+            "priority": 0,
+            "status": {
+                "uniqueId": "_STATUS_UUID_",
+                "name": "Open",
+                "ordering": 0,
+                "description": "Awaiting assignment"
+            },
+            "createdBy": {
+                "username": "TestUser",
+                "uniqueId": "_USER_UUID_"
+            },
+            "assignedTo": {
+                "username": "TestUser",
+                "uniqueId": "_USER_UUID_"
+            },
+            "dateCreated": "20200501",
+            "dateUpdated": "20200501",
+        }
+
+### Update parts of an issue [PATCH]
+
++ Request (application/json)
+
+        {
+            "shortDescription": "Renamed Issue",
+            "priority": 2
+        }
+
++ Response 200 (application/json)
+
+        {
+            "uniqueId": "_ISSUE_UUID_",
+            "shortDescription": "Renamed Issue",
+            "description": "optional",
+            "priority": 2,
+            "status": {
+                "uniqueId": "_STATUS_UUID_",
+                "name": "Open",
+                "ordering": 0,
+                "description": "Awaiting assignment"
+            },
+            "createdBy": {
+                "username": "TestUser",
+                "uniqueId": "_USER_UUID_"
+            },
+            "assignedTo": {
+                "username": "TestUser",
+                "uniqueId": "_USER_UUID_"
+            },
+            "dateCreated": "20200501",
+            "dateUpdated": "20200501",
+        }
+
+### Remove issue [DELETE]
+
++ Response 200 (application/json)
+
+        {
+            "success": true,
+        }
+
+## [/teams/{slug}/issues/{issueUniqueId}/comments]
+
++ Parameters
+    + slug (string) - Unique team slug identifier
+    + issueUniqueId (string) - UUID of issue
+
++ Request (application/json)
+    + Headers
+
+            Authentication: Bearer _JWT_ACCESS_TOKEN_
+
+### Submit comment [POST]
+
++ Request (application/json)
+
+        {
+            "text": "Hello, world!",
+        }
+
++ Response 200 (application/json)
+
+        {
+            "success": true,
+        }
+
+### List comments for issue [GET]
+
++ Response 200 (application/json)
+
+        {
+            "comments" [
+                {
+                    "text": "Hello, world!",
+                    "timestamp": "2020-04-26 14:05:20.122244",
+                    "user": {
+                        "username": "TestUser",
+                        "uniqueId": "_USER_UUID_"
+                    }
+                }
+            ],
+        }
