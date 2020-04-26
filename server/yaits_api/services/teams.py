@@ -164,20 +164,20 @@ def create_issue(short_description: str,
 
 def get_issues_for_team(team_id,
                         filters: List[FilterRequest] = []) -> List[Issue]:
-    q = db.session.query(Issue).filter_by(team_id=team_id)
+    db_filters = [Issue.team_id == team_id]
 
     apply_filter = {
-        [FilterOps.EQ]: lambda f: q.filter(f.field == f.val),
-        [FilterOps.GT]: lambda f: q.filter(f.field > f.val),
-        [FilterOps.GTE]: lambda f: q.filter(f.field >= f.val),
-        [FilterOps.LT]: lambda f: q.filter(f.field <= f.val),
-        [FilterOps.LTE]: lambda f: q.filter(f.field <= f.val),
+        FilterOps.EQ: lambda f: db_filters.append(f.field == f.val),
+        FilterOps.GT: lambda f: db_filters.append(f.field > f.val),
+        FilterOps.GTE: lambda f: db_filters.append(f.field >= f.val),
+        FilterOps.LT: lambda f: db_filters.append(f.field <= f.val),
+        FilterOps.LTE: lambda f: db_filters.append(f.field <= f.val),
     }
 
     for f in filters:
         apply_filter.get(f.op)(f)
 
-    return q.all()
+    return db.session.query(Issue).filter(*db_filters).all()
 
 
 def get_issue_by_uuid(unique_id) -> Issue:

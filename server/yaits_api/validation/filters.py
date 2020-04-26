@@ -1,4 +1,5 @@
 from typing import List, Mapping
+import json
 import inflection
 from flask import Request
 from flask_sqlalchemy import Model
@@ -57,10 +58,16 @@ def validate_filters(request: Request, model: Model) -> List[FilterRequest]:
 
     Returns kwargs for .where()
     """
-    req_filters = request.args.get('filter')
+    filters_str = request.args.get('filter')
+    req_filters = None
+
+    try:
+        req_filters = json.loads(filters_str)
+    except (json.decoder.JSONDecodeError, TypeError):
+        raise BadFilters()
 
     if not req_filters or not hasattr(model, 'filters'):
-        return {}
+        return []
 
     if not isinstance(req_filters, List):
         raise BadFilters()

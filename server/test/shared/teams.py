@@ -84,7 +84,8 @@ def verify_create_issue(client: FlaskClient,
                         access_token: str,
                         status_uuid: str,
                         short_description: str,
-                        description: str = None) -> Mapping:
+                        description: str = None,
+                        priority: int = None) -> Mapping:
     payload = {
         'shortDescription': short_description,
         'statusUniqueId': status_uuid,
@@ -92,6 +93,9 @@ def verify_create_issue(client: FlaskClient,
 
     if description:
         payload['description'] = description
+
+    if priority is not None:
+        payload['priority'] = priority
 
     response = client.post(f'/teams/{team_slug}/issues',
                            headers=auth_header(access_token),
@@ -111,7 +115,11 @@ def verify_create_issue(client: FlaskClient,
     assert data['assignedTo']
     assert data['dateCreated']
     assert data['dateUpdated']
-    assert data['priority'] == 0
+
+    if priority is not None:
+        assert data['priority'] == priority
+    else:
+        assert data['priority'] == 0
 
     return data
 
