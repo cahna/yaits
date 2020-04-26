@@ -18,6 +18,15 @@ def verify_register_user(client: FlaskClient,
 
     assert 'success' in data
     assert data.get('success') is True
+    assert 'user' in data
+    user_dto = data.get('user')
+    assert 'password' not in user_dto
+    assert 'hashedPw' not in user_dto
+    assert 'hashed_pw' not in user_dto
+    assert 'uniqueId' in user_dto
+    assert user_dto.get('username') == username
+
+    return user_dto
 
 
 def verify_login_user(client: FlaskClient,

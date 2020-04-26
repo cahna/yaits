@@ -1,4 +1,4 @@
-from typing import Mapping
+from typing import Mapping, List
 from flask.testing import FlaskClient
 from .request import auth_header
 from .response import verify_api_response, verify_error_response
@@ -30,6 +30,27 @@ def verify_create_team(client: FlaskClient,
         assert data['members'][0]['username'] == expect_owner
 
     return data
+
+
+def verify_add_team_members(client: FlaskClient,
+                            access_token: str,
+                            team_slug: str,
+                            user_uuids: List[str]) -> Mapping:
+    assert user_uuids
+    payload = dict(add=user_uuids)
+    response = client.patch(f'/teams/{team_slug}/members',
+                            headers=auth_header(access_token),
+                            json=payload,
+                            follow_redirects=True)
+    data = verify_api_response(response)
+
+    assert data.get('slug') == team_slug
+    members = data.get('members')
+    assert members
+    member_ids = [m['uniqueId'] for m in members]
+
+    for uid in user_uuids:
+        assert uid in member_ids
 
 
 def verify_create_issue_status(client: FlaskClient,

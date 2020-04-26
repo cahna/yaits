@@ -1,4 +1,4 @@
-from typing import Mapping
+from typing import Mapping, List
 from yaits_api.constants import (
     UUID_LENGTH,
     TEAM_NAME_CHARS_WHITELIST,
@@ -17,6 +17,7 @@ from yaits_api.exceptions.teams import (
     CreateIssueStatusBadName,
     CreateIssueStatusBadDescription,
     CreateIssueBadRequest,
+    UpdateTeamBadRequest,
 )
 
 
@@ -113,3 +114,19 @@ def validate_create_issue(request_data: Mapping,
             create_issue_kwargs['priority'] = priority
 
     return create_issue_kwargs
+
+
+def validate_manage_team_members(request_data: Mapping) -> List[List]:
+    add_users = request_data.get('add', [])
+    remove_users = request_data.get('remove', [])
+
+    if not (add_users or remove_users):
+        raise UpdateTeamBadRequest()
+
+    if add_users and remove_users:  # Only allows one action per request
+        raise UpdateTeamBadRequest()
+
+    if not all(isinstance(uid, str) for uid in add_users + remove_users):
+        raise UpdateTeamBadRequest()
+
+    return add_users, remove_users

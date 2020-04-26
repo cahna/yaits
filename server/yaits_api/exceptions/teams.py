@@ -13,6 +13,10 @@ class CreateTeamBadRequest(BadRequest):
     description = 'Bad request'
 
 
+class UpdateTeamBadRequest(CreateTeamBadRequest):
+    pass
+
+
 class CreateTeamBadName(CreateTeamBadRequest):
     description = 'Invalid team name'
 

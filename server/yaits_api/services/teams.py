@@ -83,6 +83,16 @@ def verify_user_in_team(team_slug: str, user_uuid: str) -> List:
     return team, user
 
 
+def add_team_members(team: Team, user_uuids: List[str]):
+    users = db.session.query(User)\
+        .filter(User.unique_id.in_(user_uuids)).all()
+
+    for u in users:
+        team.members.append(u)
+
+    db.session.commit()
+
+
 def issue_status_name_exists(status_name: str, team: Team) -> bool:
     return bool(db.session.query(IssueStatus)
                 .filter_by(name=status_name, team_id=team.id).first())

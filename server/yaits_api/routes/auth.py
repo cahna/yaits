@@ -20,7 +20,10 @@ def register() -> Response:
     username, password = validate_auth_user(request.get_json())
     user = auth.create_user(username, password)
 
-    return jsonify({'success': bool(user)})
+    return jsonify({
+        'success': bool(user),
+        'user': user.dto(),
+    })
 
 
 @bp.route('/login', methods=['POST'])

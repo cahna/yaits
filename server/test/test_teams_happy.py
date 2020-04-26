@@ -2,6 +2,7 @@ from flask.testing import FlaskClient
 from .shared.auth import verify_register_user, verify_login_user
 from .shared.teams import (
     verify_create_team,
+    verify_add_team_members,
     verify_create_issue_status,
     verify_create_issue,
     verify_delete_issue,
@@ -19,6 +20,30 @@ def test_create_team(client: FlaskClient):
     verify_create_team(client, team_name, access_token,
                        expect_slug='my-test-team',
                        expect_owner=username)
+
+
+def test_add_team_members(client: FlaskClient):
+    # Create a user
+    username1 = '2TestTeamAdmin2'
+    password1 = '2$uper_Team2'
+    verify_register_user(client, username1, password1)
+    # Login
+    access_token, _ = verify_login_user(client, username1, password1)
+    # Create a team
+    team_name = 'My Test Team'
+    team_slug = 'my-test-team'
+    verify_create_team(client, team_name, access_token,
+                       expect_slug=team_slug,
+                       expect_owner=username1)
+    # Create second user
+    username2 = 'MemberBerries'
+    password2 = 'CatCatCatCat'
+    user2 = verify_register_user(client, username2, password2)
+    # Add second user to team
+    verify_add_team_members(client,
+                            access_token,
+                            team_slug,
+                            [user2['uniqueId']])
 
 
 def test_create_issue_statuses(client: FlaskClient):
