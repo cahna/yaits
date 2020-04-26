@@ -7,14 +7,6 @@ export default defineMessages({
     id: `${scope}.owner`,
     defaultMessage: 'Owner',
   },
-  usernameHeader: {
-    id: `${scope}.usernameHeader`,
-    defaultMessage: 'Username',
-  },
-  uniqueIdHeader: {
-    id: `${scope}.uniqueIdHeader`,
-    defaultMessage: 'User ID',
-  },
   actionsTitle: {
     id: `${scope}.actionsTitle`,
     defaultMessage: 'Actions',
@@ -33,6 +25,14 @@ export default defineMessages({
   },
   manageMembersDescription: {
     id: `${scope}.manageMembersDescription`,
-    defaultMessage: 'Manage team members.',
+    defaultMessage: 'View and manage team members.',
+  },
+  manageTeamTitle: {
+    id: `${scope}.manageTeamTitle`,
+    defaultMessage: 'Settings',
+  },
+  manageTeamDescription: {
+    id: `${scope}.manageTeamDescription`,
+    defaultMessage: 'Configure team settings.',
   },
 });

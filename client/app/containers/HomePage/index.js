@@ -24,7 +24,7 @@ export function HomePage({ currentUser }) {
 
   let pageContent = <NoTeamsPrompt />;
 
-  if (currentUser.teams.length > 0) {
+  if ((currentUser.teams || []).length > 0) {
     // TODO: Make some dashboard-like content
     pageContent = <Redirect to={ROUTE_TEAMS} />;
   }

@@ -14,6 +14,7 @@ import {
   SUBMIT_CREATE_TEAM,
   REQUEST_ISSUES_FOR_TEAM,
   SUBMIT_CREATE_ISSUE,
+  DELETE_ISSUE,
 } from './constants';
 import { makeSelectAccessToken } from './selectors';
 import {
@@ -222,6 +223,57 @@ export function* submitCreateIssue({
 }
 
 /**
+ * Delete an issue for a team
+ */
+export function* deleteIssue({
+  payload: { teamSlug, issueUniqueId, onStart, onSuccess, onFailure },
+}) {
+  yield call(onStart);
+  const accessToken = yield select(makeSelectAccessToken());
+
+  const options = {
+    method: 'DELETE',
+    headers: {
+      ...JSON_HEADERS,
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+
+  try {
+    const url = `${API_TEAMS}/${teamSlug}/issues/${issueUniqueId}`;
+    const response = yield call(request, url, options);
+
+    if (response && response.success) {
+      yield call(onSuccess);
+      yield put(
+        showSuccessToast({
+          title: 'Success: Deleted issue',
+          text: `ID: ${issueUniqueId}`,
+        }),
+      );
+      yield put(requestIssuesForTeam(teamSlug));
+    } else {
+      const error = response.error || 'Unknown Error';
+      yield put(
+        showErrorToast({
+          title: 'Error deleting issue',
+          text: error,
+        }),
+      );
+      yield call(onFailure, error);
+    }
+  } catch (error) {
+    yield put(
+      showErrorToast({
+        title: 'Error deleting issue',
+        text: error.toString(),
+      }),
+    );
+    yield call(onFailure, error);
+  }
+}
+
+/**
  * Root saga manages watcher lifecycle
  */
 export default function* appSaga() {
@@ -231,5 +283,6 @@ export default function* appSaga() {
     takeLatest(SUBMIT_CREATE_TEAM, submitCreateTeam),
     takeLatest(REQUEST_ISSUES_FOR_TEAM, loadIssuesForTeam),
     takeLatest(SUBMIT_CREATE_ISSUE, submitCreateIssue),
+    takeLatest(DELETE_ISSUE, deleteIssue),
   ]);
 }

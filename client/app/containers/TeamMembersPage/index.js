@@ -12,21 +12,17 @@ import {
   EuiTitle,
   EuiPageContentHeaderSection,
   EuiPageContentBody,
-  EuiFlexItem,
-  EuiCard,
-  EuiIcon,
+  EuiInMemoryTable,
   EuiSpacer,
-  EuiFlexGroup,
 } from '@elastic/eui';
 
-import history from 'utils/history';
 import { User } from 'utils/sharedProps';
 import { ROUTE_TEAMS } from 'containers/App/constants';
 import { makeSelectCurrentUser } from 'containers/App/selectors';
 
 import messages from './messages';
 
-export function TeamPage({
+export function TeamMembersPage({
   match: {
     params: { slug },
   },
@@ -42,6 +38,28 @@ export function TeamPage({
   const isOwner = team.owner.uniqueId === currentUser.uniqueId;
   const ownerLabel = isOwner ? `(${formatMessage(messages.owner)})` : undefined;
 
+  const columns = [
+    {
+      field: 'username',
+      name: formatMessage(messages.usernameHeader),
+      sortable: true,
+      dataType: 'string',
+    },
+    {
+      field: 'uniqueId',
+      name: formatMessage(messages.uniqueIdHeader),
+      sortable: false,
+      dataType: 'string',
+    },
+  ];
+
+  const sorting = {
+    sort: {
+      field: 'username',
+      direction: 'asc',
+    },
+  };
+
   return (
     <EuiPageContent>
       <EuiPageContentHeader>
@@ -55,42 +73,21 @@ export function TeamPage({
       </EuiPageContentHeader>
       <EuiPageContentBody>
         <EuiTitle size="s">
-          <h3>{formatMessage(messages.actionsTitle)}</h3>
+          <h3>{formatMessage(messages.teamMembersTitle)}</h3>
         </EuiTitle>
-        <EuiFlexGroup gutterSize="l">
-          <EuiFlexItem>
-            <EuiCard
-              icon={<EuiIcon size="xxl" type="reportingApp" />}
-              title={formatMessage(messages.viewTeamIssuesTitle)}
-              description={formatMessage(messages.viewTeamIssuesDescription)}
-              onClick={() => history.push(`${ROUTE_TEAMS}/${slug}/issues`)}
-            />
-          </EuiFlexItem>
-          <EuiFlexItem>
-            <EuiCard
-              icon={<EuiIcon size="xxl" type="usersRolesApp" />}
-              title={formatMessage(messages.manageMembersTitle)}
-              description={formatMessage(messages.manageMembersDescription)}
-              onClick={() => history.push(`${ROUTE_TEAMS}/${slug}/members`)}
-            />
-          </EuiFlexItem>
-          <EuiFlexItem>
-            <EuiCard
-              icon={<EuiIcon size="xxl" type="managementApp" />}
-              title={formatMessage(messages.manageTeamTitle)}
-              description={formatMessage(messages.manageTeamDescription)}
-              onClick={() => history.push(`${ROUTE_TEAMS}/${slug}/settings`)}
-              isDisabled
-            />
-          </EuiFlexItem>
-        </EuiFlexGroup>
         <EuiSpacer />
+        <EuiInMemoryTable
+          items={team.members}
+          columns={columns}
+          pagination
+          sorting={sorting}
+        />
       </EuiPageContentBody>
     </EuiPageContent>
   );
 }
 
-TeamPage.propTypes = {
+TeamMembersPage.propTypes = {
   currentUser: User.isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({
@@ -105,4 +102,4 @@ const mapStateToProps = createStructuredSelector({
 
 const withConnect = connect(mapStateToProps, {});
 
-export default compose(withConnect, memo)(TeamPage);
+export default compose(withConnect, memo)(TeamMembersPage);

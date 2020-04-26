@@ -5,6 +5,7 @@ import { ROUTE_TEAMS } from 'containers/App/constants';
 import TeamsPage from 'containers/TeamsPage/Loadable';
 import TeamPage from 'containers/TeamPage/Loadable';
 import TeamIssuesPage from 'containers/TeamIssuesPage/Loadable';
+import TeamMembersPage from 'containers/TeamMembersPage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 
 export const TeamsApp = () => (
@@ -15,6 +16,11 @@ export const TeamsApp = () => (
       exact
       path={`${ROUTE_TEAMS}/:slug/issues`}
       component={TeamIssuesPage}
+    />
+    <Route
+      exact
+      path={`${ROUTE_TEAMS}/:slug/members`}
+      component={TeamMembersPage}
     />
     <Route component={NotFoundPage} />
   </Switch>

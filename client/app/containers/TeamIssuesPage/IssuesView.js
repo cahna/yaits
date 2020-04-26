@@ -1,5 +1,7 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { useIntl, FormattedMessage } from 'react-intl';
 import {
   EuiInMemoryTable,
@@ -12,10 +14,16 @@ import {
 import history from 'utils/history';
 import { Issue } from 'utils/sharedProps';
 import { ROUTE_TEAMS } from 'containers/App/constants';
+import { requestDeleteIssue } from 'containers/App/actions';
 
 import messages from './messages';
 
-export function IssuesView({ issues, issuesLoaded, showModal }) {
+export function IssuesView({
+  issues,
+  issuesLoaded,
+  showModal,
+  handleDeleteIssue,
+}) {
   const { formatMessage, formatDate } = useIntl();
 
   if (!issuesLoaded) {
@@ -60,7 +68,7 @@ export function IssuesView({ issues, issuesLoaded, showModal }) {
       icon: 'trash',
       color: 'danger',
       type: 'icon',
-      onClick: () => {}, // (issue) => requestDeleteIssue(issue),
+      onClick: handleDeleteIssue,
       isPrimary: true,
       'data-test-subj': 'action-delete-issue',
     },
@@ -145,6 +153,14 @@ IssuesView.propTypes = {
   issuesLoaded: PropTypes.oneOfType([PropTypes.number, PropTypes.bool])
     .isRequired,
   showModal: PropTypes.func.isRequired,
+  handleDeleteIssue: PropTypes.func.isRequired,
 };
 
-export default memo(IssuesView);
+const mapDispatchToProps = (dispatch) => ({
+  handleDeleteIssue: ({ uniqueId: issueUniqueId, teamSlug }) =>
+    dispatch(requestDeleteIssue({ issueUniqueId, teamSlug })),
+});
+
+const withConnect = connect(null, mapDispatchToProps);
+
+export default compose(withConnect, memo)(IssuesView);

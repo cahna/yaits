@@ -10,6 +10,7 @@ import {
   SUBMIT_CREATE_TEAM,
   REQUEST_ISSUES_FOR_TEAM,
   SUBMIT_CREATE_ISSUE,
+  DELETE_ISSUE,
 } from '../constants';
 import { loadingActiveUser, activeUserLoaded } from '../actions';
 import appSaga, {
@@ -18,6 +19,7 @@ import appSaga, {
   submitCreateTeam,
   loadIssuesForTeam,
   submitCreateIssue,
+  deleteIssue,
 } from '../saga';
 
 const accessToken = '_JWT_';
@@ -34,6 +36,7 @@ describe('appSaga', () => {
         takeLatest(SUBMIT_CREATE_TEAM, submitCreateTeam),
         takeLatest(REQUEST_ISSUES_FOR_TEAM, loadIssuesForTeam),
         takeLatest(SUBMIT_CREATE_ISSUE, submitCreateIssue),
+        takeLatest(DELETE_ISSUE, deleteIssue),
       ]),
     );
   });

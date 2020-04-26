@@ -30,6 +30,7 @@ import {
   CLOSE_TOAST,
   LOADED_ISSUES_FOR_TEAM,
   SUBMIT_CREATE_ISSUE,
+  DELETE_ISSUE,
 } from './constants';
 
 export const logoutUser = () => ({ type: REQUEST_LOGOUT });
@@ -124,6 +125,23 @@ export const submitCreateIssue = ({
     description,
     priority,
     statusUniqueId,
+    onStart,
+    onSuccess,
+    onFailure,
+  },
+});
+
+export const requestDeleteIssue = ({
+  teamSlug,
+  issueUniqueId,
+  onStart = () => {},
+  onSuccess = () => {},
+  onFailure = () => {},
+}) => ({
+  type: DELETE_ISSUE,
+  payload: {
+    teamSlug,
+    issueUniqueId,
     onStart,
     onSuccess,
     onFailure,

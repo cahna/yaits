@@ -45,17 +45,17 @@ export const TeamsPage = ({ currentUser }) => {
         width: '50%',
       },
       {
-        name: formatMessage(messages.memberCountHeader),
-        render: ({ members }) => members.length,
-        sortable: ({ members }) => members.length,
-        dataType: 'number',
-      },
-      {
         name: formatMessage(messages.ownerHeader),
         render: ({ owner: { username } }) => username,
         sortable: ({ owner: { username } }) => username,
         dataType: 'string',
         truncateText: true,
+      },
+      {
+        name: formatMessage(messages.memberCountHeader),
+        render: ({ members }) => members.length,
+        sortable: ({ members }) => members.length,
+        dataType: 'number',
       },
     ];
 
