@@ -18,6 +18,7 @@ from yaits_api.exceptions.teams import (
     CreateIssueStatusBadDescription,
     CreateIssueBadRequest,
     UpdateTeamBadRequest,
+    UpdateIssueBadRequest,
 )
 
 
@@ -114,6 +115,37 @@ def validate_create_issue(request_data: Mapping,
             create_issue_kwargs['priority'] = priority
 
     return create_issue_kwargs
+
+
+def validate_update_issue(request_data: Mapping) -> Mapping:
+    """Each property of Issue that can be updated must be whitelisted here"""
+    if not isinstance(request_data, Mapping):
+        raise UpdateIssueBadRequest()
+
+    updates = {}
+
+    desc = request_data.get('description')
+    short_desc = request_data.get('shortDescription')
+    priority = request_data.get('priority')
+    status_uuid = request_data.get('statusUniqueId')
+    assigned_to_uuid = request_data.get('assignedToUniqueId')
+
+    # TODO: Make more strict and based-off model reflection
+    if desc and isinstance(desc, str):
+        updates['description'] = desc
+    if short_desc and isinstance(desc, str):
+        updates['short_description'] = short_desc
+    if priority and isinstance(priority, int):
+        updates['priority'] = priority
+    if status_uuid and isinstance(status_uuid, str):
+        updates['status_uuid'] = status_uuid
+    if assigned_to_uuid and isinstance(assigned_to_uuid, str):
+        updates['assigned_to_uuid'] = assigned_to_uuid
+
+    if not updates:
+        raise UpdateIssueBadRequest()
+
+    return updates
 
 
 def validate_manage_team_members(request_data: Mapping) -> List[List]:

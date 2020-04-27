@@ -78,7 +78,8 @@ Must be run manually until automation configured.
 
 ## TODO/TBD
 
-- Replace calls to `yaits_api.services.teams.verify_user_in_team()` with a JWT claim.
+- Replace calls to `yaits_api.services.teams.verify_user_in_team()` with JWT claims
 - Add SQL triggers/constraints to enforce data model rules/permissions
 - Add SQL/ORM ONDELETE behaviors
-- Websocket service
+- Websocket service(s)
+- Move session-related storage to redis

@@ -9,6 +9,10 @@ class NoSuchIssue(NotFound):
     description = 'No matching issue'
 
 
+class NoSuchStatus(NotFound):
+    description = 'No matching issue status'
+
+
 class CreateTeamBadRequest(BadRequest):
     description = 'Bad request'
 
@@ -49,6 +53,10 @@ class IssueStatusAlreadyExists(HTTPException):
 
 
 class CreateIssueBadRequest(BadRequest):
+    pass
+
+
+class UpdateIssueBadRequest(BadRequest):
     pass
 
 

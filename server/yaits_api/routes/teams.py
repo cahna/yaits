@@ -11,6 +11,7 @@ from yaits_api.validation.teams import (
     validate_create_issue_status,
     validate_create_issue,
     validate_manage_team_members,
+    validate_update_issue,
 )
 
 
@@ -117,9 +118,12 @@ def get_issue(team_slug: str, issue_uuid: str) -> Response:
           methods=['PATCH'])
 @jwt_required
 def patch_issue(team_slug: str, issue_uuid: str) -> Response:
-    # team, user = authorize_for_team(team_slug)
+    team, user = authorize_for_team(team_slug)
+    issue = teams.get_issue_by_uuid(issue_uuid)
+    updates = validate_update_issue(request.get_json())
+    teams.update_issue(issue, updates)
 
-    return jsonify({'TODO': True})
+    return jsonify(issue.dto())
 
 
 @bp.route('/<string:team_slug>/issues/<string:issue_uuid>/comments',

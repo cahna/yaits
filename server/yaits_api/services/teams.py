@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Mapping
 from slugify import slugify
 from yaits_api.constants import TEAM_SLUG_MAX_LENGTH
 from yaits_api.models import db, Team, User, IssueStatus, Issue
@@ -10,8 +10,10 @@ from yaits_api.exceptions.teams import (
     TeamSlugCollission,
     NoSuchTeam,
     NoSuchIssue,
+    NoSuchStatus,
     IssueStatusAlreadyExists,
     CreateIssueUnprocessable,
+    UpdateIssueBadRequest,
 )
 
 
@@ -124,8 +126,13 @@ def create_issue_status(name: str,
 
 
 def get_issue_status_by_uuid(status_uuid: str) -> IssueStatus:
-    return db.session.query(IssueStatus)\
+    issue_status = db.session.query(IssueStatus)\
         .filter_by(unique_id=status_uuid).first()
+
+    if not issue_status:
+        raise NoSuchStatus()
+
+    return issue_status
 
 
 def create_issue(short_description: str,
@@ -187,6 +194,37 @@ def get_issue_by_uuid(unique_id) -> Issue:
         raise NoSuchIssue()
 
     return issue
+
+
+def update_issue(issue: Issue, updates: Mapping):
+    if updates.get('status_uuid'):
+        status_uuid = updates.get('status_uuid')
+        status = get_issue_status_by_uuid(status_uuid)
+
+        if status.team.slug != issue.team.slug:
+            raise UpdateIssueBadRequest()
+
+        issue.status_id = status.id
+
+    if updates.get('assigned_to_uuid'):
+        assigned_uuid = updates.get('assigned_to_uuid')
+        assignee = get_user_by_id(assigned_uuid)
+
+        if issue.team.slug not in [t.slug for t in assignee.teams]:
+            raise UpdateIssueBadRequest()
+
+        issue.assigned_to_id = assignee.id
+
+    if updates.get('description'):
+        issue.description = updates.get('description')
+
+    if updates.get('short_description'):
+        issue.short_description = updates.get('short_description')
+
+    if updates.get('priority'):
+        issue.priority = updates.get('priority')
+
+    db.session.commit()
 
 
 def try_delete_issue(issue: Issue):
