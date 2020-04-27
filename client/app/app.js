@@ -15,7 +15,8 @@ import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from 'styled-components';
-import '@elastic/eui/dist/eui_theme_dark.css';
+// import '@elastic/eui/dist/eui_theme_dark.css';
+import './eui_theme_dark.css';
 import 'sanitize.css/sanitize.css';
 import * as euiVars from '@elastic/eui/dist/eui_theme_dark.json';
 

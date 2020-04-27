@@ -1,0 +1,80 @@
+---
+version: "3.1"
+networks:
+  yaits_public:
+    driver: bridge
+  yaits_private:
+    driver: bridge
+services:
+  db:
+    image: postgres:12
+    restart: always
+    environment:
+      - POSTGRES_USER=yaits
+      - POSTGRES_PASSWORD=yaits
+    networks:
+      - yaits_private
+    ports:
+      - 5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U yaits"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  migration:
+    build: ./server
+    environment:
+      - FLASK_APP=yaits_api
+      - FLASK_ENV=production
+      - YAITS_DB_URI=postgresql://yaits:yaits@db:5432/yaits
+    command: flask db upgrade
+    depends_on:
+      - db
+    networks:
+      - yaits_private
+    healthcheck:
+      test: ["CMD-SHELL", "sleep 5"]
+  api:
+    build:
+      context: ./server
+    restart: always
+    environment:
+      - FLASK_ENV=production
+      - YAITS_DB_URI=postgresql://yaits:yaits@db:5432/yaits
+    depends_on:
+      - db
+      - migration
+    networks:
+      - yaits_private
+    ports:
+      - 5000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -L -f http://localhost:5000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+  static:
+    build: ./client
+    restart: always
+    depends_on:
+      - api
+    networks:
+      - yaits_private
+    ports:
+      - 5001
+    healthcheck:
+      test: ["CMD-SHELL", "curl -L -f http://localhost:5001/index.html"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  proxy:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - api
+      - static
+    networks:
+      - yaits_public
+      - yaits_private

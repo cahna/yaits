@@ -58,7 +58,11 @@ def validate_filters(request: Request, model: Model) -> List[FilterRequest]:
 
     Returns kwargs for .where()
     """
-    filters_str = request.args.get('filter')
+    filters_str = request.args.get('filter', '')
+
+    if not filters_str or not hasattr(model, 'filters'):
+        return []
+
     req_filters = None
 
     try:
@@ -66,7 +70,7 @@ def validate_filters(request: Request, model: Model) -> List[FilterRequest]:
     except (json.decoder.JSONDecodeError, TypeError):
         raise BadFilters()
 
-    if not req_filters or not hasattr(model, 'filters'):
+    if not req_filters:
         return []
 
     if not isinstance(req_filters, List):

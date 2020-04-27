@@ -116,9 +116,9 @@ module.exports = require('./webpack.base.babel')({
     }),
 
     new WebpackPwaManifest({
-      name: 'React Boilerplate',
-      short_name: 'React BP',
-      description: 'My React Boilerplate-based project!',
+      name: 'Yet Another Issue Tracking System',
+      short_name: 'YAITS',
+      description: 'React-based issue tracking system',
       inject: true,
       ios: true,
       icons: [

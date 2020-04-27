@@ -16,7 +16,7 @@ CMD gunicorn \
   --worker-class gevent \
   --workers 4 \
   --bind 0.0.0.0:5000 \
-  --log-level info \
+  --log-level debug \
   --max-requests 10000 \
   --timeout 5 \
   --keep-alive 5 \

@@ -39,6 +39,12 @@ module.exports = (options) => ({
         include: /node_modules/,
         use: ['style-loader', 'css-loader'],
       },
+      // {  // TODO: NOT WORKING! :'(
+      //   // Preprocess @eui styles
+      //   test: /\.css$/,
+      //   include: /@elastic/,
+      //   use: ['style-loader', 'css-loader', 'postcss-loader'],
+      // },
       {
         test: /\.(eot|otf|ttf|woff|woff2)$/,
         use: 'file-loader',
