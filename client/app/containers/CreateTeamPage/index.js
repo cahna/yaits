@@ -5,15 +5,15 @@ import { Helmet } from 'react-helmet-async';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { compose } from 'redux';
 import {
+  EuiButton,
+  EuiFieldText,
+  EuiForm,
+  EuiFormRow,
   EuiPageContent,
   EuiPageContentBody,
   EuiPageContentHeader,
   EuiPageContentHeaderSection,
   EuiTitle,
-  EuiFieldText,
-  EuiForm,
-  EuiFormRow,
-  EuiButton,
 } from '@elastic/eui';
 
 import { submitCreateTeam } from 'containers/App/actions';

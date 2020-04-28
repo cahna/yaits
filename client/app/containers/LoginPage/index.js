@@ -5,44 +5,48 @@ import { Helmet } from 'react-helmet-async';
 import { useIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'redux';
 import {
+  EuiButton,
+  EuiFieldPassword,
+  EuiFieldText,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiForm,
+  EuiFormRow,
+  EuiLink,
   EuiPage,
   EuiPageBody,
   EuiPageContent,
   EuiPageContentBody,
   EuiPageContentHeader,
   EuiPageContentHeaderSection,
-  EuiTitle,
-  EuiFieldPassword,
-  EuiFieldText,
-  EuiForm,
-  EuiFormRow,
-  EuiButton,
-  EuiLink,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiSpacer,
+  EuiTitle,
 } from '@elastic/eui';
 
 import history from 'utils/history';
-import { useInjectSaga } from 'utils/injectSaga';
-import { ROUTE_REGISTER } from 'containers/App/constants';
+import { ROUTE_HOME, ROUTE_REGISTER } from 'containers/App/constants';
+import {
+  activeUserLoaded,
+  submitLogin,
+  showErrorToast,
+  showSuccessToast,
+} from 'containers/App/actions';
 
 import reducer, { initialState } from './reducer';
-import saga from './saga';
 import messages from './messages';
 import {
-  submitLogin,
   changeUsername,
   changePassword,
   loginFormLoading,
   loginFailure,
 } from './actions';
 
-const key = 'loginPage';
-
-export function LoginPage({ makeOnSubmitForm }) {
-  useInjectSaga({ key, saga });
-
+export function LoginPage({
+  makeOnSubmitForm,
+  alertSuccess,
+  alertError,
+  setActiveUser,
+}) {
   const { formatMessage } = useIntl();
   const [state, dispatch] = useReducer(reducer, initialState);
   const { username, password, loading } = state;
@@ -53,7 +57,21 @@ export function LoginPage({ makeOnSubmitForm }) {
     username,
     password,
     onStart: () => dispatch(loginFormLoading()),
-    onFailure: (error) => dispatch(loginFailure(error)),
+    onSuccess: (user) => {
+      setActiveUser(user);
+      history.push(ROUTE_HOME);
+      alertSuccess({
+        title: formatMessage(messages.loginSuccessAlertTitle),
+        text: formatMessage(messages.loginSuccessAlertText, user),
+      });
+    },
+    onFailure: (error) => {
+      dispatch(loginFailure(error));
+      alertError({
+        title: formatMessage(messages.loginErrorAlertTitle),
+        text: error.toString() || formatMessage(messages.unknownLoginError),
+      });
+    },
   });
 
   return (
@@ -129,16 +147,20 @@ export function LoginPage({ makeOnSubmitForm }) {
 
 LoginPage.propTypes = {
   makeOnSubmitForm: PropTypes.func.isRequired,
+  alertSuccess: PropTypes.func.isRequired,
+  alertError: PropTypes.func.isRequired,
+  setActiveUser: PropTypes.func.isRequired,
 };
 
-function mapDispatchToProps(dispatch) {
-  return {
-    makeOnSubmitForm: (payload) => (evt) => {
-      if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-      dispatch(submitLogin(payload));
-    },
-  };
-}
+const mapDispatchToProps = (dispatch) => ({
+  makeOnSubmitForm: (payload) => (evt) => {
+    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    dispatch(submitLogin(payload));
+  },
+  alertSuccess: (payload) => dispatch(showSuccessToast(payload)),
+  alertError: (payload) => dispatch(showErrorToast(payload)),
+  setActiveUser: (user) => dispatch(activeUserLoaded(user)),
+});
 
 const withConnect = connect(null, mapDispatchToProps);
 

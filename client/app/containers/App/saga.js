@@ -4,36 +4,73 @@ import request from 'utils/request';
 import history from 'utils/history';
 
 import {
-  REQUEST_LOGOUT,
+  API_ACTIVE_USER,
+  API_LOGIN,
   API_LOGOUT,
   API_TEAMS,
-  ROUTE_TEAMS,
-  LOCAL_TOKEN_NAME,
-  API_ACTIVE_USER,
-  GET_ACTIVE_USER,
-  SUBMIT_CREATE_TEAM,
-  REQUEST_ISSUES_FOR_TEAM,
-  SUBMIT_CREATE_ISSUE,
   DELETE_ISSUE,
+  GET_ACTIVE_USER,
+  LOCAL_TOKEN_NAME,
+  LOCAL_REFRESH_TOKEN_NAME,
+  REQUEST_ISSUES_FOR_TEAM,
+  REQUEST_LOGIN,
+  REQUEST_LOGOUT,
+  ROUTE_TEAMS,
+  SUBMIT_CREATE_ISSUE,
+  SUBMIT_CREATE_TEAM,
 } from './constants';
 import { makeSelectAccessToken } from './selectors';
 import {
-  logoutSuccess,
-  logoutFailed,
   activeUserLoaded,
-  loadingActiveUser,
   createdNewTeam,
-  showErrorToast,
-  requestIssuesForTeam,
   loadedIssuesForTeam,
-  showSuccessToast,
+  loadingActiveUser,
+  logoutFailed,
+  logoutSuccess,
+  requestIssuesForTeam,
+  showErrorToast,
   showInfoToast,
+  showSuccessToast,
+  userLoggedIn,
 } from './actions';
 
 const JSON_HEADERS = {
   Accept: 'application/json',
   'Content-Type': 'application/json',
 };
+
+/**
+ * Send authentication request
+ */
+export function* submitLogin({
+  payload: {
+    username,
+    password,
+    onStart = () => {},
+    onSuccess = () => {},
+    onFailure = () => {},
+  },
+}) {
+  yield call(onStart);
+
+  const options = {
+    body: JSON.stringify({ username, password }),
+    method: 'POST',
+    headers: JSON_HEADERS,
+  };
+
+  try {
+    const response = yield call(request, API_LOGIN, options);
+    const { accessToken, refreshToken, user } = response;
+
+    localStorage.setItem(LOCAL_TOKEN_NAME, accessToken);
+    localStorage.setItem(LOCAL_REFRESH_TOKEN_NAME, refreshToken);
+    yield put(userLoggedIn(response));
+    yield call(onSuccess, user);
+  } catch (error) {
+    yield call(onFailure, error);
+  }
+}
 
 /**
  * Invalidate token
@@ -66,6 +103,7 @@ export function* logoutUser() {
   }
 
   localStorage.removeItem(LOCAL_TOKEN_NAME);
+  localStorage.removeItem(LOCAL_REFRESH_TOKEN_NAME);
 }
 
 /**
@@ -278,6 +316,7 @@ export function* deleteIssue({
  */
 export default function* appSaga() {
   yield all([
+    takeLatest(REQUEST_LOGIN, submitLogin),
     takeLatest(GET_ACTIVE_USER, loadActiveUser),
     takeLatest(REQUEST_LOGOUT, logoutUser),
     takeLatest(SUBMIT_CREATE_TEAM, submitCreateTeam),

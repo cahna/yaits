@@ -4,81 +4,154 @@ import { testSaga } from 'redux-saga-test-plan';
 import request from 'utils/request';
 
 import {
-  GET_ACTIVE_USER,
   API_ACTIVE_USER,
-  REQUEST_LOGOUT,
-  SUBMIT_CREATE_TEAM,
-  REQUEST_ISSUES_FOR_TEAM,
-  SUBMIT_CREATE_ISSUE,
+  API_LOGIN,
   DELETE_ISSUE,
+  GET_ACTIVE_USER,
+  REQUEST_ISSUES_FOR_TEAM,
+  REQUEST_LOGIN,
+  REQUEST_LOGOUT,
+  SUBMIT_CREATE_ISSUE,
+  SUBMIT_CREATE_TEAM,
 } from '../constants';
-import { loadingActiveUser, activeUserLoaded } from '../actions';
+import { userLoggedIn, loadingActiveUser, activeUserLoaded } from '../actions';
 import appSaga, {
-  logoutUser,
-  loadActiveUser,
-  submitCreateTeam,
-  loadIssuesForTeam,
-  submitCreateIssue,
   deleteIssue,
+  loadActiveUser,
+  loadIssuesForTeam,
+  logoutUser,
+  submitCreateIssue,
+  submitCreateTeam,
+  submitLogin,
 } from '../saga';
 
-const accessToken = '_JWT_';
-
 /* eslint-disable redux-saga/yield-effects */
-describe('appSaga', () => {
-  const mainSaga = appSaga();
+describe('sagas', () => {
+  describe('appSaga', () => {
+    const mainSaga = appSaga();
 
-  it('should start thread to watch for expected actions', () => {
-    expect(mainSaga.next().value).toEqual(
-      all([
-        takeLatest(GET_ACTIVE_USER, loadActiveUser),
-        takeLatest(REQUEST_LOGOUT, logoutUser),
-        takeLatest(SUBMIT_CREATE_TEAM, submitCreateTeam),
-        takeLatest(REQUEST_ISSUES_FOR_TEAM, loadIssuesForTeam),
-        takeLatest(SUBMIT_CREATE_ISSUE, submitCreateIssue),
-        takeLatest(DELETE_ISSUE, deleteIssue),
-      ]),
-    );
-  });
-});
-
-describe('loadActiveUser saga generator', () => {
-  const options = {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-  };
-  const userResponse = {
-    username: 'TestUser',
-    uniqueId: 'abc-123-def-456',
-  };
-
-  it('handles succussful fetch of active user', () => {
-    testSaga(loadActiveUser)
-      .next()
-      .put(loadingActiveUser())
-      .next()
-      .next(accessToken)
-      .call(request, API_ACTIVE_USER, options)
-      .next(userResponse)
-      .put(activeUserLoaded(userResponse))
-      .next()
-      .isDone();
+    it('should start thread to watch for expected actions', () => {
+      expect(mainSaga.next().value).toEqual(
+        all([
+          takeLatest(REQUEST_LOGIN, submitLogin),
+          takeLatest(GET_ACTIVE_USER, loadActiveUser),
+          takeLatest(REQUEST_LOGOUT, logoutUser),
+          takeLatest(SUBMIT_CREATE_TEAM, submitCreateTeam),
+          takeLatest(REQUEST_ISSUES_FOR_TEAM, loadIssuesForTeam),
+          takeLatest(SUBMIT_CREATE_ISSUE, submitCreateIssue),
+          takeLatest(DELETE_ISSUE, deleteIssue),
+        ]),
+      );
+    });
   });
 
-  it('handles failed fetch of active user', () => {
-    testSaga(loadActiveUser)
-      .next()
-      .put(loadingActiveUser())
-      .next()
-      .next(accessToken)
-      .call(request, API_ACTIVE_USER, options)
-      .throw('dummy')
-      .put(activeUserLoaded(null, true))
-      .next()
-      .isDone();
+  describe('submitLogin saga', () => {
+    const onStart = jest.fn();
+    const onFailure = jest.fn();
+    const onSuccess = jest.fn();
+    const username = 'TestUser';
+    const password = 'TestPassword';
+    const accessToken = '_JWT_';
+    const refreshToken = '_RJWT_';
+    const options = {
+      body: JSON.stringify({ username, password }),
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    };
+
+    it('handles successful login', () => {
+      const mockResponse = {
+        accessToken,
+        refreshToken,
+        user: { username, uniqueId: 'mockuuid' },
+      };
+      testSaga(() =>
+        submitLogin({
+          payload: {
+            username,
+            password,
+            onStart,
+            onSuccess,
+            onFailure,
+          },
+        }),
+      )
+        .next()
+        .call(onStart)
+        .next()
+        .call(request, API_LOGIN, options)
+        .next(mockResponse)
+        .put(userLoggedIn(mockResponse))
+        .next()
+        .call(onSuccess, mockResponse.user)
+        .next()
+        .isDone();
+    });
+
+    it('handles failed login', () => {
+      testSaga(() =>
+        submitLogin({
+          payload: {
+            username,
+            password,
+            onStart,
+            onFailure,
+          },
+        }),
+      )
+        .next()
+        .call(onStart)
+        .next()
+        .call(request, API_LOGIN, options)
+        .throw('dummy')
+        .call(onFailure, 'dummy')
+        .next()
+        .isDone();
+    });
+  });
+
+  describe('loadActiveUser saga', () => {
+    const accessToken = '_JWT_';
+    const options = {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    const userResponse = {
+      username: 'TestUser',
+      uniqueId: 'abc-123-def-456',
+    };
+
+    it('handles succussful fetch of active user', () => {
+      testSaga(loadActiveUser)
+        .next()
+        .put(loadingActiveUser())
+        .next()
+        .next(accessToken)
+        .call(request, API_ACTIVE_USER, options)
+        .next(userResponse)
+        .put(activeUserLoaded(userResponse))
+        .next()
+        .isDone();
+    });
+
+    it('handles failed fetch of active user', () => {
+      testSaga(loadActiveUser)
+        .next()
+        .put(loadingActiveUser())
+        .next()
+        .next(accessToken)
+        .call(request, API_ACTIVE_USER, options)
+        .throw('dummy')
+        .put(activeUserLoaded(null, true))
+        .next()
+        .isDone();
+    });
   });
 });

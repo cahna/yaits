@@ -7,13 +7,13 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Redirect } from 'react-router-dom';
 import {
-  EuiPageContent,
-  EuiPageContentHeader,
-  EuiTitle,
-  EuiPageContentHeaderSection,
-  EuiPageContentBody,
   EuiInMemoryTable,
+  EuiPageContent,
+  EuiPageContentBody,
+  EuiPageContentHeader,
+  EuiPageContentHeaderSection,
   EuiSpacer,
+  EuiTitle,
 } from '@elastic/eui';
 
 import { User } from 'utils/sharedProps';

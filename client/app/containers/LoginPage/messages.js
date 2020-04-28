@@ -37,4 +37,20 @@ export default defineMessages({
     id: `${scope}.registerButtonLabel`,
     defaultMessage: 'Register',
   },
+  loginSuccessAlertTitle: {
+    id: `${scope}.loginSuccessAlertTitle`,
+    defaultMessage: 'Login success!',
+  },
+  loginSuccessAlertText: {
+    id: `${scope}.loginSuccessAlertText`,
+    defaultMessage: 'Welcome back, {username}!',
+  },
+  unknownLoginError: {
+    id: `${scope}.unknownLoginError`,
+    defaultMessage: 'Unknown error during login.',
+  },
+  loginErrorAlertTitle: {
+    id: `${scope}.loginErrorAlertTitle`,
+    defaultMessage: 'Login error!',
+  },
 });

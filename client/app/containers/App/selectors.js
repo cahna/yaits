@@ -10,6 +10,12 @@ const selectGlobal = (state) => state.global || initialState;
 const makeSelectCurrentUser = () =>
   createSelector(selectGlobal, (globalState) => globalState.currentUser);
 
+const makeSelectCurrentUserTeams = () =>
+  createSelector(selectGlobal, ({ currentUser }) => currentUser.teams);
+
+const makeSelectCurrentUsername = () =>
+  createSelector(selectGlobal, ({ currentUser }) => currentUser.username);
+
 const makeSelectLoading = () =>
   createSelector(selectGlobal, (globalState) => globalState.loading);
 
@@ -26,11 +32,13 @@ const makeSelectTeamIssues = () =>
   createSelector(selectGlobal, (globalState) => globalState.teamIssues);
 
 export {
-  selectGlobal,
-  makeSelectCurrentUser,
   makeSelectAccessToken,
-  makeSelectLoading,
+  makeSelectCurrentUser,
+  makeSelectCurrentUsername,
+  makeSelectCurrentUserTeams,
   makeSelectError,
-  makeSelectToasts,
+  makeSelectLoading,
   makeSelectTeamIssues,
+  makeSelectToasts,
+  selectGlobal,
 };

@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl';
 
-export const scope = 'app.components.NoTeamsPrompt';
+export const scope = 'app.containers.NoTeamsPrompt';
 
 export default defineMessages({
   noTeamsTitle: {

@@ -1,6 +1,7 @@
 /**
  * Action/saga names
  */
+export const REQUEST_LOGIN = 'yaits/App/REQUEST_LOGIN';
 export const REQUEST_LOGOUT = 'yaits/App/REQUEST_LOGOUT';
 export const LOGOUT_SUCCESS = 'yaits/App/LOGOUT_SUCCESS';
 export const LOGOUT_FAILED = 'yaits/App/LOGOUT_FAILED';
@@ -33,11 +34,11 @@ export const API_TEAMS = `${API_PREFIX}/teams`;
 export const ROUTE_HOME = '/yaits';
 export const ROUTE_LOGIN = '/login';
 export const ROUTE_REGISTER = '/register';
-export const ROUTE_TEAMS = `${ROUTE_HOME}/teams`;
 export const ROUTE_CREATE_TEAM = `${ROUTE_HOME}/create-team`;
+export const ROUTE_TEAMS = `${ROUTE_HOME}/teams`;
 
 /**
  * Configuration / other
  */
 export const LOCAL_TOKEN_NAME = 'accessToken';
-export const APP_KEY = 'global';
+export const LOCAL_REFRESH_TOKEN_NAME = 'refreshToken';

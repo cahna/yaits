@@ -3,30 +3,34 @@ import { reject } from 'lodash/collection';
 import { kebabCase } from 'lodash/string';
 
 import {
-  LOCAL_TOKEN_NAME,
-  REQUEST_LOGOUT,
-  LOGOUT_SUCCESS,
-  LOGOUT_FAILED,
-  USER_LOGGED_IN,
-  LOADING_ACTIVE_USER,
   ACTIVE_USER_LOADED,
+  CLOSE_TOAST,
   CREATED_NEW_TEAM,
   LOADED_ISSUES_FOR_TEAM,
+  LOADING_ACTIVE_USER,
+  LOCAL_REFRESH_TOKEN_NAME,
+  LOCAL_TOKEN_NAME,
+  LOGOUT_FAILED,
+  LOGOUT_SUCCESS,
+  REQUEST_LOGOUT,
   SHOW_TOAST,
-  CLOSE_TOAST,
+  USER_LOGGED_IN,
 } from './constants';
+
+export const makeEmptyUser = () => ({
+  username: null,
+  uniqueId: null,
+  teams: [],
+});
 
 // The initial state of the App
 export const initialState = {
   loading: false,
   error: false,
-  currentUser: {
-    username: null,
-    uniqueId: null,
-    teams: [],
-  },
+  currentUser: makeEmptyUser(),
   teamIssues: {},
   accessToken: localStorage.getItem(LOCAL_TOKEN_NAME),
+  refreshToken: localStorage.getItem(LOCAL_REFRESH_TOKEN_NAME),
   toasts: [],
 };
 
@@ -42,24 +46,21 @@ const appReducer = (state = initialState, { type, payload }) =>
         draft.loading = false;
         draft.error = false;
         draft.accessToken = null;
-        draft.currentUser = {
-          username: null,
-          uniqueId: null,
-        };
+        draft.refreshToken = null;
+        draft.currentUser = makeEmptyUser();
         break;
       case LOGOUT_FAILED:
         draft.loading = false;
         draft.error = true;
         draft.accessToken = null;
-        draft.currentUser = {
-          username: null,
-          uniqueId: null,
-        };
+        draft.refreshToken = null;
+        draft.currentUser = makeEmptyUser();
         break;
       case USER_LOGGED_IN:
         draft.loading = false;
         draft.error = false;
         draft.accessToken = payload.accessToken;
+        draft.refreshToken = payload.refreshToken;
         break;
       case LOADING_ACTIVE_USER:
         draft.loading = true;
@@ -77,7 +78,10 @@ const appReducer = (state = initialState, { type, payload }) =>
         }
         break;
       case CREATED_NEW_TEAM:
-        draft.currentUser.teams = [...draft.currentUser.teams, payload.newTeam];
+        draft.currentUser = {
+          ...draft.currentUser,
+          teams: [...draft.currentUser.teams, payload.newTeam],
+        };
         break;
       case LOADED_ISSUES_FOR_TEAM:
         draft.teamIssues = {

@@ -1,7 +1,6 @@
 import {
   USERNAME_CHANGED,
   PASSWORD_CHANGED,
-  REQUEST_LOGIN,
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
   LOGIN_FORM_LOADING,
@@ -20,11 +19,6 @@ export const changeUsername = (username) => ({
 export const changePassword = (password) => ({
   type: PASSWORD_CHANGED,
   payload: { password },
-});
-
-export const submitLogin = ({ username, password, onStart, onFailure }) => ({
-  type: REQUEST_LOGIN,
-  payload: { username, password, onStart, onFailure },
 });
 
 export const loginSuccess = (accessToken) => ({

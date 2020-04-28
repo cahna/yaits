@@ -7,16 +7,16 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Redirect } from 'react-router-dom';
 import {
-  EuiPageContent,
-  EuiPageContentHeader,
-  EuiTitle,
-  EuiPageContentHeaderSection,
-  EuiPageContentBody,
-  EuiFlexItem,
   EuiCard,
-  EuiIcon,
-  EuiSpacer,
   EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiPageContent,
+  EuiPageContentBody,
+  EuiPageContentHeader,
+  EuiPageContentHeaderSection,
+  EuiSpacer,
+  EuiTitle,
 } from '@elastic/eui';
 
 import history from 'utils/history';

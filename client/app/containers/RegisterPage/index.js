@@ -1,10 +1,17 @@
-import React, { useReducer, useCallback } from 'react';
+import React, { memo, useReducer, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { compose } from 'redux';
 import {
+  EuiButton,
+  EuiFieldPassword,
+  EuiFieldText,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiForm,
+  EuiFormRow,
   EuiPage,
   EuiPageBody,
   EuiPageContent,
@@ -12,13 +19,6 @@ import {
   EuiPageContentHeader,
   EuiPageContentHeaderSection,
   EuiTitle,
-  EuiFieldPassword,
-  EuiFieldText,
-  EuiForm,
-  EuiFormRow,
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
 } from '@elastic/eui';
 
 import { useInjectSaga } from 'utils/injectSaga';
@@ -172,4 +172,4 @@ const mapDispatchToProps = (dispatch) => ({
 
 const withConnect = connect(null, mapDispatchToProps);
 
-export default compose(withConnect)(RegisterPage);
+export default compose(withConnect, memo)(RegisterPage);

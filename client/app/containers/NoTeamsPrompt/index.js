@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { EuiEmptyPrompt, EuiButton } from '@elastic/eui';
 
@@ -37,4 +37,4 @@ const NoTeamsPrompt = () => {
   );
 };
 
-export default NoTeamsPrompt;
+export default memo(NoTeamsPrompt);

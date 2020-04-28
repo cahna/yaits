@@ -1,18 +1,16 @@
 import {
-  USERNAME_CHANGED,
-  PASSWORD_CHANGED,
-  REQUEST_LOGIN,
-  LOGIN_SUCCESS,
   LOGIN_FAILURE,
   LOGIN_FORM_LOADING,
+  LOGIN_SUCCESS,
+  PASSWORD_CHANGED,
+  USERNAME_CHANGED,
 } from '../constants';
 import {
-  changeUsername,
   changePassword,
-  submitLogin,
-  loginSuccess,
+  changeUsername,
   loginFailure,
   loginFormLoading,
+  loginSuccess,
 } from '../actions';
 
 describe('LoginPage actions', () => {
@@ -33,22 +31,6 @@ describe('LoginPage actions', () => {
         payload: { password: 't' },
       };
       expect(changePassword('t')).toEqual(expected);
-    });
-  });
-
-  describe('submitLogin Action', () => {
-    it('has a type of REQUEST_LOGIN', () => {
-      const payload = {
-        username: 'testuser',
-        password: 'hunter12',
-        onStart: jest.fn(),
-        onFailure: jest.fn(),
-      };
-      const expected = {
-        type: REQUEST_LOGIN,
-        payload,
-      };
-      expect(submitLogin(payload)).toEqual(expected);
     });
   });
 

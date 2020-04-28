@@ -20,19 +20,19 @@ import NoAuthRoute from 'containers/NoAuthRoute';
 import GlobalToasts from 'containers/GlobalToasts/Loadable';
 
 import GlobalStyle from '../../global-styles';
-import { APP_KEY, ROUTE_HOME, ROUTE_LOGIN, ROUTE_REGISTER } from './constants';
+import { ROUTE_HOME, ROUTE_LOGIN, ROUTE_REGISTER } from './constants';
 import reducer from './reducer';
 import saga from './saga';
 import messages from './messages';
 
-const key = APP_KEY;
+const key = 'global';
 
 export default function App() {
   useInjectReducer({ key, reducer });
   useInjectSaga({ key, saga });
 
   const { formatMessage } = useIntl();
-  const onClickGoHome = (e) => {
+  const goHome = (e) => {
     e.preventDefault();
     history.push(ROUTE_HOME);
   };
@@ -41,16 +41,19 @@ export default function App() {
     <EuiHeaderLogo
       iconType="compute"
       href="#"
-      onClick={onClickGoHome}
+      onClick={goHome}
       aria-label={formatMessage(messages.logoAriaLabel)}
-    />
+      style={{ width: 178 }}
+    >
+      YAITS
+    </EuiHeaderLogo>
   );
 
   const breadcrumbs = [
     {
       text: formatMessage(messages.breadcrumbHome),
       href: '#',
-      onClick: onClickGoHome,
+      onClick: goHome,
     },
   ];
 

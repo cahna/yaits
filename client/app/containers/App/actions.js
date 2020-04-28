@@ -26,6 +26,7 @@ import {
   CREATED_NEW_TEAM,
   SUBMIT_CREATE_TEAM,
   REQUEST_ISSUES_FOR_TEAM,
+  REQUEST_LOGIN,
   SHOW_TOAST,
   CLOSE_TOAST,
   LOADED_ISSUES_FOR_TEAM,
@@ -43,9 +44,14 @@ export const getActiveUser = () => ({ type: GET_ACTIVE_USER });
 
 export const loadingActiveUser = () => ({ type: LOADING_ACTIVE_USER });
 
-export const userLoggedIn = (accessToken) => ({
+export const submitLogin = (payload) => ({
+  type: REQUEST_LOGIN,
+  payload,
+});
+
+export const userLoggedIn = ({ accessToken, refreshToken }) => ({
   type: USER_LOGGED_IN,
-  payload: { accessToken },
+  payload: { accessToken, refreshToken },
 });
 
 export const activeUserLoaded = (currentUser, error = false) => ({

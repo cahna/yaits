@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import PropTypes from 'prop-types';
 import { useIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -8,23 +9,26 @@ import {
   EuiPageContent,
   EuiPageContentBody,
   EuiPageContentHeader,
-  EuiTitle,
   EuiPageContentHeaderSection,
+  EuiTitle,
 } from '@elastic/eui';
 
-import { User } from 'utils/sharedProps';
+import { Team } from 'utils/sharedProps';
 import { ROUTE_TEAMS } from 'containers/App/constants';
-import { makeSelectCurrentUser } from 'containers/App/selectors';
-import NoTeamsPrompt from 'components/NoTeamsPrompt/Loadable';
+import {
+  makeSelectCurrentUsername,
+  makeSelectCurrentUserTeams,
+} from 'containers/App/selectors';
+import NoTeamsPrompt from 'containers/NoTeamsPrompt/Loadable';
 
 import messages from './messages';
 
-export function HomePage({ currentUser }) {
+export function HomePage({ username, teams }) {
   const { formatMessage } = useIntl();
 
   let pageContent = <NoTeamsPrompt />;
 
-  if ((currentUser.teams || []).length > 0) {
+  if (teams.length > 0) {
     // TODO: Make some dashboard-like content
     pageContent = <Redirect to={ROUTE_TEAMS} />;
   }
@@ -35,7 +39,7 @@ export function HomePage({ currentUser }) {
         <EuiPageContentHeaderSection>
           <EuiTitle>
             <h2>
-              {formatMessage(messages.welcomeBack)} {currentUser.username}
+              {formatMessage(messages.welcomeBack)} {username}
             </h2>
           </EuiTitle>
         </EuiPageContentHeaderSection>
@@ -46,11 +50,13 @@ export function HomePage({ currentUser }) {
 }
 
 HomePage.propTypes = {
-  currentUser: User.isRequired,
+  username: PropTypes.string,
+  teams: PropTypes.arrayOf(Team).isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
-  currentUser: makeSelectCurrentUser(),
+  currentUsername: makeSelectCurrentUsername(),
+  teams: makeSelectCurrentUserTeams(),
 });
 
 const withConnect = connect(mapStateToProps, {});

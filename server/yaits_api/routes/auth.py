@@ -36,6 +36,7 @@ def login() -> Response:
     return jsonify({
         'accessToken': token,
         'refreshToken': refresh_token,
+        'user': user.dto(),
     })
 
 

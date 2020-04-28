@@ -50,6 +50,9 @@ def verify_login_user(client: FlaskClient,
 
     assert token != refresh_token
 
+    assert data.get('user')
+    assert data.get('user').get('username') == username
+
     return token, refresh_token
 
 

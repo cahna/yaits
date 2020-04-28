@@ -20,8 +20,10 @@ describe('<LoginPage />', () => {
 
   it('Expect to not log errors in console', () => {
     const spy = jest.spyOn(global.console, 'error');
-    const navigateTo = jest.fn();
+    const alertSuccess = jest.fn();
+    const alertError = jest.fn();
     const onSubmitForm = jest.fn();
+    const setActiveUser = jest.fn();
     const makeOnSubmitForm = () => onSubmitForm;
 
     render(
@@ -29,38 +31,19 @@ describe('<LoginPage />', () => {
         <IntlProvider locale={DEFAULT_LOCALE}>
           <HelmetProvider>
             <LoginPage
-              navigateTo={navigateTo}
+              alertSuccess={alertSuccess}
+              alertError={alertError}
               makeOnSubmitForm={makeOnSubmitForm}
+              setActiveUser={setActiveUser}
             />
           </HelmetProvider>
         </IntlProvider>
       </Provider>,
     );
     expect(spy).not.toHaveBeenCalled();
-    expect(navigateTo).not.toHaveBeenCalled();
+    expect(alertSuccess).not.toHaveBeenCalled();
+    expect(alertError).not.toHaveBeenCalled();
     expect(onSubmitForm).not.toHaveBeenCalled();
-  });
-
-  it.skip('Should render and match the snapshot', () => {
-    // SKIPPED: Snapshot fails for stupid reasons
-    const navigateTo = jest.fn();
-    const onSubmitForm = jest.fn();
-    const makeOnSubmitForm = () => onSubmitForm;
-
-    const {
-      container: { firstChild },
-    } = render(
-      <Provider store={store}>
-        <IntlProvider locale={DEFAULT_LOCALE}>
-          <HelmetProvider>
-            <LoginPage
-              navigateTo={navigateTo}
-              makeOnSubmitForm={makeOnSubmitForm}
-            />
-          </HelmetProvider>
-        </IntlProvider>
-      </Provider>,
-    );
-    expect(firstChild).toMatchSnapshot();
+    expect(setActiveUser).not.toHaveBeenCalled();
   });
 });

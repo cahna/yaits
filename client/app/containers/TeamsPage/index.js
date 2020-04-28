@@ -1,34 +1,35 @@
 import React, { memo } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { useIntl } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 import {
-  EuiPageContent,
-  EuiPageContentHeader,
-  EuiTitle,
-  EuiPageContentHeaderSection,
-  EuiPageContentBody,
   EuiButtonIcon,
   EuiInMemoryTable,
   EuiLink,
+  EuiPageContent,
+  EuiPageContentBody,
+  EuiPageContentHeader,
+  EuiPageContentHeaderSection,
+  EuiTitle,
 } from '@elastic/eui';
 
 import history from 'utils/history';
-import { User } from 'utils/sharedProps';
+import { Team } from 'utils/sharedProps';
 import { ROUTE_CREATE_TEAM, ROUTE_TEAMS } from 'containers/App/constants';
-import { makeSelectCurrentUser } from 'containers/App/selectors';
-import NoTeamsPrompt from 'components/NoTeamsPrompt/Loadable';
+import { makeSelectCurrentUserTeams } from 'containers/App/selectors';
+import NoTeamsPrompt from 'containers/NoTeamsPrompt/Loadable';
 
 import messages from './messages';
 
-export const TeamsPage = ({ currentUser }) => {
+export const TeamsPage = ({ teams }) => {
   const { formatMessage } = useIntl();
 
-  const numTeams = currentUser.teams.length;
+  const numTeams = teams.length;
   let pageContent = <NoTeamsPrompt />;
 
-  if (numTeams > 1) {
+  if (numTeams > 0) {
     const columns = [
       {
         name: formatMessage(messages.teamNameHeader),
@@ -60,11 +61,7 @@ export const TeamsPage = ({ currentUser }) => {
     ];
 
     pageContent = (
-      <EuiInMemoryTable
-        items={currentUser.teams}
-        columns={columns}
-        pagination
-      />
+      <EuiInMemoryTable items={teams} columns={columns} pagination />
     );
   }
 
@@ -91,11 +88,11 @@ export const TeamsPage = ({ currentUser }) => {
 };
 
 TeamsPage.propTypes = {
-  currentUser: User.isRequired,
+  teams: PropTypes.arrayOf(Team).isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
-  currentUser: makeSelectCurrentUser(),
+  teams: makeSelectCurrentUserTeams(),
 });
 
 const withConnect = connect(mapStateToProps, {});

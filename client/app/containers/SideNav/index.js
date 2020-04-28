@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { useRouteMatch, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
@@ -24,6 +25,10 @@ export function SideNav({
   handleLogoutUser,
 }) {
   const { formatMessage } = useIntl();
+  const {
+    params: { activeTeam },
+  } = useRouteMatch(`${ROUTE_TEAMS}/:activeTeam`) || { params: {} };
+
   const items = useMemo(() => {
     if (!currentUser || !currentUser.uniqueId) {
       return [];
@@ -33,12 +38,14 @@ export function SideNav({
       {
         name: formatMessage(messages.teamsNavHeader),
         id: messages.teamsNavHeader.id,
+        onClick: () => history.push(ROUTE_TEAMS),
         icon: <EuiIcon type="users" />,
         items: [
           ...(currentUser.teams || []).map(({ name, slug }) => ({
             name,
             id: slug,
             onClick: () => history.push(`${ROUTE_TEAMS}/${slug}`),
+            isSelected: slug === activeTeam,
           })),
           {
             name: formatMessage(messages.createTeamButton),
@@ -61,7 +68,7 @@ export function SideNav({
         ],
       },
     ];
-  }, [currentUser, handleLogoutUser]);
+  }, [activeTeam, currentUser, handleLogoutUser]);
 
   if (loading) {
     return <EuiLoadingSpinner size="l" />;
@@ -95,4 +102,4 @@ function mapDispatchToProps(dispatch) {
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
-export default compose(withConnect)(SideNav);
+export default compose(withConnect, withRouter, memo)(SideNav);
