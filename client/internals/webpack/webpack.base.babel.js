@@ -27,8 +27,6 @@ module.exports = (options) => ({
       },
       {
         // Preprocess our own .css files
-        // This is the place to add your own loaders (e.g. sass/less etc.)
-        // for a list of loaders, see https://webpack.js.org/loaders/#styling
         test: /\.css$/,
         exclude: /node_modules/,
         use: ['style-loader', 'css-loader'],
@@ -38,13 +36,8 @@ module.exports = (options) => ({
         test: /\.css$/,
         include: /node_modules/,
         use: ['style-loader', 'css-loader'],
+        sideEffects: true,
       },
-      // {  // TODO: NOT WORKING! :'(
-      //   // Preprocess @eui styles
-      //   test: /\.css$/,
-      //   include: /@elastic/,
-      //   use: ['style-loader', 'css-loader', 'postcss-loader'],
-      // },
       {
         test: /\.(eot|otf|ttf|woff|woff2)$/,
         use: 'file-loader',
