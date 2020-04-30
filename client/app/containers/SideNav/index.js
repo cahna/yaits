@@ -10,7 +10,7 @@ import { EuiSideNav, EuiIcon, EuiLoadingSpinner } from '@elastic/eui';
 import { User } from 'utils/sharedProps';
 import history from 'utils/history';
 import { ROUTE_TEAMS, ROUTE_CREATE_TEAM } from 'containers/App/constants';
-import { logoutUser } from 'containers/App/actions';
+import { submitLogout } from 'containers/App/actions';
 import {
   makeSelectCurrentUser,
   makeSelectLoading,
@@ -95,7 +95,7 @@ function mapDispatchToProps(dispatch) {
       if (evt !== undefined && evt.preventDefault) {
         evt.preventDefault();
       }
-      dispatch(logoutUser());
+      dispatch(submitLogout());
     },
   };
 }

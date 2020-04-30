@@ -3,26 +3,27 @@ import { testSaga } from 'redux-saga-test-plan';
 
 import request from 'utils/request';
 
+import { API_ACTIVE_USER, API_LOGIN } from '../constants';
 import {
-  API_ACTIVE_USER,
-  API_LOGIN,
-  DELETE_ISSUE,
-  GET_ACTIVE_USER,
-  REQUEST_ISSUES_FOR_TEAM,
-  REQUEST_LOGIN,
-  REQUEST_LOGOUT,
-  SUBMIT_CREATE_ISSUE,
-  SUBMIT_CREATE_TEAM,
-} from '../constants';
-import { userLoggedIn, loadingActiveUser, activeUserLoaded } from '../actions';
-import appSaga, {
-  deleteIssue,
   loadActiveUser,
-  loadIssuesForTeam,
-  logoutUser,
-  submitCreateIssue,
+  loadTeamIssues,
+  notifyActiveUserLoaded,
+  notifyActiveUserLoading,
+  notifyUserLoggedIn,
   submitCreateTeam,
+  submitCreateIssue,
+  submitDeleteIssue,
   submitLogin,
+  submitLogout,
+} from '../actions';
+import appSaga, {
+  deleteIssueSaga,
+  loadActiveUserSaga,
+  loadIssuesForTeamSaga,
+  logoutUserSaga,
+  submitCreateIssueSaga,
+  submitCreateTeamSaga,
+  submitLoginSaga,
 } from '../saga';
 
 /* eslint-disable redux-saga/yield-effects */
@@ -33,13 +34,13 @@ describe('sagas', () => {
     it('should start thread to watch for expected actions', () => {
       expect(mainSaga.next().value).toEqual(
         all([
-          takeLatest(REQUEST_LOGIN, submitLogin),
-          takeLatest(GET_ACTIVE_USER, loadActiveUser),
-          takeLatest(REQUEST_LOGOUT, logoutUser),
-          takeLatest(SUBMIT_CREATE_TEAM, submitCreateTeam),
-          takeLatest(REQUEST_ISSUES_FOR_TEAM, loadIssuesForTeam),
-          takeLatest(SUBMIT_CREATE_ISSUE, submitCreateIssue),
-          takeLatest(DELETE_ISSUE, deleteIssue),
+          takeLatest(submitLogin.toString(), submitLoginSaga),
+          takeLatest(loadActiveUser.toString(), loadActiveUserSaga),
+          takeLatest(submitLogout.toString(), logoutUserSaga),
+          takeLatest(submitCreateTeam.toString(), submitCreateTeamSaga),
+          takeLatest(loadTeamIssues.toString(), loadIssuesForTeamSaga),
+          takeLatest(submitCreateIssue.toString(), submitCreateIssueSaga),
+          takeLatest(submitDeleteIssue.toString(), deleteIssueSaga),
         ]),
       );
     });
@@ -69,7 +70,7 @@ describe('sagas', () => {
         user: { username, uniqueId: 'mockuuid' },
       };
       testSaga(() =>
-        submitLogin({
+        submitLoginSaga({
           payload: {
             username,
             password,
@@ -84,7 +85,7 @@ describe('sagas', () => {
         .next()
         .call(request, API_LOGIN, options)
         .next(mockResponse)
-        .put(userLoggedIn(mockResponse))
+        .put(notifyUserLoggedIn(mockResponse))
         .next()
         .call(onSuccess, mockResponse.user)
         .next()
@@ -93,7 +94,7 @@ describe('sagas', () => {
 
     it('handles failed login', () => {
       testSaga(() =>
-        submitLogin({
+        submitLoginSaga({
           payload: {
             username,
             password,
@@ -129,27 +130,27 @@ describe('sagas', () => {
     };
 
     it('handles succussful fetch of active user', () => {
-      testSaga(loadActiveUser)
+      testSaga(loadActiveUserSaga)
         .next()
-        .put(loadingActiveUser())
+        .put(notifyActiveUserLoading())
         .next()
         .next(accessToken)
         .call(request, API_ACTIVE_USER, options)
         .next(userResponse)
-        .put(activeUserLoaded(userResponse))
+        .put(notifyActiveUserLoaded(userResponse))
         .next()
         .isDone();
     });
 
     it('handles failed fetch of active user', () => {
-      testSaga(loadActiveUser)
+      testSaga(loadActiveUserSaga)
         .next()
-        .put(loadingActiveUser())
+        .put(notifyActiveUserLoading())
         .next()
         .next(accessToken)
         .call(request, API_ACTIVE_USER, options)
         .throw('dummy')
-        .put(activeUserLoaded(null, true))
+        .put(notifyActiveUserLoaded(null, true))
         .next()
         .isDone();
     });

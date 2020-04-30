@@ -23,7 +23,7 @@ import {
   makeSelectTeamIssues,
   makeSelectLoading,
 } from 'containers/App/selectors';
-import { requestIssuesForTeam } from 'containers/App/actions';
+import { loadTeamIssues } from 'containers/App/actions';
 
 import messages from './messages';
 import IssuesView from './IssuesView';
@@ -132,7 +132,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  loadIssuesForTeam: (teamSlug) => dispatch(requestIssuesForTeam(teamSlug)),
+  loadIssuesForTeam: (teamSlug) => dispatch(loadTeamIssues(teamSlug)),
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);

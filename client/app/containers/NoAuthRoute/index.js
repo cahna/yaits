@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect, Route } from 'react-router-dom';
 import { compose } from 'redux';
@@ -28,4 +28,4 @@ const mapStateToProps = createStructuredSelector({
 
 const withConnect = connect(mapStateToProps, {});
 
-export default compose(withConnect)(NoAuthRoute);
+export default compose(withConnect, memo)(NoAuthRoute);

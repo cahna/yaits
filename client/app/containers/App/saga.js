@@ -8,30 +8,29 @@ import {
   API_LOGIN,
   API_LOGOUT,
   API_TEAMS,
-  DELETE_ISSUE,
-  GET_ACTIVE_USER,
   LOCAL_TOKEN_NAME,
   LOCAL_REFRESH_TOKEN_NAME,
-  REQUEST_ISSUES_FOR_TEAM,
-  REQUEST_LOGIN,
-  REQUEST_LOGOUT,
   ROUTE_TEAMS,
-  SUBMIT_CREATE_ISSUE,
-  SUBMIT_CREATE_TEAM,
 } from './constants';
 import { makeSelectAccessToken } from './selectors';
 import {
-  activeUserLoaded,
-  createdNewTeam,
-  loadedIssuesForTeam,
-  loadingActiveUser,
-  logoutFailed,
-  logoutSuccess,
-  requestIssuesForTeam,
-  showErrorToast,
-  showInfoToast,
-  showSuccessToast,
-  userLoggedIn,
+  addErrorToast,
+  addInfoToast,
+  addSuccessToast,
+  loadActiveUser,
+  loadTeamIssues,
+  notifyActiveUserLoaded,
+  notifyActiveUserLoading,
+  notifyCreatedTeam,
+  notifyLogoutFailed,
+  notifyLogoutSuccess,
+  notifyTeamIssuesLoaded,
+  notifyUserLoggedIn,
+  submitCreateTeam,
+  submitCreateIssue,
+  submitDeleteIssue,
+  submitLogin,
+  submitLogout,
 } from './actions';
 
 const JSON_HEADERS = {
@@ -42,7 +41,7 @@ const JSON_HEADERS = {
 /**
  * Send authentication request
  */
-export function* submitLogin({
+export function* submitLoginSaga({
   payload: {
     username,
     password,
@@ -65,7 +64,7 @@ export function* submitLogin({
 
     localStorage.setItem(LOCAL_TOKEN_NAME, accessToken);
     localStorage.setItem(LOCAL_REFRESH_TOKEN_NAME, refreshToken);
-    yield put(userLoggedIn(response));
+    yield put(notifyUserLoggedIn(response));
     yield call(onSuccess, user);
   } catch (error) {
     yield call(onFailure, error);
@@ -75,7 +74,7 @@ export function* submitLogin({
 /**
  * Invalidate token
  */
-export function* logoutUser() {
+export function* logoutUserSaga() {
   const accessToken = yield select(makeSelectAccessToken());
   const options = {
     method: 'POST',
@@ -88,18 +87,18 @@ export function* logoutUser() {
   try {
     const { success } = yield call(request, API_LOGOUT, options);
     if (success) {
-      yield put(logoutSuccess());
+      yield put(notifyLogoutSuccess());
       yield put(
-        showInfoToast({
+        addInfoToast({
           title: 'Logout',
           text: 'You have been logged-out',
         }),
       );
     } else {
-      yield put(logoutFailed({ reason: 'unknown' }));
+      yield put(notifyLogoutFailed({ reason: 'unknown' }));
     }
   } catch (err) {
-    yield put(logoutFailed());
+    yield put(notifyLogoutFailed());
   }
 
   localStorage.removeItem(LOCAL_TOKEN_NAME);
@@ -109,8 +108,8 @@ export function* logoutUser() {
 /**
  * Load active user info
  */
-export function* loadActiveUser() {
-  yield put(loadingActiveUser());
+export function* loadActiveUserSaga() {
+  yield put(notifyActiveUserLoading());
 
   const accessToken = yield select(makeSelectAccessToken());
   const options = {
@@ -123,16 +122,16 @@ export function* loadActiveUser() {
 
   try {
     const activeUser = yield call(request, API_ACTIVE_USER, options);
-    yield put(activeUserLoaded(activeUser));
+    yield put(notifyActiveUserLoaded(activeUser));
   } catch (err) {
-    yield put(activeUserLoaded(null, true));
+    yield put(notifyActiveUserLoaded(null, true));
   }
 }
 
 /**
  * Send create team request
  */
-export function* submitCreateTeam({
+export function* submitCreateTeamSaga({
   payload: { teamName, onStart, failToast },
 }) {
   yield call(onStart);
@@ -151,28 +150,28 @@ export function* submitCreateTeam({
     const team = yield call(request, API_TEAMS, options);
 
     if (team && team.slug) {
-      yield put(createdNewTeam(team));
+      yield put(notifyCreatedTeam(team));
       yield call(history.push, `${ROUTE_TEAMS}/${team.slug}`);
       yield put(
-        showSuccessToast({
+        addSuccessToast({
           title: 'Success: Team created',
           text: `Name: ${team.name}\nSlug: ${team.slug}`,
         }),
       );
     } else {
       yield put(
-        showErrorToast({ ...failToast, text: team.error || 'Unknown Error' }),
+        addErrorToast({ ...failToast, text: team.error || 'Unknown Error' }),
       );
     }
   } catch (error) {
-    yield put(showErrorToast(failToast));
+    yield put(addErrorToast(failToast));
   }
 }
 
 /**
  * Load issues for a team
  */
-export function* loadIssuesForTeam({ payload: { teamSlug } }) {
+export function* loadIssuesForTeamSaga({ payload: { teamSlug } }) {
   const accessToken = yield select(makeSelectAccessToken());
   const options = {
     method: 'GET',
@@ -185,10 +184,10 @@ export function* loadIssuesForTeam({ payload: { teamSlug } }) {
 
   try {
     const { issues } = yield call(request, url, options);
-    yield put(loadedIssuesForTeam(teamSlug, issues));
+    yield put(notifyTeamIssuesLoaded(teamSlug, issues));
   } catch (err) {
     yield put(
-      showErrorToast({
+      addErrorToast({
         title: 'Error loading issues for team',
         text: err.toString(),
       }),
@@ -199,7 +198,7 @@ export function* loadIssuesForTeam({ payload: { teamSlug } }) {
 /**
  * Handle request to create issue for a team
  */
-export function* submitCreateIssue({
+export function* submitCreateIssueSaga({
   payload: {
     teamSlug,
     shortDescription,
@@ -235,15 +234,15 @@ export function* submitCreateIssue({
     if (issue && issue.uniqueId) {
       yield call(onSuccess, issue);
       yield put(
-        showSuccessToast({
+        addSuccessToast({
           title: 'Success: New issue created',
           text: `ID: ${issue.uniqueId}`,
         }),
       );
-      yield put(requestIssuesForTeam(teamSlug));
+      yield put(loadTeamIssues(teamSlug));
     } else {
       yield put(
-        showErrorToast({
+        addErrorToast({
           title: 'Error creating issue',
           text: issue.error || 'Unknown Error',
         }),
@@ -251,7 +250,7 @@ export function* submitCreateIssue({
     }
   } catch (error) {
     yield put(
-      showErrorToast({
+      addErrorToast({
         title: 'Error creating issue',
         text: error.toString(),
       }),
@@ -263,7 +262,7 @@ export function* submitCreateIssue({
 /**
  * Delete an issue for a team
  */
-export function* deleteIssue({
+export function* deleteIssueSaga({
   payload: { teamSlug, issueUniqueId, onStart, onSuccess, onFailure },
 }) {
   yield call(onStart);
@@ -284,16 +283,16 @@ export function* deleteIssue({
     if (response && response.success) {
       yield call(onSuccess);
       yield put(
-        showSuccessToast({
+        addSuccessToast({
           title: 'Success: Deleted issue',
           text: `ID: ${issueUniqueId}`,
         }),
       );
-      yield put(requestIssuesForTeam(teamSlug));
+      yield put(loadTeamIssues(teamSlug));
     } else {
       const error = response.error || 'Unknown Error';
       yield put(
-        showErrorToast({
+        addErrorToast({
           title: 'Error deleting issue',
           text: error,
         }),
@@ -302,7 +301,7 @@ export function* deleteIssue({
     }
   } catch (error) {
     yield put(
-      showErrorToast({
+      addErrorToast({
         title: 'Error deleting issue',
         text: error.toString(),
       }),
@@ -316,12 +315,12 @@ export function* deleteIssue({
  */
 export default function* appSaga() {
   yield all([
-    takeLatest(REQUEST_LOGIN, submitLogin),
-    takeLatest(GET_ACTIVE_USER, loadActiveUser),
-    takeLatest(REQUEST_LOGOUT, logoutUser),
-    takeLatest(SUBMIT_CREATE_TEAM, submitCreateTeam),
-    takeLatest(REQUEST_ISSUES_FOR_TEAM, loadIssuesForTeam),
-    takeLatest(SUBMIT_CREATE_ISSUE, submitCreateIssue),
-    takeLatest(DELETE_ISSUE, deleteIssue),
+    takeLatest(submitLogin.toString(), submitLoginSaga),
+    takeLatest(loadActiveUser.toString(), loadActiveUserSaga),
+    takeLatest(submitLogout.toString(), logoutUserSaga),
+    takeLatest(submitCreateTeam.toString(), submitCreateTeamSaga),
+    takeLatest(loadTeamIssues.toString(), loadIssuesForTeamSaga),
+    takeLatest(submitCreateIssue.toString(), submitCreateIssueSaga),
+    takeLatest(submitDeleteIssue.toString(), deleteIssueSaga),
   ]);
 }

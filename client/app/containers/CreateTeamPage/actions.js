@@ -1,11 +1,14 @@
-import { TEAM_NAME_CHANGED, CREATE_TEAM_FORM_LOADING } from './constants';
+import { createActions } from 'redux-actions';
 
-export const changeTeamName = (teamName) => ({
-  type: TEAM_NAME_CHANGED,
-  payload: { teamName },
-});
-
-export const createTeamFormLoading = (loading = true) => ({
-  type: CREATE_TEAM_FORM_LOADING,
-  payload: { loading },
+export const {
+  yaits: {
+    createTeamPage: { setTeamName, setFormLoading },
+  },
+} = createActions({
+  YAITS: {
+    CREATE_TEAM_PAGE: {
+      SET_TEAM_NAME: (teamName) => ({ teamName }),
+      SET_FORM_LOADING: (loading = true) => ({ loading }),
+    },
+  },
 });

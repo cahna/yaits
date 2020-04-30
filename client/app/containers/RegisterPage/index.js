@@ -19,10 +19,16 @@ import {
   EuiPageContentHeader,
   EuiPageContentHeaderSection,
   EuiTitle,
+  EuiToolTip,
 } from '@elastic/eui';
 
 import { useInjectSaga } from 'utils/injectSaga';
 
+import {
+  MIN_USERNAME_LEN,
+  MAX_USERNAME_LEN,
+  MIN_PASSWORD_LEN,
+} from './constants';
 import {
   submitRegister,
   changeUsername,
@@ -104,25 +110,40 @@ export function RegisterPage({ makeOnSubmitForm }) {
                 label={formatMessage(messages.usernameLabel)}
                 isInvalid={usernameError}
               >
-                <EuiFieldText
-                  placeholder=""
-                  value={username}
-                  onChange={onChangeUsername}
-                  disabled={loading}
-                  isInvalid={usernameError}
-                />
+                <EuiToolTip
+                  position="right"
+                  content={formatMessage(messages.usernameRequirements, {
+                    min: MIN_USERNAME_LEN,
+                    max: MAX_USERNAME_LEN,
+                  })}
+                >
+                  <EuiFieldText
+                    placeholder=""
+                    value={username}
+                    onChange={onChangeUsername}
+                    disabled={loading}
+                    isInvalid={usernameError}
+                  />
+                </EuiToolTip>
               </EuiFormRow>
               <EuiFormRow
                 label={formatMessage(messages.passwordLabel)}
                 isInvalid={passwordError}
               >
-                <EuiFieldPassword
-                  placeholder=""
-                  value={password}
-                  onChange={onChangePassword}
-                  disabled={loading}
-                  isInvalid={passwordError}
-                />
+                <EuiToolTip
+                  position="right"
+                  content={formatMessage(messages.passwordRequirements, {
+                    min: MIN_PASSWORD_LEN,
+                  })}
+                >
+                  <EuiFieldPassword
+                    placeholder=""
+                    value={password}
+                    onChange={onChangePassword}
+                    disabled={loading}
+                    isInvalid={passwordError}
+                  />
+                </EuiToolTip>
               </EuiFormRow>
               <EuiFormRow
                 label={formatMessage(messages.confirmPasswordLabel)}

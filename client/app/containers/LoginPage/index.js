@@ -26,10 +26,10 @@ import {
 import history from 'utils/history';
 import { ROUTE_HOME, ROUTE_REGISTER } from 'containers/App/constants';
 import {
-  activeUserLoaded,
+  notifyActiveUserLoaded,
   submitLogin,
-  showErrorToast,
-  showSuccessToast,
+  addErrorToast,
+  addSuccessToast,
 } from 'containers/App/actions';
 
 import reducer, { initialState } from './reducer';
@@ -157,9 +157,9 @@ const mapDispatchToProps = (dispatch) => ({
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
     dispatch(submitLogin(payload));
   },
-  alertSuccess: (payload) => dispatch(showSuccessToast(payload)),
-  alertError: (payload) => dispatch(showErrorToast(payload)),
-  setActiveUser: (user) => dispatch(activeUserLoaded(user)),
+  alertSuccess: (payload) => dispatch(addSuccessToast(payload)),
+  alertError: (payload) => dispatch(addErrorToast(payload)),
+  setActiveUser: (user) => dispatch(notifyActiveUserLoaded(user)),
 });
 
 const withConnect = connect(null, mapDispatchToProps);

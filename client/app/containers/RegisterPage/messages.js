@@ -37,4 +37,12 @@ export default defineMessages({
     id: `${scope}.confirmPasswordLabel`,
     defaultMessage: 'Confirm password',
   },
+  usernameRequirements: {
+    id: `${scope}.usernameRequirements`,
+    defaultMessage: 'Length must be between {min} and {max} characters',
+  },
+  passwordRequirements: {
+    id: `${scope}.passwordRequirements`,
+    defaultMessage: 'Minimum length is {min} characters',
+  },
 });

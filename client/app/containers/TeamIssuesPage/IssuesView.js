@@ -14,7 +14,7 @@ import {
 import history from 'utils/history';
 import { Issue } from 'utils/sharedProps';
 import { ROUTE_TEAMS } from 'containers/App/constants';
-import { requestDeleteIssue } from 'containers/App/actions';
+import { submitDeleteIssue } from 'containers/App/actions';
 
 import messages from './messages';
 
@@ -158,7 +158,7 @@ IssuesView.propTypes = {
 
 const mapDispatchToProps = (dispatch) => ({
   handleDeleteIssue: ({ uniqueId: issueUniqueId, teamSlug }) =>
-    dispatch(requestDeleteIssue({ issueUniqueId, teamSlug })),
+    dispatch(submitDeleteIssue({ issueUniqueId, teamSlug })),
 });
 
 const withConnect = connect(null, mapDispatchToProps);

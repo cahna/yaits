@@ -1,21 +1,23 @@
 import produce from 'immer';
+import { handleActions, combineActions } from 'redux-actions';
 import { reject } from 'lodash/collection';
-import { kebabCase } from 'lodash/string';
 
+import { LOCAL_TOKEN_NAME, LOCAL_REFRESH_TOKEN_NAME } from './constants';
 import {
-  ACTIVE_USER_LOADED,
-  CLOSE_TOAST,
-  CREATED_NEW_TEAM,
-  LOADED_ISSUES_FOR_TEAM,
-  LOADING_ACTIVE_USER,
-  LOCAL_REFRESH_TOKEN_NAME,
-  LOCAL_TOKEN_NAME,
-  LOGOUT_FAILED,
-  LOGOUT_SUCCESS,
-  REQUEST_LOGOUT,
-  SHOW_TOAST,
-  USER_LOGGED_IN,
-} from './constants';
+  addErrorToast,
+  addInfoToast,
+  addSuccessToast,
+  addToast,
+  closeToast,
+  notifyActiveUserLoaded,
+  notifyActiveUserLoading,
+  notifyCreatedTeam,
+  notifyLogoutFailed,
+  notifyLogoutSuccess,
+  notifyTeamIssuesLoaded,
+  notifyUserLoggedIn,
+  submitLogout,
+} from './actions';
 
 export const makeEmptyUser = () => ({
   username: null,
@@ -34,80 +36,87 @@ export const initialState = {
   toasts: [],
 };
 
-/* eslint-disable default-case, no-param-reassign */
-const appReducer = (state = initialState, { type, payload }) =>
-  produce(state, (draft) => {
-    switch (type) {
-      case REQUEST_LOGOUT:
-        draft.loading = true;
-        draft.error = false;
-        break;
-      case LOGOUT_SUCCESS:
+const appReducer = handleActions(
+  {
+    /* eslint-disable no-param-reassign */
+    [submitLogout]: produce((draft) => {
+      draft.loading = true;
+      draft.error = false;
+    }),
+    [combineActions(notifyLogoutSuccess, notifyLogoutFailed)]: produce(
+      (draft, { payload: { error } }) => {
         draft.loading = false;
-        draft.error = false;
+        draft.error = error;
         draft.accessToken = null;
         draft.refreshToken = null;
         draft.currentUser = makeEmptyUser();
-        break;
-      case LOGOUT_FAILED:
-        draft.loading = false;
-        draft.error = true;
-        draft.accessToken = null;
-        draft.refreshToken = null;
-        draft.currentUser = makeEmptyUser();
-        break;
-      case USER_LOGGED_IN:
+      },
+    ),
+    [notifyUserLoggedIn]: produce(
+      (draft, { payload: { accessToken, refreshToken } }) => {
         draft.loading = false;
         draft.error = false;
-        draft.accessToken = payload.accessToken;
-        draft.refreshToken = payload.refreshToken;
-        break;
-      case LOADING_ACTIVE_USER:
-        draft.loading = true;
-        break;
-      case ACTIVE_USER_LOADED:
+        draft.accessToken = accessToken;
+        draft.refreshToken = refreshToken;
+      },
+    ),
+    [notifyActiveUserLoading]: produce((draft) => {
+      draft.loading = true;
+    }),
+    [notifyActiveUserLoaded]: produce(
+      (draft, { payload: { error, currentUser } }) => {
         draft.loading = false;
-        draft.error = payload.error;
+        draft.error = error;
 
-        if (payload.currentUser) {
-          draft.currentUser = payload.currentUser;
+        if (currentUser) {
+          draft.currentUser = currentUser;
         } else {
           draft.currentUser = initialState.currentUser;
           draft.accessToken = null;
           localStorage.removeItem(LOCAL_TOKEN_NAME);
         }
-        break;
-      case CREATED_NEW_TEAM:
-        draft.currentUser = {
-          ...draft.currentUser,
-          teams: [...draft.currentUser.teams, payload.newTeam],
-        };
-        break;
-      case LOADED_ISSUES_FOR_TEAM:
+      },
+    ),
+    [notifyCreatedTeam]: produce((draft, { payload: { newTeam } }) => {
+      draft.currentUser = {
+        ...draft.currentUser,
+        teams: [...draft.currentUser.teams, newTeam],
+      };
+    }),
+    [notifyTeamIssuesLoaded]: produce(
+      (draft, { payload: { teamSlug, issues, timestamp } }) => {
         draft.teamIssues = {
           ...draft.teamIssues,
-          [payload.teamSlug]: {
-            loaded: Date.now(),
-            data: payload.issues,
+          [teamSlug]: {
+            loaded: timestamp,
+            data: issues,
           },
         };
-        break;
-      case SHOW_TOAST:
-        draft.toasts = [
-          ...draft.toasts,
-          {
-            id: kebabCase(`${payload.title}-${Date.now()}`),
-            title: payload.title,
-            text: payload.text,
-            color: payload.color,
-            iconType: payload.iconType,
-          },
-        ];
-        break;
-      case CLOSE_TOAST:
-        draft.toasts = reject(draft.toasts, (t) => t.id === payload.id);
-        break;
-    }
-  });
+      },
+    ),
+    [combineActions(
+      addToast,
+      addInfoToast,
+      addSuccessToast,
+      addErrorToast,
+    )]: produce((draft, { payload: { id, title, text, color, iconType } }) => {
+      draft.toasts = [
+        ...draft.toasts,
+        {
+          id,
+          title,
+          text,
+          color,
+          iconType,
+        },
+      ];
+    }),
+    [closeToast]: produce((draft, { payload: { id } }) => {
+      draft.toasts = reject(draft.toasts, (t) => t.id === id);
+    }),
+    /* eslint-enable */
+  },
+  initialState,
+);
 
 export default appReducer;

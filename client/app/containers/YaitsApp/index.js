@@ -22,7 +22,7 @@ import {
   makeSelectLoading,
   makeSelectAccessToken,
 } from 'containers/App/selectors';
-import { getActiveUser } from 'containers/App/actions';
+import { loadActiveUser } from 'containers/App/actions';
 import SideNav from 'containers/SideNav/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import HomePage from 'containers/HomePage/Loadable';
@@ -35,12 +35,12 @@ export function YaitsApp({
   loading,
   accessToken,
   currentUser,
-  loadActiveUser,
+  reloadActiveUser,
 }) {
   const { formatMessage } = useIntl();
   useEffect(() => {
     if (accessToken && (!currentUser || !currentUser.username)) {
-      loadActiveUser();
+      reloadActiveUser();
     }
   });
 
@@ -74,7 +74,7 @@ YaitsApp.propTypes = {
   loading: PropTypes.bool,
   accessToken: PropTypes.string,
   currentUser: User.isRequired,
-  loadActiveUser: PropTypes.func.isRequired,
+  reloadActiveUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -84,7 +84,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  loadActiveUser: () => dispatch(getActiveUser()),
+  reloadActiveUser: () => dispatch(loadActiveUser()),
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);

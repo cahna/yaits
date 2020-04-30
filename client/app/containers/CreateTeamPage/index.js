@@ -18,7 +18,7 @@ import {
 
 import { submitCreateTeam } from 'containers/App/actions';
 
-import { changeTeamName, createTeamFormLoading } from './actions';
+import { setTeamName, setFormLoading } from './actions';
 import reducer, { initialState } from './reducer';
 import messages from './messages';
 
@@ -28,12 +28,12 @@ export function CreateTeamPage({ makeOnSubmitForm }) {
   const { loading, teamName, teamNameError } = state;
 
   const onChangeTeamName = useCallback(
-    (evt) => dispatch(changeTeamName(evt.target.value)),
+    (evt) => dispatch(setTeamName(evt.target.value)),
     [],
   );
   const onSubmitForm = makeOnSubmitForm({
     teamName,
-    onStart: () => dispatch(createTeamFormLoading()),
+    onStart: () => dispatch(setFormLoading()),
     failToast: {
       title: formatMessage(messages.createTeamFailedTitle),
       text: formatMessage(messages.createTeamFailedText),

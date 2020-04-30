@@ -1,11 +1,8 @@
 import { replace } from 'lodash/string';
+import { handleActions } from 'redux-actions';
 import produce from 'immer';
-import {
-  TEAM_NAME_CHANGED,
-  CREATE_TEAM_FORM_LOADING,
-  MIN_TEAM_NAME_LEN,
-  MAX_TEAM_NAME_LEN,
-} from './constants';
+import { MIN_TEAM_NAME_LEN, MAX_TEAM_NAME_LEN } from './constants';
+import { setTeamName, setFormLoading } from './actions';
 
 export const initialState = {
   teamName: '',
@@ -20,19 +17,20 @@ const sanitizeTeamName = (username = '') =>
 const showTeamNameError = ({ teamName }) =>
   teamName.length < MIN_TEAM_NAME_LEN || teamName.length > MAX_TEAM_NAME_LEN;
 
-/* eslint-disable default-case, no-param-reassign */
-const CreateTeamPageReducer = (state = initialState, { type, payload }) =>
-  produce(state, (draft) => {
-    switch (type) {
-      case TEAM_NAME_CHANGED:
-        draft.teamName = sanitizeTeamName(payload.teamName);
-        draft.teamNameError = showTeamNameError(draft);
-        break;
-      case CREATE_TEAM_FORM_LOADING:
-        draft.loading = payload.loading;
-        draft.createTeamError = false;
-        break;
-    }
-  });
+const reducerFactory = handleActions(
+  {
+    /* eslint-disable no-param-reassign */
+    [setTeamName]: (draft, { payload: { teamName } }) => {
+      draft.teamName = sanitizeTeamName(teamName);
+      draft.teamNameError = showTeamNameError(draft);
+    },
+    [setFormLoading]: (draft, { payload: { loading } }) => {
+      draft.loading = loading;
+      draft.createTeamError = false;
+    },
+    /* eslint-enable */
+  },
+  initialState,
+);
 
-export default CreateTeamPageReducer;
+export default produce((draft, action) => reducerFactory(draft, action));

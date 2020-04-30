@@ -1,155 +1,84 @@
-/*
+/**
  * App Actions
- *
- * Actions change things in your application
- * Since this boilerplate uses a uni-directional data flow, specifically redux,
- * we have these actions which are the only way your application interacts with
- * your application state. This guarantees that your state is up to date and nobody
- * messes it up weirdly somewhere.
- *
- * To add a new Action:
- * 1) Import your constant
- * 2) Add a function like this:
- *    export function yourAction(var) {
- *        return { type: YOUR_ACTION_CONSTANT, var: var }
- *    }
  */
+import { createActions } from 'redux-actions';
+import { kebabCase } from 'lodash/string';
 
-import {
-  LOGOUT_SUCCESS,
-  LOGOUT_FAILED,
-  USER_LOGGED_IN,
-  GET_ACTIVE_USER,
-  ACTIVE_USER_LOADED,
-  LOADING_ACTIVE_USER,
-  REQUEST_LOGOUT,
-  CREATED_NEW_TEAM,
-  SUBMIT_CREATE_TEAM,
-  REQUEST_ISSUES_FOR_TEAM,
-  REQUEST_LOGIN,
-  SHOW_TOAST,
-  CLOSE_TOAST,
-  LOADED_ISSUES_FOR_TEAM,
-  SUBMIT_CREATE_ISSUE,
-  DELETE_ISSUE,
-} from './constants';
+const makeToastId = (title, type = 'default') =>
+  kebabCase(`${type}-${title}-${Date.now()}`);
 
-export const logoutUser = () => ({ type: REQUEST_LOGOUT });
-
-export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
-
-export const logoutFailed = () => ({ type: LOGOUT_FAILED });
-
-export const getActiveUser = () => ({ type: GET_ACTIVE_USER });
-
-export const loadingActiveUser = () => ({ type: LOADING_ACTIVE_USER });
-
-export const submitLogin = (payload) => ({
-  type: REQUEST_LOGIN,
-  payload,
-});
-
-export const userLoggedIn = ({ accessToken, refreshToken }) => ({
-  type: USER_LOGGED_IN,
-  payload: { accessToken, refreshToken },
-});
-
-export const activeUserLoaded = (currentUser, error = false) => ({
-  type: ACTIVE_USER_LOADED,
-  payload: { currentUser, error },
-});
-
-export const submitCreateTeam = (payload) => ({
-  type: SUBMIT_CREATE_TEAM,
-  payload,
-});
-
-export const createdNewTeam = (newTeam) => ({
-  type: CREATED_NEW_TEAM,
-  payload: { newTeam },
-});
-
-export const requestIssuesForTeam = (teamSlug) => ({
-  type: REQUEST_ISSUES_FOR_TEAM,
-  payload: { teamSlug },
-});
-
-export const loadedIssuesForTeam = (teamSlug, issues) => ({
-  type: LOADED_ISSUES_FOR_TEAM,
-  payload: { teamSlug, issues },
-});
-
-export const showToast = ({ title, text, color, iconType }) => ({
-  type: SHOW_TOAST,
-  payload: { title, text, color, iconType },
-});
-
-export const showErrorToast = ({ title, text }) => ({
-  type: SHOW_TOAST,
-  payload: {
-    title,
-    text,
-    color: 'danger',
-    iconType: 'alert',
+export const {
+  yaits: {
+    app: {
+      addErrorToast,
+      addInfoToast,
+      addSuccessToast,
+      addToast,
+      closeToast,
+      loadActiveUser,
+      loadTeamIssues,
+      notifyActiveUserLoaded,
+      notifyActiveUserLoading,
+      notifyCreatedTeam,
+      notifyLogoutFailed,
+      notifyLogoutSuccess,
+      notifyTeamIssuesLoaded,
+      notifyUserLoggedIn,
+      submitCreateIssue,
+      submitCreateTeam,
+      submitDeleteIssue,
+      submitLogin,
+      submitLogout,
+    },
   },
-});
-
-export const showSuccessToast = ({ title, text }) => ({
-  type: SHOW_TOAST,
-  payload: {
-    title,
-    text,
-    color: 'success',
-    iconType: 'check',
-  },
-});
-
-export const showInfoToast = ({ title, text }) => ({
-  type: SHOW_TOAST,
-  payload: { title, text },
-});
-
-export const closeToast = ({ id }) => ({
-  type: CLOSE_TOAST,
-  payload: { id },
-});
-
-export const submitCreateIssue = ({
-  teamSlug,
-  shortDescription,
-  description,
-  priority,
-  statusUniqueId,
-  onStart = () => {},
-  onSuccess = () => {},
-  onFailure = () => {},
-}) => ({
-  type: SUBMIT_CREATE_ISSUE,
-  payload: {
-    teamSlug,
-    shortDescription,
-    description,
-    priority,
-    statusUniqueId,
-    onStart,
-    onSuccess,
-    onFailure,
-  },
-});
-
-export const requestDeleteIssue = ({
-  teamSlug,
-  issueUniqueId,
-  onStart = () => {},
-  onSuccess = () => {},
-  onFailure = () => {},
-}) => ({
-  type: DELETE_ISSUE,
-  payload: {
-    teamSlug,
-    issueUniqueId,
-    onStart,
-    onSuccess,
-    onFailure,
+} = createActions({
+  YAITS: {
+    APP: {
+      ADD_ERROR_TOAST: ({ title, text }) => ({
+        id: makeToastId(title, 'error'),
+        title,
+        text,
+        color: 'danger',
+        iconType: 'alert',
+      }),
+      ADD_INFO_TOAST: ({ title, text }) => ({
+        id: makeToastId(title, 'info'),
+        title,
+        text,
+      }),
+      ADD_SUCCESS_TOAST: ({ title, text }) => ({
+        id: makeToastId(title, 'success'),
+        title,
+        text,
+        color: 'success',
+        iconType: 'check',
+      }),
+      ADD_TOAST: ({ title, ...rest }) => ({
+        id: makeToastId(title),
+        ...rest,
+      }),
+      CLOSE_TOAST: undefined,
+      LOAD_ACTIVE_USER: undefined,
+      LOAD_TEAM_ISSUES: (teamSlug) => ({ teamSlug }),
+      NOTIFY_ACTIVE_USER_LOADED: (currentUser, error = false) => ({
+        currentUser,
+        error,
+      }),
+      NOTIFY_ACTIVE_USER_LOADING: undefined,
+      NOTIFY_CREATED_TEAM: (newTeam) => ({ newTeam }),
+      NOTIFY_LOGOUT_FAILED: () => ({ error: true }),
+      NOTIFY_LOGOUT_SUCCESS: () => ({ error: false }),
+      NOTIFY_TEAM_ISSUES_LOADED: (teamSlug, issues) => ({
+        teamSlug,
+        issues,
+        timestamp: Date.now(),
+      }),
+      NOTIFY_USER_LOGGED_IN: undefined,
+      SUBMIT_CREATE_ISSUE: undefined,
+      SUBMIT_CREATE_TEAM: undefined,
+      SUBMIT_DELETE_ISSUE: undefined,
+      SUBMIT_LOGIN: undefined,
+      SUBMIT_LOGOUT: undefined,
+    },
   },
 });
