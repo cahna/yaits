@@ -11,15 +11,15 @@ import NotFoundPage from 'containers/NotFoundPage/Loadable';
 export const TeamsApp = () => (
   <Switch>
     <Route exact path={ROUTE_TEAMS} component={TeamsPage} />
-    <Route exact path={`${ROUTE_TEAMS}/:slug`} component={TeamPage} />
+    <Route exact path={`${ROUTE_TEAMS}/:teamSlug`} component={TeamPage} />
     <Route
       exact
-      path={`${ROUTE_TEAMS}/:slug/issues`}
+      path={`${ROUTE_TEAMS}/:teamSlug/issues`}
       component={TeamIssuesPage}
     />
     <Route
       exact
-      path={`${ROUTE_TEAMS}/:slug/members`}
+      path={`${ROUTE_TEAMS}/:teamSlug/members`}
       component={TeamMembersPage}
     />
     <Route component={NotFoundPage} />

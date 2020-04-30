@@ -24,7 +24,6 @@ export const Team = PropTypes.shape({
 export const User = PropTypes.shape({
   username: PropTypes.string,
   uniqueId: PropTypes.string,
-  teams: PropTypes.arrayOf(Team),
 });
 
 export const Issue = PropTypes.shape({

@@ -150,8 +150,7 @@ export function IssuesView({
 
 IssuesView.propTypes = {
   issues: PropTypes.arrayOf(Issue).isRequired,
-  issuesLoaded: PropTypes.oneOfType([PropTypes.number, PropTypes.bool])
-    .isRequired,
+  issuesLoaded: PropTypes.number,
   showModal: PropTypes.func.isRequired,
   handleDeleteIssue: PropTypes.func.isRequired,
 };

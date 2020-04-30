@@ -1,6 +1,4 @@
 import React, { memo } from 'react';
-import PropTypes from 'prop-types';
-import { find } from 'lodash/collection';
 import { useIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -20,20 +18,17 @@ import {
 } from '@elastic/eui';
 
 import history from 'utils/history';
-import { User } from 'utils/sharedProps';
+import { User, Team } from 'utils/sharedProps';
 import { ROUTE_TEAMS } from 'containers/App/constants';
-import { makeSelectCurrentUser } from 'containers/App/selectors';
+import {
+  makeSelectCurrentUser,
+  makeSelectTeam,
+} from 'containers/App/selectors';
 
 import messages from './messages';
 
-export function TeamPage({
-  match: {
-    params: { slug },
-  },
-  currentUser,
-}) {
+export function TeamPage({ currentUser, team }) {
   const { formatMessage } = useIntl();
-  const team = find(currentUser.teams, (t) => t.slug === slug);
 
   if (!team) {
     return <Redirect to={ROUTE_TEAMS} />;
@@ -63,7 +58,7 @@ export function TeamPage({
               icon={<EuiIcon size="xxl" type="reportingApp" />}
               title={formatMessage(messages.viewTeamIssuesTitle)}
               description={formatMessage(messages.viewTeamIssuesDescription)}
-              onClick={() => history.push(`${ROUTE_TEAMS}/${slug}/issues`)}
+              onClick={() => history.push(`${ROUTE_TEAMS}/${team.slug}/issues`)}
             />
           </EuiFlexItem>
           <EuiFlexItem>
@@ -71,7 +66,9 @@ export function TeamPage({
               icon={<EuiIcon size="xxl" type="usersRolesApp" />}
               title={formatMessage(messages.manageMembersTitle)}
               description={formatMessage(messages.manageMembersDescription)}
-              onClick={() => history.push(`${ROUTE_TEAMS}/${slug}/members`)}
+              onClick={() =>
+                history.push(`${ROUTE_TEAMS}/${team.slug}/members`)
+              }
             />
           </EuiFlexItem>
           <EuiFlexItem>
@@ -79,7 +76,9 @@ export function TeamPage({
               icon={<EuiIcon size="xxl" type="managementApp" />}
               title={formatMessage(messages.manageTeamTitle)}
               description={formatMessage(messages.manageTeamDescription)}
-              onClick={() => history.push(`${ROUTE_TEAMS}/${slug}/settings`)}
+              onClick={() =>
+                history.push(`${ROUTE_TEAMS}/${team.slug}/settings`)
+              }
               isDisabled
             />
           </EuiFlexItem>
@@ -92,15 +91,12 @@ export function TeamPage({
 
 TeamPage.propTypes = {
   currentUser: User.isRequired,
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      slug: PropTypes.string,
-    }),
-  }).isRequired,
+  team: Team,
 };
 
 const mapStateToProps = createStructuredSelector({
   currentUser: makeSelectCurrentUser(),
+  team: makeSelectTeam(),
 });
 
 const withConnect = connect(mapStateToProps, {});

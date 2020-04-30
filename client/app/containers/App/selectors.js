@@ -3,42 +3,61 @@
  */
 
 import { createSelector } from 'reselect';
+import { find } from 'lodash/collection';
+import { get } from 'lodash/object';
+
 import { initialState } from './reducer';
 
 const selectGlobal = (state) => state.global || initialState;
+const selectTeams = ({ global: { userTeams } }) => userTeams;
+const selectTeamIssues = ({ global: { teamIssues } }) => teamIssues;
+const selectTeamIssuesLoaded = ({ global: { teamIssuesLoaded } }) =>
+  teamIssuesLoaded;
 
-const makeSelectCurrentUser = () =>
-  createSelector(selectGlobal, (globalState) => globalState.currentUser);
+/**
+ * @param {object} _ unused
+ * @param {object} props
+ * @returns {string} teamSlug from router props
+ */
+export const selectTeamSlugRouter = (_, props) => props.match.params.teamSlug;
 
-const makeSelectCurrentUserTeams = () =>
-  createSelector(selectGlobal, ({ currentUser }) => currentUser.teams);
+export const makeSelectTeam = () =>
+  createSelector([selectTeams, selectTeamSlugRouter], (teams, teamSlug) =>
+    find(teams, (t) => t.slug === teamSlug),
+  );
 
-const makeSelectCurrentUsername = () =>
+export const makeSelectTeamIssues = () =>
+  createSelector(
+    [selectTeamSlugRouter, selectTeamIssues],
+    (teamSlug, teamIssues) => get(teamIssues, teamSlug, []),
+  );
+
+export const makeSelectTeamIssuesLoaded = () =>
+  createSelector(
+    [selectTeamSlugRouter, selectTeamIssuesLoaded],
+    (teamSlug, teamIssuesLoaded) => get(teamIssuesLoaded, teamSlug, undefined),
+  );
+
+export const makeSelectCurrentUser = () =>
+  createSelector(selectGlobal, ({ currentUser }) => currentUser);
+
+export const makeSelectUserTeams = () =>
+  createSelector(selectGlobal, ({ userTeams }) => userTeams);
+
+export const makeSelectCurrentUsername = () =>
   createSelector(selectGlobal, ({ currentUser }) => currentUser.username);
 
-const makeSelectLoading = () =>
-  createSelector(selectGlobal, (globalState) => globalState.loading);
+export const makeSelectLoading = () =>
+  createSelector(selectGlobal, ({ loading }) => loading);
 
-const makeSelectError = () =>
-  createSelector(selectGlobal, (globalState) => globalState.error);
+export const makeSelectError = () =>
+  createSelector(selectGlobal, ({ error }) => error);
 
-const makeSelectAccessToken = () =>
-  createSelector(selectGlobal, (globalState) => globalState.accessToken);
+export const makeSelectAccessToken = () =>
+  createSelector(selectGlobal, ({ accessToken }) => accessToken);
 
-const makeSelectToasts = () =>
-  createSelector(selectGlobal, (globalState) => globalState.toasts);
+export const makeSelectRefreshToken = () =>
+  createSelector(selectGlobal, ({ refreshToken }) => refreshToken);
 
-const makeSelectTeamIssues = () =>
-  createSelector(selectGlobal, (globalState) => globalState.teamIssues);
-
-export {
-  makeSelectAccessToken,
-  makeSelectCurrentUser,
-  makeSelectCurrentUsername,
-  makeSelectCurrentUserTeams,
-  makeSelectError,
-  makeSelectLoading,
-  makeSelectTeamIssues,
-  makeSelectToasts,
-  selectGlobal,
-};
+export const makeSelectToasts = () =>
+  createSelector(selectGlobal, ({ toasts }) => toasts);

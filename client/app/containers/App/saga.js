@@ -124,7 +124,13 @@ export function* loadActiveUserSaga() {
     const activeUser = yield call(request, API_ACTIVE_USER, options);
     yield put(notifyActiveUserLoaded(activeUser));
   } catch (err) {
-    yield put(notifyActiveUserLoaded(null, true));
+    yield put(notifyLogoutSuccess());
+    yield put(
+      addErrorToast({
+        title: 'You have been logged-out',
+        text: err.toString(),
+      }),
+    );
   }
 }
 

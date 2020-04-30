@@ -13,22 +13,22 @@ import {
   EuiTitle,
 } from '@elastic/eui';
 
-import { Team } from 'utils/sharedProps';
+import { User, Team } from 'utils/sharedProps';
 import { ROUTE_TEAMS } from 'containers/App/constants';
 import {
-  makeSelectCurrentUsername,
-  makeSelectCurrentUserTeams,
+  makeSelectCurrentUser,
+  makeSelectUserTeams,
 } from 'containers/App/selectors';
 import NoTeamsPrompt from 'containers/NoTeamsPrompt/Loadable';
 
 import messages from './messages';
 
-export function HomePage({ username, teams }) {
+export function HomePage({ user = {}, teams }) {
   const { formatMessage } = useIntl();
 
   let pageContent = <NoTeamsPrompt />;
 
-  if (teams.length > 0) {
+  if (Object.keys(teams).length > 0) {
     // TODO: Make some dashboard-like content
     pageContent = <Redirect to={ROUTE_TEAMS} />;
   }
@@ -39,7 +39,7 @@ export function HomePage({ username, teams }) {
         <EuiPageContentHeaderSection>
           <EuiTitle>
             <h2>
-              {formatMessage(messages.welcomeBack)} {username}
+              {formatMessage(messages.welcomeBack)} {user.username}
             </h2>
           </EuiTitle>
         </EuiPageContentHeaderSection>
@@ -50,13 +50,13 @@ export function HomePage({ username, teams }) {
 }
 
 HomePage.propTypes = {
-  username: PropTypes.string,
-  teams: PropTypes.arrayOf(Team).isRequired,
+  user: User,
+  teams: PropTypes.objectOf(Team).isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
-  currentUsername: makeSelectCurrentUsername(),
-  teams: makeSelectCurrentUserTeams(),
+  currentUser: makeSelectCurrentUser(),
+  teams: makeSelectUserTeams(),
 });
 
 const withConnect = connect(mapStateToProps, {});

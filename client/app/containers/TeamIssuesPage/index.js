@@ -1,7 +1,5 @@
 import React, { useState, useEffect, memo } from 'react';
 import PropTypes from 'prop-types';
-import { find } from 'lodash/collection';
-import { get } from 'lodash/object';
 import { useIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -16,12 +14,14 @@ import {
   EuiTitle,
 } from '@elastic/eui';
 
-import { User } from 'utils/sharedProps';
+import { User, Team, Issue } from 'utils/sharedProps';
 import { ROUTE_TEAMS } from 'containers/App/constants';
 import {
   makeSelectCurrentUser,
   makeSelectTeamIssues,
   makeSelectLoading,
+  makeSelectTeam,
+  makeSelectTeamIssuesLoaded,
 } from 'containers/App/selectors';
 import { loadTeamIssues } from 'containers/App/actions';
 
@@ -30,25 +30,18 @@ import IssuesView from './IssuesView';
 import IssueFormModal from './IssueFormModal';
 
 export function TeamIssuesPage({
-  match: {
-    params: { slug },
-  },
   currentUser,
-  allTeamIssues,
+  team,
+  issues,
+  issuesLoaded,
   loadIssuesForTeam,
   loading,
 }) {
-  const team = find(currentUser.teams, (t) => t.slug === slug);
-  const { loaded: issuesLoaded, data: issues } = get(allTeamIssues, slug, {
-    loaded: false,
-    data: [],
-  });
-
   useEffect(() => {
     if (team && !issuesLoaded && !loading) {
       loadIssuesForTeam(team.slug);
     }
-  }, [slug, issuesLoaded, loading]);
+  }, [team, issuesLoaded, loading]);
 
   const { formatMessage } = useIntl();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -104,7 +97,7 @@ export function TeamIssuesPage({
       <EuiPageContentBody>
         {modal}
         <IssuesView
-          issues={issues}
+          issues={Object.values(issues)}
           issuesLoaded={issuesLoaded}
           showModal={showModal}
         />
@@ -115,19 +108,18 @@ export function TeamIssuesPage({
 
 TeamIssuesPage.propTypes = {
   currentUser: User.isRequired,
-  allTeamIssues: PropTypes.object.isRequired,
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      slug: PropTypes.string,
-    }),
-  }).isRequired,
+  team: Team.isRequired,
+  issues: PropTypes.arrayOf(Issue).isRequired,
+  issuesLoaded: PropTypes.number,
   loadIssuesForTeam: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
   currentUser: makeSelectCurrentUser(),
-  allTeamIssues: makeSelectTeamIssues(),
+  team: makeSelectTeam(),
+  issues: makeSelectTeamIssues(),
+  issuesLoaded: makeSelectTeamIssuesLoaded(),
   loading: makeSelectLoading(),
 });
 

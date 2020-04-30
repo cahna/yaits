@@ -18,7 +18,7 @@ import {
 import history from 'utils/history';
 import { Team } from 'utils/sharedProps';
 import { ROUTE_CREATE_TEAM, ROUTE_TEAMS } from 'containers/App/constants';
-import { makeSelectCurrentUserTeams } from 'containers/App/selectors';
+import { makeSelectUserTeams } from 'containers/App/selectors';
 import NoTeamsPrompt from 'containers/NoTeamsPrompt/Loadable';
 
 import messages from './messages';
@@ -26,7 +26,7 @@ import messages from './messages';
 export const TeamsPage = ({ teams }) => {
   const { formatMessage } = useIntl();
 
-  const numTeams = teams.length;
+  const numTeams = Object.keys(teams).length;
   let pageContent = <NoTeamsPrompt />;
 
   if (numTeams > 0) {
@@ -61,7 +61,11 @@ export const TeamsPage = ({ teams }) => {
     ];
 
     pageContent = (
-      <EuiInMemoryTable items={teams} columns={columns} pagination />
+      <EuiInMemoryTable
+        items={Object.values(teams)}
+        columns={columns}
+        pagination
+      />
     );
   }
 
@@ -88,11 +92,11 @@ export const TeamsPage = ({ teams }) => {
 };
 
 TeamsPage.propTypes = {
-  teams: PropTypes.arrayOf(Team).isRequired,
+  teams: PropTypes.objectOf(Team).isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
-  teams: makeSelectCurrentUserTeams(),
+  teams: makeSelectUserTeams(),
 });
 
 const withConnect = connect(mapStateToProps, {});

@@ -1,6 +1,4 @@
 import React, { memo } from 'react';
-import PropTypes from 'prop-types';
-import { find } from 'lodash/collection';
 import { useIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -16,20 +14,17 @@ import {
   EuiTitle,
 } from '@elastic/eui';
 
-import { User } from 'utils/sharedProps';
+import { User, Team } from 'utils/sharedProps';
 import { ROUTE_TEAMS } from 'containers/App/constants';
-import { makeSelectCurrentUser } from 'containers/App/selectors';
+import {
+  makeSelectCurrentUser,
+  makeSelectTeam,
+} from 'containers/App/selectors';
 
 import messages from './messages';
 
-export function TeamMembersPage({
-  match: {
-    params: { slug },
-  },
-  currentUser,
-}) {
+export function TeamMembersPage({ currentUser, team }) {
   const { formatMessage } = useIntl();
-  const team = find(currentUser.teams, (t) => t.slug === slug);
 
   if (!team) {
     return <Redirect to={ROUTE_TEAMS} />;
@@ -89,15 +84,12 @@ export function TeamMembersPage({
 
 TeamMembersPage.propTypes = {
   currentUser: User.isRequired,
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      slug: PropTypes.string,
-    }),
-  }).isRequired,
+  team: Team,
 };
 
 const mapStateToProps = createStructuredSelector({
   currentUser: makeSelectCurrentUser(),
+  team: makeSelectTeam(),
 });
 
 const withConnect = connect(mapStateToProps, {});

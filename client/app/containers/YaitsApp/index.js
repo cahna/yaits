@@ -42,7 +42,7 @@ export function YaitsApp({
     if (accessToken && (!currentUser || !currentUser.username)) {
       reloadActiveUser();
     }
-  });
+  }, []);
 
   const pageContent = loading ? (
     <EuiLoadingContent lines={3} />
