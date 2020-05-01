@@ -1,6 +1,6 @@
 # `yaits`
 
-Yet Another Issue Tracking Service
+Yet Another Issue Tracking Service. Built as an exercise in learning the Redux environment.
 
 ## Get started now
 
