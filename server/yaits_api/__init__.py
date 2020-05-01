@@ -3,6 +3,7 @@ import logging
 from werkzeug.exceptions import HTTPException
 from flask import Flask, jsonify
 from flask_migrate import Migrate
+from marshmallow import ValidationError
 
 
 DEFAULT_DB_URI = 'sqlite:////tmp/yaits.db'
@@ -16,7 +17,7 @@ logger = logging.getLogger()
 def configure_app(app, config_overrides=None):
     from yaits_api.models import db
     from yaits_api.extensions import (
-        flask_bcrypt, flask_jwt, configure_jwt
+        flask_bcrypt, flask_jwt, configure_jwt, flask_ma
     )
 
     db_uri = os.getenv('YAITS_DB_URI')
@@ -31,7 +32,7 @@ def configure_app(app, config_overrides=None):
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         JWT_SECRET_KEY=secret_key,
         JWT_BLACKLIST_ENABLED=True,
-        JWT_ERROR_MESSAGE_KEY='error',
+        JWT_ERROR_MESSAGE_KEY='errors',
         JWT_IDENTITY_CLAIM='sub',
     )
 
@@ -47,9 +48,18 @@ def configure_app(app, config_overrides=None):
         def setup_sqlite():
             db.create_all()
 
+    flask_ma.init_app(app)
     flask_bcrypt.init_app(app)
     flask_jwt.init_app(app)
     configure_jwt(flask_jwt)
+
+    @app.errorhandler(HTTPException)
+    def bad_request(error):
+        return jsonify({'errors': [error.description]}), error.code
+
+    @app.errorhandler(ValidationError)
+    def validation_error(error):
+        return jsonify({'errors': [error.messages]}), 422
 
     logger.info(f'Configured for environment: {app.env}')
 
@@ -59,10 +69,6 @@ def create_app(config_overrides=None) -> Flask:
 
     app = Flask(__name__)
     configure_app(app, config_overrides)
-
-    @app.errorhandler(HTTPException)
-    def bad_request(error):
-        return jsonify({'error': error.description}), error.code
 
     from yaits_api.routes import blueprints
     for bp in blueprints:

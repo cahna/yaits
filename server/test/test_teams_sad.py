@@ -109,7 +109,7 @@ def test_create_issue_status_rejects_bad_names(client: FlaskClient):
                                headers=auth_header(access_token),
                                json=dict(name=name),
                                follow_redirects=True)
-        verify_error_response(response, 400, 'Invalid name')
+        verify_error_response(response, 422)
 
 
 def test_create_issue_rejects_bad_requests(client: FlaskClient):
@@ -147,7 +147,7 @@ def test_create_issue_rejects_bad_requests(client: FlaskClient):
                                headers=auth_header(access_token),
                                json=payload,
                                follow_redirects=True)
-        verify_error_response(response, 400)
+        verify_error_response(response, 422)
 
     # Bad assignee
     test_case_assigned_to = [
@@ -167,7 +167,7 @@ def test_create_issue_rejects_bad_requests(client: FlaskClient):
                                    'assignedToUniqueId': assigned_to,
                                },
                                follow_redirects=True)
-        verify_error_response(response, 400, 'invalid assignedToUniqueId')
+        verify_error_response(response, 422)
 
     # Bad short description
     test_case_short_description = [
@@ -189,7 +189,7 @@ def test_create_issue_rejects_bad_requests(client: FlaskClient):
                                    'assignedToUniqueId': assigned_to,
                                },
                                follow_redirects=True)
-        verify_error_response(response, 400, 'invalid shortDescription')
+        verify_error_response(response, 422)
 
     # Bad description
     test_case_description = [
@@ -209,7 +209,7 @@ def test_create_issue_rejects_bad_requests(client: FlaskClient):
                                    'assignedToUniqueId': assigned_to,
                                },
                                follow_redirects=True)
-        verify_error_response(response, 400, 'invalid description')
+        verify_error_response(response, 422)
 
     # Bad status uuid
     test_case_status_id = [
@@ -230,7 +230,7 @@ def test_create_issue_rejects_bad_requests(client: FlaskClient):
                                    'statusUniqueId': status_id,
                                },
                                follow_redirects=True)
-        verify_error_response(response, 400, 'invalid statusUniqueId')
+        verify_error_response(response, 422)
 
     # Bad priority
     test_case_priority = [
@@ -251,4 +251,4 @@ def test_create_issue_rejects_bad_requests(client: FlaskClient):
                                    'priority': priority,
                                },
                                follow_redirects=True)
-        verify_error_response(response, 400, 'invalid priority')
+        verify_error_response(response, 422)

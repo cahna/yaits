@@ -4,18 +4,21 @@ from flask_jwt_extended import (
     get_jwt_identity,
 )
 from yaits_api.models import Issue
+from yaits_api.schemas import (
+    IssueSchema,
+    IssueStatusSchema,
+    TeamSchema,
+    UserSchema,
+)
 from yaits_api.services import teams, users
 from yaits_api.validation.filters import validate_filters
-from yaits_api.validation.teams import (
-    validate_create_team,
-    validate_create_issue_status,
-    validate_create_issue,
-    validate_manage_team_members,
-    validate_update_issue,
-)
 
 
 bp = Blueprint('teams', __name__, url_prefix='/teams')
+user_schema = UserSchema()
+team_schema = TeamSchema()
+issue_status_schema = IssueStatusSchema()
+issue_schema = IssueSchema()
 
 
 def authorize_for_team(team_slug: str):
@@ -30,10 +33,10 @@ def authorize_for_team(team_slug: str):
 def create_team() -> Response:
     user_uuid = get_jwt_identity().get('unique_id')
     user = users.get_user_by_id(user_uuid)
-    name = validate_create_team(request.get_json())
-    team = teams.create_team(name, user)
+    data = team_schema.load(request.get_json())
+    team = teams.create_team(data.get('name'), user)
 
-    return jsonify(team.dto())
+    return team_schema.jsonify(team)
 
 
 @bp.route('/<string:team_slug>', methods=['GET'])
@@ -41,44 +44,52 @@ def create_team() -> Response:
 def get_team_details(team_slug: str) -> Response:
     team, user = authorize_for_team(team_slug)
 
-    return jsonify(team.dto(with_issue_ids=True))
+    return team_schema.jsonify(team)
 
 
 @bp.route('/<string:team_slug>/members', methods=['PATCH'])
 @jwt_required
-def manage_team_members(team_slug: str) -> Response:
+def add_team_members(team_slug: str) -> Response:
     team, user = authorize_for_team(team_slug)
-    add_users, remove_users = validate_manage_team_members(request.get_json())
+    users = user_schema.load(request.get_json(), many=True)
 
-    if add_users:
-        teams.add_team_members(team, add_users)
-    elif remove_users:
-        pass  # TODO
+    teams.add_team_members(team, [u.get('unique_id') for u in users])
 
-    return jsonify(team.dto())
+    return team_schema.jsonify(team)
+
+
+@bp.route('/<string:team_slug>/members', methods=['DELETE'])
+@jwt_required
+def remove_team_members(team_slug: str) -> Response:
+    team, user = authorize_for_team(team_slug)
+    # users = user_schema.load(request.get_json(), many=True)
+
+    # teams.add_team_members(team, [u.get('unique_id') for u in users])
+
+    return team_schema.jsonify(team)
 
 
 @bp.route('/<string:team_slug>/issue_statuses', methods=['POST'])
 @jwt_required
 def create_issue_status(team_slug) -> Response:
     team, user = authorize_for_team(team_slug)
-    name, description = validate_create_issue_status(request.get_json())
+    data = issue_status_schema.load(request.get_json())
+    issue_status = teams\
+        .create_issue_status(name=data.get('name'),
+                             description=data.get('description'),
+                             team=team)
 
-    issue_status = teams.create_issue_status(name=name,
-                                             description=description,
-                                             team=team)
-
-    return jsonify(issue_status.dto())
+    return issue_status_schema.jsonify(issue_status)
 
 
 @bp.route('/<string:team_slug>/issues', methods=['POST'])
 @jwt_required
 def create_issue(team_slug) -> Response:
     team, user = authorize_for_team(team_slug)
-    kwargs = validate_create_issue(request.get_json(), team, user)
-    issue = teams.create_issue(**kwargs)
+    kwargs = issue_schema.load(request.get_json())
+    issue = teams.create_issue(team=team, created_by=user, **kwargs)
 
-    return jsonify(issue.dto())
+    return issue_schema.jsonify(issue)
 
 
 @bp.route('/<string:team_slug>/issues', methods=['GET'])
@@ -88,9 +99,7 @@ def get_issues(team_slug: str) -> Response:
     filters = validate_filters(request, Issue)
     issues = teams.get_issues_for_team(team.id, filters)
 
-    return jsonify({
-        'issues': [i.dto() for i in issues],
-    })
+    return issue_schema.jsonify(issues, many=True)
 
 
 @bp.route('/<string:team_slug>/issues/<string:issue_uuid>',
@@ -100,7 +109,7 @@ def delete_issue(team_slug: str, issue_uuid: str) -> Response:
     team, user = authorize_for_team(team_slug)
     issue = teams.get_issue_by_uuid(issue_uuid)
 
-    return jsonify(issue.dto())
+    return issue_schema.jsonify(issue)
 
 
 @bp.route('/<string:team_slug>/issues/<string:issue_uuid>',
@@ -119,11 +128,11 @@ def get_issue(team_slug: str, issue_uuid: str) -> Response:
 @jwt_required
 def patch_issue(team_slug: str, issue_uuid: str) -> Response:
     team, user = authorize_for_team(team_slug)
+    updates = issue_schema.load(request.get_json())
     issue = teams.get_issue_by_uuid(issue_uuid)
-    updates = validate_update_issue(request.get_json())
     teams.update_issue(issue, updates)
 
-    return jsonify(issue.dto())
+    return issue_schema.jsonify(issue)
 
 
 @bp.route('/<string:team_slug>/issues/<string:issue_uuid>/comments',

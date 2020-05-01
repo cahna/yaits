@@ -58,8 +58,8 @@ export function IssuesView({
       isPrimary: true,
       icon: 'pencil',
       type: 'icon',
-      onClick: ({ uniqueId, teamSlug }) =>
-        history.push(`${ROUTE_TEAMS}/${teamSlug}/issues/${uniqueId}`),
+      onClick: ({ uniqueId, team: { slug } }) =>
+        history.push(`${ROUTE_TEAMS}/${slug}/issues/${uniqueId}`),
       'data-test-subj': 'action-edit-issue',
     },
     {
@@ -78,16 +78,21 @@ export function IssuesView({
     {
       name: formatMessage(messages.issueShortDescription),
       render: (
-        { teamSlug, shortDescription, uniqueId }, // eslint-disable-line react/prop-types
-      ) => (
-        <EuiLink
-          onClick={() =>
-            history.push(`${ROUTE_TEAMS}/${teamSlug}/issues/${uniqueId}`)
-          }
-        >
-          {shortDescription}
-        </EuiLink>
-      ),
+        { team: { slug }, shortDescription, uniqueId }, // eslint-disable-line react/prop-types
+      ) => {
+        const href = `${ROUTE_TEAMS}/${slug}/issues/${uniqueId}`;
+        return (
+          <EuiLink
+            href={href}
+            onClick={(e) => {
+              e.preventDefault();
+              history.push(href);
+            }}
+          >
+            {shortDescription}
+          </EuiLink>
+        );
+      },
       sortable: ({ shortDescription }) => shortDescription,
       truncateText: true,
       dataType: 'string',

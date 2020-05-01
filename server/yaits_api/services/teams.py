@@ -75,7 +75,7 @@ def get_team_by_slug(team_slug: str) -> User:
 
 def verify_user_in_team(team_slug: str, user_uuid: str) -> List:
     """If valid, return [Team, User]
-    TODO: Refactor into Flask route decorator
+    TODO: Refactor into Flask route decorator(?)
     """
     team = get_team_by_slug(team_slug)
     user = get_user_by_id(user_uuid)
@@ -137,12 +137,12 @@ def get_issue_status_by_uuid(status_uuid: str) -> IssueStatus:
 
 def create_issue(short_description: str,
                  description: str,
-                 status_uuid: str,
+                 status_unique_id: str,
                  team: Team,
                  created_by: User,
                  assigned_to_uuid: str = None,
                  priority: int = 0) -> Issue:
-    status = get_issue_status_by_uuid(status_uuid)
+    status = get_issue_status_by_uuid(status_unique_id)
 
     if not status:
         raise CreateIssueUnprocessable('No such status')
@@ -197,8 +197,8 @@ def get_issue_by_uuid(unique_id) -> Issue:
 
 
 def update_issue(issue: Issue, updates: Mapping):
-    if updates.get('status_uuid'):
-        status_uuid = updates.get('status_uuid')
+    if updates.get('status_unique_id'):
+        status_uuid = updates.get('status_unique_id')
         status = get_issue_status_by_uuid(status_uuid)
 
         if status.team.slug != issue.team.slug:
@@ -206,8 +206,8 @@ def update_issue(issue: Issue, updates: Mapping):
 
         issue.status_id = status.id
 
-    if updates.get('assigned_to_uuid'):
-        assigned_uuid = updates.get('assigned_to_uuid')
+    if updates.get('assigned_to_unique_id'):
+        assigned_uuid = updates.get('assigned_to_unique_id')
         assignee = get_user_by_id(assigned_uuid)
 
         if issue.team.slug not in [t.slug for t in assignee.teams]:

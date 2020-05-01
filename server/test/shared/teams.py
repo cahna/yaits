@@ -35,9 +35,12 @@ def verify_create_team(client: FlaskClient,
 def verify_add_team_members(client: FlaskClient,
                             access_token: str,
                             team_slug: str,
-                            user_uuids: List[str]) -> Mapping:
-    assert user_uuids
-    payload = dict(add=user_uuids)
+                            users: List[Mapping]) -> Mapping:
+    assert users
+    payload = dict(users=[{
+        'username': u['username'],
+        'uniqueId': u['uniqueId'],
+    } for u in users])
     response = client.patch(f'/teams/{team_slug}/members',
                             headers=auth_header(access_token),
                             json=payload,
@@ -49,7 +52,7 @@ def verify_add_team_members(client: FlaskClient,
     assert members
     member_ids = [m['uniqueId'] for m in members]
 
-    for uid in user_uuids:
+    for uid in [u['uniqueId'] for u in users]:
         assert uid in member_ids
 
 

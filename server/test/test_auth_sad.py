@@ -6,35 +6,35 @@ from .shared.auth import verify_register_user, verify_login_user
 
 def test_create_user_bad_request(client: FlaskClient):
     response = client.post('/auth/register', follow_redirects=True)
-    verify_error_response(response, 400, 'Bad request')
+    verify_error_response(response, 422)
 
 
 def test_create_user_missing_password(client: FlaskClient):
     response = client.post('/auth/register',
                            json=dict(username='ForgotAPassword'),
                            follow_redirects=True)
-    verify_error_response(response, 400, 'Invalid password')
+    verify_error_response(response, 422)
 
 
 def test_create_user_missing_username(client: FlaskClient):
     response = client.post('/auth/register',
                            json=dict(password='ForgotAUsername'),
                            follow_redirects=True)
-    verify_error_response(response, 400, 'Invalid username')
+    verify_error_response(response, 422)
 
 
 def test_create_user_empty_password(client: FlaskClient):
     response = client.post('/auth/register',
                            json=dict(username='UserFoo', password=''),
                            follow_redirects=True)
-    verify_error_response(response, 400, 'Invalid password')
+    verify_error_response(response, 422)
 
 
 def test_create_user_password_too_short(client: FlaskClient):
     response = client.post('/auth/register',
                            json=dict(username='UserFoo', password='123'),
                            follow_redirects=True)
-    verify_error_response(response, 400, 'Invalid password')
+    verify_error_response(response, 422)
 
 
 def test_create_user_username_already_exists(client: FlaskClient):
@@ -45,7 +45,7 @@ def test_create_user_username_already_exists(client: FlaskClient):
     response = client.post('/auth/register',
                            json=payload,
                            follow_redirects=True)
-    verify_error_response(response, 409, 'Username already exists')
+    verify_error_response(response, 409)
 
 
 def test_logout_without_jwt(client: FlaskClient):

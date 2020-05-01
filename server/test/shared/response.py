@@ -17,10 +17,10 @@ def verify_error_response(response: Response,
     data = verify_api_response(response, status_code)
 
     if message:
-        assert 'error' in data
-        err_msg = data['error']
-        assert err_msg == message, \
-            f'Expected error: "{message}". Instead got: "{err_msg}"'
+        assert 'errors' in data
+        err_msgs = data['errors']
+        assert message in err_msgs, \
+            f'Expected error: "{message}". Instead got: "{err_msgs}"'
 
 
 def verify_user_response(response: Response,

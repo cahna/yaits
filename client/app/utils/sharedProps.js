@@ -36,7 +36,7 @@ export const Issue = PropTypes.shape({
   priority: PropTypes.number.isRequired,
   dateCreated: PropTypes.string.isRequired,
   dateUpdated: PropTypes.string.isRequired,
-  teamSlug: PropTypes.string.isRequired,
+  team: Team.isRequired,
 });
 
 export const IssueComment = PropTypes.shape({

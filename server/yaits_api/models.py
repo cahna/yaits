@@ -11,7 +11,6 @@ from yaits_api.constants import (
     ISSUE_STATUS_MAX_LENGTH,
     ISSUE_SHORT_DESCRIPTION_MAX_LENGTH,
 )
-from yaits_api.validation.auth import is_valid_username
 from yaits_api.validation.filters import FilterOps
 
 db = SQLAlchemy()
@@ -74,22 +73,6 @@ class User(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     teams = db.relationship('Team', secondary='team_membership')
 
-    @db.validates('created_by', 'assigned_to')
-    def validate_username(self, key, _username):
-        assert is_valid_username(_username)
-
-    def dto(self, with_teams: bool = True) -> Mapping:
-        u = {
-            'username': self.username,
-            'uniqueId': self.unique_id,
-            'dateCreated': self.date_created,
-        }
-
-        if with_teams:
-            u['teams'] = [t.dto() for t in self.teams]
-
-        return u
-
     def jwt_identity(self) -> Mapping:
         return {
             'username': self.username,
@@ -126,20 +109,6 @@ class Team(db.Model):
     owner = db.relationship('User')
     members = db.relationship('User', secondary='team_membership')
 
-    def dto(self, with_issue_ids=False) -> Mapping:
-        t = {
-            'name': self.name,
-            'slug': self.slug,
-            'owner': self.owner.dto(with_teams=False),
-            'members': [u.dto(with_teams=False) for u in self.members],
-            'issueStatuses': [s.dto() for s in self.issue_statuses],
-        }
-
-        if with_issue_ids:
-            t['issueIds'] = [i.unique_id for i in self.issues]
-
-        return t
-
 
 class TeamMembership(db.Model):
     team_id = db.Column(PK_TYPE, db.ForeignKey('team.id'), primary_key=True)
@@ -155,7 +124,7 @@ class IssueStatus(db.Model):
     name = db.Column(db.String(ISSUE_STATUS_MAX_LENGTH),
                      index=True,
                      nullable=False)
-    description = db.Column(db.Text)
+    description = db.Column(db.Text, default=str)
     ordering = db.Column(db.Integer, nullable=False)
     team_id = db.Column(PK_TYPE,
                         db.ForeignKey('team.id'),
@@ -169,14 +138,6 @@ class IssueStatus(db.Model):
         db.UniqueConstraint('name', 'team_id'),
         db.UniqueConstraint('team_id', 'ordering'),
     )
-
-    def dto(self):
-        return {
-            'uniqueId': self.unique_id,
-            'name': self.name,
-            'description': self.description,
-            'ordering': self.ordering,
-        }
 
 
 class Issue(db.Model):
@@ -227,20 +188,6 @@ class Issue(db.Model):
         db.CheckConstraint('priority < 10'),
     )
 
-    def dto(self):
-        return {
-            'uniqueId': self.unique_id,
-            'shortDescription': self.short_description,
-            'description': self.description,
-            'priority': self.priority,
-            'dateCreated': self.date_created,
-            'dateUpdated': self.date_updated,
-            'createdBy': self.created_by.dto(with_teams=False),
-            'assignedTo': self.assigned_to.dto(with_teams=False),
-            'status': self.status.dto(),
-            'teamSlug': self.team.slug,
-        }
-
     @staticmethod
     def filters():
         return {
@@ -264,10 +211,3 @@ class IssueComment(db.Model):
 
     issue = db.relationship('Issue', backref=db.backref('comments', lazy=True))
     user = db.relationship('User')
-
-    def dto(self):
-        return {
-            'text': self.text,
-            'timestamp': self.timestamp,
-            'user': self.user.dto(with_teams=False),
-        }

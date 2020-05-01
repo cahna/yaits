@@ -46,7 +46,7 @@ def test_add_team_members(client: FlaskClient):
     verify_add_team_members(client,
                             access_token,
                             team_slug,
-                            [user2['uniqueId']])
+                            [user2])
 
 
 def test_create_issue_statuses(client: FlaskClient):

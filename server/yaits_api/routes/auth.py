@@ -7,28 +7,31 @@ from flask_jwt_extended import (
     create_refresh_token,
     jwt_refresh_token_required
 )
+from yaits_api.schemas import UserSchema, UserAuthSchema
 from yaits_api.services import auth
 from yaits_api.services.users import get_user_by_id
-from yaits_api.validation.auth import validate_auth_user
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+user_schema = UserSchema()
+user_auth_schema = UserAuthSchema()
 
 
 @bp.route('/register', methods=['POST'])
 def register() -> Response:
-    username, password = validate_auth_user(request.get_json())
-    user = auth.create_user(username, password)
+    data = user_auth_schema.load(request.get_json())
+    user = auth.create_user(data.get('username'), data.get('password'))
 
     return jsonify({
         'success': bool(user),
-        'user': user.dto(),
+        'user': user_schema.dump(user),
     })
 
 
 @bp.route('/login', methods=['POST'])
 def login() -> Response:
-    username, password = validate_auth_user(request.get_json())
+    data = user_auth_schema.load(request.get_json())
+    username, password = data.get('username'), data.get('password')
     user = auth.login_user(username, password)
     token = create_access_token(identity=user.jwt_identity())
     refresh_token = create_refresh_token(identity=user.jwt_identity())
@@ -36,7 +39,7 @@ def login() -> Response:
     return jsonify({
         'accessToken': token,
         'refreshToken': refresh_token,
-        'user': user.dto(),
+        'user': user_schema.dump(user),
     })
 
 
@@ -46,7 +49,7 @@ def get_active_user() -> Response:
     identity = get_jwt_identity()
     user = get_user_by_id(identity['unique_id'])
 
-    return jsonify(user.dto())
+    return user_schema.jsonify(user)
 
 
 @bp.route('/refresh', methods=['POST'])
