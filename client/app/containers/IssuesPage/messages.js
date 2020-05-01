@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl';
 
-export const scope = 'app.containers.TeamPage';
+export const scope = 'app.containers.IssuesPage';
 
 export default defineMessages({
   loadingTeam: {

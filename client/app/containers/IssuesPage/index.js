@@ -29,7 +29,7 @@ import messages from './messages';
 import IssuesView from './IssuesView';
 import IssueFormModal from './IssueFormModal';
 
-export function TeamIssuesPage({
+export function IssuesPage({
   currentUser,
   team,
   issues,
@@ -106,7 +106,7 @@ export function TeamIssuesPage({
   );
 }
 
-TeamIssuesPage.propTypes = {
+IssuesPage.propTypes = {
   currentUser: User.isRequired,
   team: Team.isRequired,
   issues: PropTypes.arrayOf(Issue).isRequired,
@@ -129,4 +129,4 @@ const mapDispatchToProps = (dispatch) => ({
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
-export default compose(withConnect, memo)(TeamIssuesPage);
+export default compose(withConnect, memo)(IssuesPage);

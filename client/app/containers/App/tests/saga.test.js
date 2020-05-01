@@ -5,10 +5,12 @@ import request from 'utils/request';
 
 import { API_ACTIVE_USER, API_LOGIN } from '../constants';
 import {
+  addErrorToast,
   loadActiveUser,
   loadTeamIssues,
   notifyActiveUserLoaded,
   notifyActiveUserLoading,
+  notifyLogoutSuccess,
   notifyUserLoggedIn,
   submitCreateTeam,
   submitCreateIssue,
@@ -150,7 +152,14 @@ describe('sagas', () => {
         .next(accessToken)
         .call(request, API_ACTIVE_USER, options)
         .throw('dummy')
-        .put(notifyActiveUserLoaded(null, true))
+        .put(notifyLogoutSuccess())
+        .next()
+        .put(
+          addErrorToast({
+            title: 'You have been logged-out',
+            text: 'dummy',
+          }),
+        )
         .next()
         .isDone();
     });

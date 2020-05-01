@@ -19,22 +19,32 @@ const selectTeamIssuesLoaded = ({ global: { teamIssuesLoaded } }) =>
  * @param {object} props
  * @returns {string} teamSlug from router props
  */
-export const selectTeamSlugRouter = (_, props) => props.match.params.teamSlug;
+export const selectRouterTeamSlug = (_, props) => props.match.params.teamSlug;
+
+export const selectRouterIssueId = (_, props) => props.match.params.issueId;
 
 export const makeSelectTeam = () =>
-  createSelector([selectTeams, selectTeamSlugRouter], (teams, teamSlug) =>
-    find(teams, (t) => t.slug === teamSlug),
+  createSelector([selectTeams, selectRouterTeamSlug], (teams, teamSlug) =>
+    get(teams, teamSlug),
   );
 
 export const makeSelectTeamIssues = () =>
   createSelector(
-    [selectTeamSlugRouter, selectTeamIssues],
+    [selectRouterTeamSlug, selectTeamIssues],
     (teamSlug, teamIssues) => get(teamIssues, teamSlug, []),
   );
 
+export const makeSelectCurrentIssue = () => {
+  const getIssuesForTeam = makeSelectTeamIssues();
+  return createSelector(
+    [getIssuesForTeam, selectRouterIssueId],
+    (teamIssues, issueId) => find(teamIssues, (i) => i.uniqueId === issueId),
+  );
+};
+
 export const makeSelectTeamIssuesLoaded = () =>
   createSelector(
-    [selectTeamSlugRouter, selectTeamIssuesLoaded],
+    [selectRouterTeamSlug, selectTeamIssuesLoaded],
     (teamSlug, teamIssuesLoaded) => get(teamIssuesLoaded, teamSlug, undefined),
   );
 
