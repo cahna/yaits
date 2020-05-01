@@ -1,38 +1,46 @@
 import { defineMessages } from 'react-intl';
 
-export const scope = 'app.containers.TeamPage';
+export const scope = 'app.containers.IssuePage';
 
 export default defineMessages({
-  owner: {
-    id: `${scope}.owner`,
-    defaultMessage: 'Owner',
+  issuePageTitle: {
+    id: `${scope}.issuePageTitle`,
+    defaultMessage: 'Issue details',
   },
-  actionsTitle: {
-    id: `${scope}.actionsTitle`,
-    defaultMessage: 'Actions',
+  shortDescriptionTitle: {
+    id: `${scope}.shortDescriptionTitle`,
+    defaultMessage: 'Short description',
   },
-  viewTeamIssuesTitle: {
-    id: `${scope}.viewTeamIssuesTitle`,
-    defaultMessage: 'Issues',
+  descriptionTitle: {
+    id: `${scope}.descriptionTitle`,
+    defaultMessage: 'Details',
   },
-  viewTeamIssuesDescription: {
-    id: `${scope}.viewTeamIssuesDescription`,
-    defaultMessage: "View and manage your teams' issues.",
+  priorityTitle: {
+    id: `${scope}.priorityTitle`,
+    defaultMessage: 'Priority',
   },
-  manageMembersTitle: {
-    id: `${scope}.manageMembersTitle`,
-    defaultMessage: 'Members',
+  statusTitle: {
+    id: `${scope}.statusTitle`,
+    defaultMessage: 'Status',
   },
-  manageMembersDescription: {
-    id: `${scope}.manageMembersDescription`,
-    defaultMessage: 'View and manage team members.',
+  assignedToTitle: {
+    id: `${scope}.assignedToTitle`,
+    defaultMessage: 'Assigned to',
   },
-  manageTeamTitle: {
-    id: `${scope}.manageTeamTitle`,
-    defaultMessage: 'Settings',
+  createdByTitle: {
+    id: `${scope}.createdByTitle`,
+    defaultMessage: 'Created by',
   },
-  manageTeamDescription: {
-    id: `${scope}.manageTeamDescription`,
-    defaultMessage: 'Configure team settings.',
+  dateUpdatedTitle: {
+    id: `${scope}.dateUpdatedTitle`,
+    defaultMessage: 'Last updated',
+  },
+  dateCreatedTitle: {
+    id: `${scope}.dateCreatedTitle`,
+    defaultMessage: 'Created',
+  },
+  submitCommentLabel: {
+    id: `${scope}.submitCommentLabel`,
+    defaultMessage: 'Submit',
   },
 });

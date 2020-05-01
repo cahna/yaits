@@ -4,8 +4,7 @@
 import { createActions } from 'redux-actions';
 import { kebabCase } from 'lodash/string';
 
-const makeToastId = (title, type = 'default') =>
-  kebabCase(`${type}-${title}-${Date.now()}`);
+const makeToastId = (title, type = 'default') => kebabCase(`${type}-${title}`);
 
 export const {
   yaits: {
