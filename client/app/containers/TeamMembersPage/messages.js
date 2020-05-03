@@ -19,4 +19,8 @@ export default defineMessages({
     id: `${scope}.teamMembersTitle`,
     defaultMessage: 'Team Members',
   },
+  inviteUserToTeamLabel: {
+    id: `${scope}.inviteUserToTeamLabel`,
+    defaultMessage: 'Invite user to team',
+  },
 });

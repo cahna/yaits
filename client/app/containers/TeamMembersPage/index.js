@@ -1,21 +1,24 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Redirect } from 'react-router-dom';
 import {
+  EuiButtonIcon,
   EuiInMemoryTable,
   EuiPageContent,
   EuiPageContentBody,
   EuiPageContentHeader,
   EuiPageContentHeaderSection,
+  EuiPopover,
   EuiSpacer,
   EuiTitle,
 } from '@elastic/eui';
 
 import { User, Team } from 'utils/sharedProps';
 import { ROUTE_TEAMS } from 'containers/App/constants';
+import TextFieldInlineForm from 'components/TextFieldInlineForm/Loadable';
 import {
   makeSelectCurrentUser,
   makeSelectTeam,
@@ -25,6 +28,7 @@ import messages from './messages';
 
 export function TeamMembersPage({ currentUser, team }) {
   const { formatMessage } = useIntl();
+  const [isPopoverOpen, setPopoverOpen] = useState(false);
 
   if (!team) {
     return <Redirect to={ROUTE_TEAMS} />;
@@ -55,6 +59,9 @@ export function TeamMembersPage({ currentUser, team }) {
     },
   };
 
+  const closePopover = () => setPopoverOpen(false);
+  const togglePopover = () => setPopoverOpen(!isPopoverOpen);
+
   return (
     <EuiPageContent>
       <EuiPageContentHeader>
@@ -64,6 +71,26 @@ export function TeamMembersPage({ currentUser, team }) {
               {team.name} {ownerLabel}
             </h2>
           </EuiTitle>
+        </EuiPageContentHeaderSection>
+        <EuiPageContentHeaderSection>
+          <EuiPopover
+            button={
+              <EuiButtonIcon
+                color="primary"
+                onClick={togglePopover}
+                iconType="plusInCircle"
+                aria-label={formatMessage(messages.inviteUserToTeamLabel)}
+              />
+            }
+            isOpen={isPopoverOpen}
+            closePopover={closePopover}
+          >
+            <TextFieldInlineForm
+              onSubmit={closePopover}
+              fieldLabel="User ID"
+              buttonText="Save"
+            />
+          </EuiPopover>
         </EuiPageContentHeaderSection>
       </EuiPageContentHeader>
       <EuiPageContentBody>

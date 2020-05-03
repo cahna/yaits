@@ -36,13 +36,13 @@ describe('sagas', () => {
     it('should start thread to watch for expected actions', () => {
       expect(mainSaga.next().value).toEqual(
         all([
-          takeLatest(submitLogin.toString(), submitLoginSaga),
-          takeLatest(loadActiveUser.toString(), loadActiveUserSaga),
-          takeLatest(submitLogout.toString(), logoutUserSaga),
-          takeLatest(submitCreateTeam.toString(), submitCreateTeamSaga),
-          takeLatest(loadTeamIssues.toString(), loadIssuesForTeamSaga),
-          takeLatest(submitCreateIssue.toString(), submitCreateIssueSaga),
-          takeLatest(submitDeleteIssue.toString(), deleteIssueSaga),
+          takeLatest(submitLogin, submitLoginSaga),
+          takeLatest(loadActiveUser, loadActiveUserSaga),
+          takeLatest(submitLogout, logoutUserSaga),
+          takeLatest(submitCreateTeam, submitCreateTeamSaga),
+          takeLatest(loadTeamIssues, loadIssuesForTeamSaga),
+          takeLatest(submitCreateIssue, submitCreateIssueSaga),
+          takeLatest(submitDeleteIssue, deleteIssueSaga),
         ]),
       );
     });
