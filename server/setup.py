@@ -26,10 +26,13 @@ setup(
     python_requires='>=3.7',
     install_requires=[
         'Flask-Bcrypt==0.7.1',
+        'Flask-GraphQL==2.0.1',
         'Flask-JWT-Extended==3.24.1',
         'flask-marshmallow==0.12.0',
         'flask-migrate==2.5.2',
         'flask==1.1.1',
+        'graphene-sqlalchemy==2.2.2',
+        'graphene==2.1.8',
         'inflection==0.4.0',
         'marshmallow-sqlalchemy==0.23.0',
         'psycopg2-binary==2.8.4',

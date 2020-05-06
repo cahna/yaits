@@ -23,7 +23,7 @@
         "FLASK_APP": "yaits_api",
         "FLASK_ENV": "development",
         "FLASK_DEBUG": "0",
-        "IMADETHIS_DB_URI": "postgresql://yaits:yaits@localhost:5432/yaits"
+        "YAITS_DB_URI": "postgresql://yaits:yaits@localhost:5432/yaits"
       },
       "args": ["run", "--no-debugger", "--no-reload"],
       "jinja": true
