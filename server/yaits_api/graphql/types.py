@@ -1,24 +1,31 @@
-from graphene import String
-from graphene.relay import Node
-from graphene_sqlalchemy import SQLAlchemyObjectType
-# from graphene_sqlalchemy.types import ORMField
-from graphene_sqlalchemy.converter import convert_sqlalchemy_type
-from yaits_api.models import User, Team, GUID
+import graphene
 
 
-@convert_sqlalchemy_type.register(GUID)
-def convert_column_to_string(type, column, registry=None):
-    return String
+class GuidNode(graphene.relay.Node):
+    id = graphene.ID(required=True)
+
+    @staticmethod
+    def resolve_id(parent, info):
+        return parent.unique_id
 
 
-class UserType(SQLAlchemyObjectType):
+class UserType(graphene.ObjectType):
     class Meta:
-        model = User
-        interfaces = (Node,)
-        exclude_fields = ('hashed_pw',)
+        interfaces = (GuidNode,)
+
+    username = graphene.String()
+    date_created = graphene.types.datetime.DateTime()
+    teams = graphene.List(lambda: TeamType)
 
 
-class TeamType(SQLAlchemyObjectType):
+class TeamType(graphene.ObjectType):
     class Meta:
-        model = Team
-        interfaces = (Node,)
+        interfaces = (graphene.relay.Node,)
+
+    id = graphene.ID(required=True)
+    slug = id
+    name = graphene.String()
+
+    @staticmethod
+    def resolve_id(parent, info):
+        return parent.slug
