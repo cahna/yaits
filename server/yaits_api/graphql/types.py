@@ -2,6 +2,8 @@ import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from graphene_sqlalchemy.converter import convert_sqlalchemy_type
 from yaits_api.models import GUID, User, Team, IssueStatus, Issue
+from yaits_api.services.users import get_user_by_id
+from yaits_api.services.teams import get_team_by_slug
 
 
 @convert_sqlalchemy_type.register(GUID)
@@ -27,6 +29,10 @@ class UserType(BaseType):
         interfaces = (graphene.relay.Node,)
         exclude_fields = ('hashed_pw',)
 
+    @classmethod
+    def get_node(parent, info, id):
+        return get_user_by_id(id)
+
 
 class TeamType(SQLAlchemyObjectType):
     class Meta:
@@ -38,6 +44,10 @@ class TeamType(SQLAlchemyObjectType):
     @staticmethod
     def resolve_id(parent, info):
         return parent.slug
+
+    @classmethod
+    def get_node(parent, info, id):
+        return get_team_by_slug(id)
 
 
 class IssueStatusType(BaseType):

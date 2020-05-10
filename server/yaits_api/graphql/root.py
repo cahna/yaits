@@ -1,6 +1,7 @@
 import graphene
 from graphene_sqlalchemy import SQLAlchemyConnectionField
-from yaits_api.services import users, teams
+from yaits_api.services.users import get_user_by_id
+from yaits_api.services.teams import get_team_by_slug
 from .types import UserType, TeamType, IssueStatusType, IssueType
 from .mutations import CreateTeam
 
@@ -20,10 +21,10 @@ class Query(graphene.ObjectType):
         return info.context.yaits_user
 
     def resolve_user(root, info, id):
-        return users.get_user_by_id(id)
+        return get_user_by_id(id)
 
     def resolve_team(root, info, slug):
-        return teams.get_team_by_slug(slug)
+        return get_team_by_slug(slug)
 
 
 class Mutation(graphene.ObjectType):
